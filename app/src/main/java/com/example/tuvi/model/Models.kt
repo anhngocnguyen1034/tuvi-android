@@ -1,0 +1,96 @@
+package com.example.tuvi.model
+
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+
+@Serializable
+data class TuViRequest(
+    val ngay: Int,
+    val thang: Int,
+    val nam: Int,
+    val gioi_tinh: Int,          // 1 is Male, -1 is Female
+    val gio: Int? = null,
+    val phut: Int? = null,
+    val gio_sinh: Int? = null,
+    val ten: String = "",
+    val duong_lich: Boolean = true,
+    val time_zone: Int = 7
+)
+
+/** Cho phép giá trị Int đến từ số (1) hoặc chuỗi ("1") trong JSON, tránh lỗi Unexpected token. */
+private object IntOrStringSerializer : KSerializer<Int?> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("IntOrString", PrimitiveKind.INT)
+    override fun deserialize(decoder: Decoder): Int? {
+        if (decoder is JsonDecoder) {
+            val el = decoder.decodeJsonElement()
+            return (el as? JsonPrimitive)?.content?.toIntOrNull()
+        }
+        return decoder.decodeNullableSerializableValue(serializer<Int>().nullable)
+    }
+    override fun serialize(encoder: Encoder, value: Int?) {
+        if (value != null) encoder.encodeInt(value)
+    }
+}
+
+@Serializable
+data class TuViResponse(
+    val thien_ban: ThienBan,
+    @SerialName("dia_ban") val dia_ban: List<Cung> = emptyList()
+)
+
+@Serializable
+data class ThienBan(
+    val ten: String,
+    val gioi_tinh: String,
+    val ngay_duong: String,
+    val ngay_am: String,
+    @SerialName("ngay_am_lich_ten") val ngayAmLichTen: String? = null,
+    @Serializable(with = IntOrStringSerializer::class) @SerialName("thang_nhuan") val thangNhuan: Int? = null,
+    @SerialName("gio_sinh") val gioSinh: String? = null,
+    @SerialName("chi_gio_sinh") val chiGioSinh: String? = null,
+    @SerialName("can_nam") val canNam: String? = null,
+    @SerialName("chi_nam") val chiNam: String? = null,
+    @SerialName("can_thang") val canThang: String? = null,
+    @SerialName("chi_thang") val chiThang: String? = null,
+    @SerialName("can_ngay") val canNgay: String? = null,
+    @SerialName("chi_ngay") val chiNgay: String? = null,
+    @SerialName("am_duong_nam_sinh") val amDuongNamSinh: String? = null,
+    @SerialName("am_duong_menh") val amDuongMenh: String? = null,
+    val menh: String? = null,
+    @SerialName("ban_menh") val banMenh: String? = null,
+    val cuc: String? = null,
+    @Serializable(with = IntOrStringSerializer::class) @SerialName("hanh_cuc") val hanhCuc: Int? = null,
+    @SerialName("menh_chu") val menhChu: String? = null,
+    @SerialName("than_chu") val thanChu: String? = null,
+    @SerialName("sinh_khac") val sinhKhac: String? = null,
+    @SerialName("nam_xem") val namXem: Int? = null,
+    @SerialName("tuoi_am") val tuoiAm: Int? = null
+)
+
+@Serializable
+data class Cung(
+    @SerialName("cung_ten") val cungTen: String,
+    @SerialName("cung_chu") val cungChu: String,
+    @SerialName("hanh_cung") val hanhCung: String,
+    @SerialName("dai_han") val daiHan: Int? = null,
+    val sao: List<Sao>,
+    val tuan: Boolean = false,
+    val triet: Boolean = false
+)
+
+@Serializable
+data class Sao(
+    val ten: String,
+    val dac_tinh: String? = ""
+)
