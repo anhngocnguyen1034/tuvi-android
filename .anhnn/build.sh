@@ -5,8 +5,9 @@
 # ─────────────────────────────────────────────
 HOST="https://production.hihoay.com"
 FILE_SERVICE="$HOST/file/service"
-DISCORD_WEBHOOK_TESTING="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
-DISCORD_WEBHOOK_PRODUCTION="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
+# WEBHOOKS (Có thể được truyền từ Jenkins qua biến môi trường)
+DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1}"
+DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS}"
 
 BUILD_FILE="app/build.gradle.kts"
 current_branch="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
@@ -201,11 +202,7 @@ notify_discord() {
         --arg image_url "$qr" \
         '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993, image: {url: $image_url}}]}')
 
-    if [ "$current_branch" == "main" ] || [ "$current_branch" == "release" ]; then
-        curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_PRODUCTION"
-    else
-        curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_TESTING"
-    fi
+    curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_SUCCESS"
 }
 
 notify_discord_failure() {
@@ -220,11 +217,7 @@ notify_discord_failure() {
         --arg description "Branch: \`$current_branch\`\nCommit: \`$commit\`\nBuild: [#${BUILD_NUMBER:-?}]($build_url)" \
         '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, description: $description, color: 15158332}]}')
 
-    if [ "$current_branch" == "main" ] || [ "$current_branch" == "release" ]; then
-        curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_PRODUCTION"
-    else
-        curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_TESTING"
-    fi
+    curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_JENKINS"
 }
 
 # ─────────────────────────────────────────────
