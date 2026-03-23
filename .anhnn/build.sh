@@ -105,14 +105,26 @@ run_builder() {
 
     if [ "$current_branch" == "develop" ] || [ "$current_branch" == "testing" ]; then
         echo "--- assembleDebug ---"
-        ./gradlew assembleDebug --stacktrace
+        ./gradlew assembleDebug --stacktrace --info 2>&1
+        GRADLE_EXIT=$?
+        echo "Gradle exit code: $GRADLE_EXIT"
+        if [ $GRADLE_EXIT -ne 0 ]; then
+            echo "Gradle assembleDebug thất bại!"
+            return 1
+        fi
         find app/build/outputs -type f -name "*-release*" -delete 2>/dev/null || true
 
     elif [ "$current_branch" == "release" ] || [ "$current_branch" == "main" ]; then
         echo "--- assembleRelease ---"
-        ./gradlew assembleRelease --stacktrace
+        ./gradlew assembleRelease --stacktrace --info 2>&1
+        GRADLE_EXIT=$?
+        echo "Gradle exit code: $GRADLE_EXIT"
+        if [ $GRADLE_EXIT -ne 0 ]; then
+            echo "Gradle assembleRelease thất bại!"
+            return 1
+        fi
         echo "--- bundleRelease ---"
-        ./gradlew :app:bundleRelease --stacktrace
+        ./gradlew :app:bundleRelease --stacktrace 2>&1
         find app/build/outputs -type f -name "*-debug*" -delete 2>/dev/null || true
     fi
 }
