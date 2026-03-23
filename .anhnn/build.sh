@@ -105,7 +105,7 @@ run_builder() {
 
     if [ "$current_branch" == "develop" ] || [ "$current_branch" == "testing" ]; then
         echo "--- assembleDebug ---"
-        ./gradlew assembleDebug --stacktrace --info 2>&1
+        ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
         GRADLE_EXIT=$?
         echo "Gradle exit code: $GRADLE_EXIT"
         if [ $GRADLE_EXIT -ne 0 ]; then
@@ -116,7 +116,7 @@ run_builder() {
 
     elif [ "$current_branch" == "release" ] || [ "$current_branch" == "main" ]; then
         echo "--- assembleRelease ---"
-        ./gradlew assembleRelease --stacktrace --info 2>&1
+        ./gradlew assembleRelease --no-daemon --stacktrace 2>&1
         GRADLE_EXIT=$?
         echo "Gradle exit code: $GRADLE_EXIT"
         if [ $GRADLE_EXIT -ne 0 ]; then
@@ -124,9 +124,12 @@ run_builder() {
             return 1
         fi
         echo "--- bundleRelease ---"
-        ./gradlew :app:bundleRelease --stacktrace 2>&1
+        ./gradlew :app:bundleRelease --no-daemon --stacktrace 2>&1
         find app/build/outputs -type f -name "*-debug*" -delete 2>/dev/null || true
     fi
+
+    echo "--- Tìm APK toàn bộ project ---"
+    find . -name "*.apk" -o -name "*.aab" 2>/dev/null | grep -v ".gradle" || true
 }
 
 # ─────────────────────────────────────────────
