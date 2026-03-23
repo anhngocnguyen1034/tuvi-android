@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 # Cấu hình
 # ─────────────────────────────────────────────
-HOST="https://production.hihoay.com"
+HOST="https://production.anhnn.com"
 FILE_SERVICE="$HOST/file/service"
 # WEBHOOKS (Có thể được truyền từ Jenkins qua biến môi trường)
 DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1}"
@@ -34,8 +34,13 @@ fi
 # ─────────────────────────────────────────────
 get_current_tag() {
     git fetch origin --tags 2>/dev/null || true
-    latest_tag=$(git ls-remote --tags origin | awk -F'/' '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+
+    # Lọc bỏ chữ 'v' (nếu có) TRƯỚC khi sort.
+    # Đảm bảo 1.0.0.2 luôn lớn hơn v1.0.0.1
+    latest_tag=$(git ls-remote --tags origin | awk -F'/' '{print $NF}' | grep -v '\^{}' | sed 's/^v//' | sort -V | tail -1)
+
     echo "DEBUG: git ls-remote latest_tag: $latest_tag" >&2
+
     if [ -z "$latest_tag" ]; then
         latest_tag="1.0.0.0"
     fi
@@ -75,11 +80,12 @@ update_version_in_gradle() {
 
     echo "Cập nhật $BUILD_FILE → versionName=$new_tag, versionCode=$new_code"
 
-    # versionName = "x.x"  →  versionName = "new_tag"
-    sed -i '' "s/versionName = \"[^\"]*\"/versionName = \"$new_tag\"/" "$BUILD_FILE"
+    # Dùng -i.bak để chạy được trên cả Mac và Linux (GNU/BSD sed)
+    sed -i.bak "s/versionName = \"[^\"]*\"/versionName = \"$new_tag\"/" "$BUILD_FILE"
+    sed -i.bak "s/versionCode = [0-9]*/versionCode = $new_code/" "$BUILD_FILE"
 
-    # versionCode = N  →  versionCode = new_code
-    sed -i '' "s/versionCode = [0-9]*/versionCode = $new_code/" "$BUILD_FILE"
+    # Xoá file backup do sed tạo ra
+    rm -f "$BUILD_FILE.bak"
 
     echo "Sau khi cập nhật:"
     grep -E 'versionName|versionCode' "$BUILD_FILE"
