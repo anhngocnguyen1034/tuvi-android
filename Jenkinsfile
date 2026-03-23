@@ -39,7 +39,7 @@ pipeline {
                     // Lấy tag mới nhất theo pattern của từng nhánh
                     def newVersion = ''
                     if (branch == 'develop') {
-                        newVersion = bumpVersion(branch, '0\\.0\\.0\\.\\d+', '0.0.0', 3)
+                        newVersion = bumpVersion(branch, '0\\.0\\.0\\.\\d+', '0.0.0.0', 3)
                     } else if (branch == 'testing') {
                         newVersion = bumpVersion(branch, '0\\.0\\.\\d+\\.0', '0.0.0.0', 2)
                     } else if (branch == 'release') {
@@ -120,25 +120,14 @@ pipeline {
                 def apkPath = env.APK_PATH ?: 'app/build/outputs/apk/debug/app-debug.apk'
                 def commit  = sh(script: 'git log -1 --pretty=format:"%h - %s"', returnStdout: true).trim()
 
-                // Gửi thông báo text
-                def message = """✅ **Build thành công!**
-🌿 Branch  : `${branch}`
-🏷️ Version : `v${version}`
-📝 Commit  : `${commit}`
-🔢 Build   : #${env.BUILD_NUMBER}"""
+                // Ghi JSON ra file tạm để tránh lỗi escape
+                writeFile file: '/tmp/discord_success.json', text: groovy.json.JsonOutput.toJson([
+                    content: "✅ **Build thành công!**\n🌿 Branch  : `${branch}`\n🏷️ Version : `v${version}`\n📝 Commit  : `${commit}`\n🔢 Build   : #${env.BUILD_NUMBER}"
+                ])
+                sh 'curl -s -X POST "$DISCORD_WEBHOOK" -H "Content-Type: application/json" --data-binary @/tmp/discord_success.json'
 
-                sh """
-                    curl -s -X POST "${DISCORD_WEBHOOK}" \\
-                        -H "Content-Type: application/json" \\
-                        -d '{"content": "${message.replace("'", "\\'")}"}'
-                """
-
-                // Upload file APK
-                sh """
-                    curl -s -X POST "${DISCORD_WEBHOOK}" \\
-                        -F "content=📦 APK v${version}" \\
-                        -F "file=@${apkPath}"
-                """
+                // Upload APK
+                sh "curl -s -X POST \"\$DISCORD_WEBHOOK\" -F 'content=📦 APK v${version}' -F 'file=@${apkPath}'"
             }
         }
 
@@ -147,17 +136,10 @@ pipeline {
                 def branch = env.BRANCH_NAME ?: sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
                 def commit = sh(script: 'git log -1 --pretty=format:"%h - %s"', returnStdout: true).trim()
 
-                def message = """❌ **Build THẤT BẠI!**
-🌿 Branch  : `${branch}`
-📝 Commit  : `${commit}`
-🔢 Build   : #${env.BUILD_NUMBER}
-🔗 Log     : ${env.BUILD_URL}"""
-
-                sh """
-                    curl -s -X POST "${DISCORD_WEBHOOK}" \\
-                        -H "Content-Type: application/json" \\
-                        -d '{"content": "${message.replace("'", "\\'")}"}'
-                """
+                writeFile file: '/tmp/discord_failure.json', text: groovy.json.JsonOutput.toJson([
+                    content: "❌ **Build THẤT BẠI!**\n🌿 Branch  : `${branch}`\n📝 Commit  : `${commit}`\n🔢 Build   : #${env.BUILD_NUMBER}\n🔗 Log     : ${env.BUILD_URL}"
+                ])
+                sh 'curl -s -X POST "$DISCORD_WEBHOOK" -H "Content-Type: application/json" --data-binary @/tmp/discord_failure.json'
             }
         }
     }
