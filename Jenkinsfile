@@ -89,7 +89,7 @@ pipeline {
             steps {
                 echo "Building APK v${env.APP_VERSION}..."
                 sh 'chmod +x gradlew'
-                sh './gradlew assembleDebug'
+                sh './gradlew assembleDebug --stacktrace'
             }
         }
 
@@ -99,11 +99,21 @@ pipeline {
         stage('Rename APK') {
             steps {
                 script {
-                    def apkSrc = 'app/build/outputs/apk/debug/app-debug.apk'
+                    // Tự động tìm APK vừa build (không hardcode path)
+                    def apkSrc = sh(
+                        script: 'find app/build/outputs/apk -name "*.apk" | head -1',
+                        returnStdout: true
+                    ).trim()
+
+                    if (!apkSrc) {
+                        error "Không tìm thấy file APK sau khi build!"
+                    }
+
+                    echo "APK tìm thấy: ${apkSrc}"
                     def apkDst = "app/build/outputs/apk/debug/TuVi-v${env.APP_VERSION}.apk"
-                    sh "cp ${apkSrc} ${apkDst}"
+                    sh "cp '${apkSrc}' '${apkDst}'"
                     env.APK_PATH = apkDst
-                    echo "APK: ${env.APK_PATH}"
+                    echo "APK đã đổi tên: ${env.APK_PATH}"
                 }
             }
         }
