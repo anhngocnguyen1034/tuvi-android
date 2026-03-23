@@ -149,15 +149,21 @@ auto_create_tag() {
     echo "DEBUG: Bắt đầu auto_create_tag với newTag=$newTag"
     git config user.email "jenkins@ci.local"
     git config user.name "Jenkins CI"
-    git fetch origin --tags
-    # Bỏ qua nếu tag đã tồn tại
-    if git rev-parse "$newTag" >/dev/null 2>&1; then
-        echo "Tag $newTag đã tồn tại, bỏ qua."
+
+    # Xoá tag cục bộ nếu có để đồng bộ với remote
+    git tag -d "$newTag" 2>/dev/null || true
+    git fetch origin --tags --force
+
+    # Kiểm tra xem tag đã tồn tại trên remote chưa
+    if git ls-remote --tags origin | grep -q "refs/tags/$newTag$"; then
+        echo "Tag $newTag đã tồn tại trên remote, bỏ qua."
         return 0
     fi
+
+    echo "Tạo tag mới: $newTag"
     git tag -a "$newTag" -m "[$current_branch] Auto create tag $newTag"
     git push origin "$newTag"
-    echo "Tag đã push: $newTag"
+    echo "Tag đã push thành công: $newTag"
 }
 
 # ─────────────────────────────────────────────
