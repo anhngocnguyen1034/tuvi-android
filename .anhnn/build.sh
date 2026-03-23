@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 # Cấu hình
 # ─────────────────────────────────────────────
-HOST="https://production.anhnn.com"
+HOST="https://production.hihoay.com"
 FILE_SERVICE="$HOST/file/service"
 DISCORD_WEBHOOK_TESTING="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
 DISCORD_WEBHOOK_PRODUCTION="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
@@ -270,11 +270,8 @@ if [ "$apk_count" -eq 0 ]; then
     exit 1
 fi
 
-# Tag & push
+# Tự động tạo tag & push
 auto_create_tag
-
-# Tắt trap trước khi gửi success
-trap - ERR
 
 # Tính thời gian build
 end_time=$(date +%s)
@@ -289,3 +286,6 @@ done
 echo "================================================"
 echo " Build hoàn tất: v$newTag ($elapsed_seconds giây)"
 echo "================================================"
+
+# Tắt trap
+trap - ERR
