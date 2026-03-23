@@ -112,7 +112,7 @@ run_builder() {
             echo "Gradle assembleDebug thất bại!"
             return 1
         fi
-        find app/build/outputs -type f -name "*-release*" -delete 2>/dev/null || true
+        find app/build -type f -name "*-release*" -delete 2>/dev/null || true
 
     elif [ "$current_branch" == "release" ] || [ "$current_branch" == "main" ]; then
         echo "--- assembleRelease ---"
@@ -125,7 +125,7 @@ run_builder() {
         fi
         echo "--- bundleRelease ---"
         ./gradlew :app:bundleRelease --no-daemon --stacktrace 2>&1
-        find app/build/outputs -type f -name "*-debug*" -delete 2>/dev/null || true
+        find app/build -type f -name "*-debug*" -delete 2>/dev/null || true
     fi
 
     echo "--- Tìm APK toàn bộ project ---"
@@ -234,10 +234,10 @@ update_version_in_gradle "$newTag" "$vmain"
 run_builder
 
 echo "--- Cây output ---"
-find app/build/outputs -type f | sort
+find app/build -type f | sort
 
 # Kiểm tra có APK/AAB không
-apk_count=$(find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \) | wc -l | tr -d ' ')
+apk_count=$(find app/build -type f \( -name "*.apk" -o -name "*.aab" \) | wc -l | tr -d ' ')
 if [ "$apk_count" -eq 0 ]; then
     echo "Không tìm thấy APK/AAB sau khi build!"
     notify_discord_failure
@@ -255,7 +255,7 @@ end_time=$(date +%s)
 elapsed_seconds=$((end_time - start_time))
 
 # Gửi từng file APK/AAB lên Discord
-for file in $(find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \)); do
+for file in $(find app/build -type f \( -name "*.apk" -o -name "*.aab" \)); do
     echo "Upload: $file"
     notify_discord "$file" "$elapsed_seconds"
 done
