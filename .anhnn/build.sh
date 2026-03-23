@@ -69,15 +69,15 @@ increase_tag() {
 # ─────────────────────────────────────────────
 update_version_in_gradle() {
     local new_tag="$1"
-    local vmain="$2"
+    local new_code="$2"
 
-    echo "Cập nhật $BUILD_FILE → versionName=$new_tag, versionCode=$vmain"
+    echo "Cập nhật $BUILD_FILE → versionName=$new_tag, versionCode=$new_code"
 
     # versionName = "x.x"  →  versionName = "new_tag"
     sed -i '' "s/versionName = \"[^\"]*\"/versionName = \"$new_tag\"/" "$BUILD_FILE"
 
-    # versionCode = N  →  versionCode = vmain
-    sed -i '' "s/versionCode = [0-9]*/versionCode = $vmain/" "$BUILD_FILE"
+    # versionCode = N  →  versionCode = new_code
+    sed -i '' "s/versionCode = [0-9]*/versionCode = $new_code/" "$BUILD_FILE"
 
     echo "Sau khi cập nhật:"
     grep -E 'versionName|versionCode' "$BUILD_FILE"
@@ -233,10 +233,24 @@ trap 'notify_discord_failure; exit 1' ERR
 # Tính version mới
 newTag=$(increase_tag "$current_branch")
 IFS='.' read -r vmain vrelease vtesting vdevelop <<< "$newTag"
-echo "Version mới: $newTag (main=$vmain, release=$vrelease, testing=$vtesting, develop=$vdevelop)"
+
+# Chuẩn hóa các thành phần (mặc định là 0 nếu thiếu) và loại bỏ số 0 ở đầu để tránh lỗi octal
+vmain=$((10#${vmain:-0}))
+vrelease=$((10#${vrelease:-0}))
+vtesting=$((10#${vtesting:-0}))
+vdevelop=$((10#${vdevelop:-0}))
+
+# Tính versionCode: (vmain * 1000000) + (vrelease * 10000) + (vtesting * 100) + vdevelop
+# Luôn đảm bảo versionCode >= 1 vì Android yêu cầu giá trị dương
+calculated_version_code=$(( vmain * 1000000 + vrelease * 10000 + vtesting * 100 + vdevelop ))
+if [ "$calculated_version_code" -le 0 ]; then
+    calculated_version_code=1
+fi
+
+echo "Version mới: $newTag (main=$vmain, release=$vrelease, testing=$vtesting, develop=$vdevelop) → versionCode=$calculated_version_code"
 
 # Cập nhật gradle
-update_version_in_gradle "$newTag" "$vmain"
+update_version_in_gradle "$newTag" "$calculated_version_code"
 
 # Build
 run_builder
