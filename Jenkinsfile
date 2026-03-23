@@ -20,8 +20,8 @@ pipeline {
 
         stage('Build & Deploy') {
             steps {
-                sh 'chmod +x .taymay/build.sh'
-                sh '.taymay/build.sh'
+                sh 'chmod +x .anhnn/build.sh'
+                sh '.anhnn/build.sh'
             }
         }
     }
