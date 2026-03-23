@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # ─────────────────────────────────────────────
 # Cấu hình
@@ -204,6 +203,10 @@ notify_discord_failure() {
 # ─────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────
+
+# Gửi Discord khi script thoát vì lỗi bất kỳ
+trap 'notify_discord_failure; exit 1' ERR
+
 # Tính version mới
 newTag=$(increase_tag "$current_branch")
 IFS='.' read -r vmain vrelease vtesting vdevelop <<< "$newTag"
@@ -213,16 +216,24 @@ echo "Version mới: $newTag (main=$vmain, release=$vrelease, testing=$vtesting,
 update_version_in_gradle "$newTag" "$vmain"
 
 # Build
-if ! run_builder; then
-    notify_discord_failure
-    exit 1
-fi
+run_builder
 
 echo "--- Cây output ---"
 find app/build/outputs -type f | sort
 
+# Kiểm tra có APK/AAB không
+apk_count=$(find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \) | wc -l | tr -d ' ')
+if [ "$apk_count" -eq 0 ]; then
+    echo "Không tìm thấy APK/AAB sau khi build!"
+    notify_discord_failure
+    exit 1
+fi
+
 # Tag & push
 auto_create_tag
+
+# Tắt trap trước khi gửi success
+trap - ERR
 
 # Tính thời gian build
 end_time=$(date +%s)
