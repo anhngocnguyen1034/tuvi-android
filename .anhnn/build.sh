@@ -34,6 +34,7 @@ fi
 get_current_tag() {
     git fetch origin --tags 2>/dev/null || true
     latest_tag=$(git ls-remote --tags origin | awk -F'/' '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+    echo "DEBUG: git ls-remote latest_tag: $latest_tag" >&2
     if [ -z "$latest_tag" ]; then
         latest_tag="1.0.0.0"
     fi
@@ -144,6 +145,7 @@ run_builder() {
 # Tạo git tag và push
 # ─────────────────────────────────────────────
 auto_create_tag() {
+    echo "DEBUG: Bắt đầu auto_create_tag với newTag=$newTag"
     git config user.email "jenkins@ci.local"
     git config user.name "Jenkins CI"
     git fetch origin --tags
@@ -173,7 +175,9 @@ notify_discord() {
     echo "URL file: $out_file"
 
     local qr_path
-    qr_path=$(curl -sS "$FILE_SERVICE/qr?text=$out_file")
+    echo "DEBUG: Truy cập QR từ: $FILE_SERVICE/qr?text=$out_file"
+    qr_path=$(curl -sS "$FILE_SERVICE/qr?text=$out_file" 2>&1)
+    echo "DEBUG: qr_path result: $qr_path"
     local qr="$HOST$qr_path"
     echo "QR: $qr"
 
