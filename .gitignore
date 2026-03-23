@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Python / venv
+venv/
+env/
+.venv/
+__pycache__/
+*.py[cod]
+
+# OS junk
+.DS_Store
+Thumbs.db

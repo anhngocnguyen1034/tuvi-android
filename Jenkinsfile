@@ -1,19 +1,24 @@
 pipeline {
     agent any
 
-    // 1. Khai báo biến môi trường (Cực kỳ quan trọng trên Mac)
     environment {
+        // 1. Khai báo đường dẫn Java (Lấy bản OpenJDK 21 bạn vừa cài qua brew)
+        JAVA_HOME = '/opt/homebrew/opt/openjdk@21'
+
+        // 2. Khai báo Android SDK
         ANDROID_HOME = '/Users/nguyenquocchinh/Library/Android/sdk'
-        PATH = "${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
+
+        // 3. Cập nhật PATH để Jenkins tìm thấy lệnh 'java' và 'gradle'
+        PATH = "${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
     }
 
     stages {
         // 2. Bước kiểm tra môi trường
         stage('Prepare') {
             steps {
-                echo "Đang kiểm tra môi trường build..."
-                sh 'python3 --version'
+                echo "Đang kiểm tra môi trường..."
                 sh 'java -version'
+                sh 'python3 --version'
             }
         }
 

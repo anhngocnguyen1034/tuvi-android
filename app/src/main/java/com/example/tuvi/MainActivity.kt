@@ -20,10 +20,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tuvi.ui.TuViUiState
-import com.example.tuvi.ui.TuViViewModel
-import com.example.tuvi.ui.screens.InputScreen
-import com.example.tuvi.ui.screens.TuViChartScreen
+import com.example.tuvi.presentation.TuViUiState
+import com.example.tuvi.presentation.TuViViewModel
+import com.example.tuvi.presentation.screens.InputScreen
+import com.example.tuvi.presentation.screens.TuViChartScreen
 import com.example.tuvi.ui.theme.TuViTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TuViApp() {
     val navController = rememberNavController()
-    val viewModel: TuViViewModel = viewModel()
+    val viewModel: TuViViewModel = viewModel(factory = TuViViewModel.Factory)
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 

@@ -1,4 +1,4 @@
-package com.example.tuvi.ui.screens
+package com.example.tuvi.presentation.screens
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -36,8 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tuvi.ui.theme.*
-import java.time.Instant
-import java.time.ZoneId
 import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -168,10 +166,13 @@ fun TuViDatePickerDialog(
             TextButton(
                 onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
-                        val ld = Instant.ofEpochMilli(millis)
-                            .atZone(ZoneId.of("UTC"))
-                            .toLocalDate()
-                        onDateSelected(ld.year, ld.monthValue, ld.dayOfMonth)
+                        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                        cal.timeInMillis = millis
+                        onDateSelected(
+                            cal.get(Calendar.YEAR),
+                            cal.get(Calendar.MONTH) + 1,
+                            cal.get(Calendar.DAY_OF_MONTH)
+                        )
                     }
                     onDismiss()
                 }
@@ -222,9 +223,13 @@ fun TuViDatePickerDialog(
                 // Hiển thị ngày đã chọn bằng định dạng d/M/yyyy
                 val selMillis = datePickerState.selectedDateMillis
                 val displayText = if (selMillis != null) {
-                    val ld = Instant.ofEpochMilli(selMillis)
-                        .atZone(ZoneId.of("UTC")).toLocalDate()
-                    "%02d / %02d / %d".format(ld.dayOfMonth, ld.monthValue, ld.year)
+                    val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    cal.timeInMillis = selMillis
+                    "%02d / %02d / %d".format(
+                        cal.get(Calendar.DAY_OF_MONTH),
+                        cal.get(Calendar.MONTH) + 1,
+                        cal.get(Calendar.YEAR)
+                    )
                 } else "—"
                 Text(
                     displayText,

@@ -1,4 +1,4 @@
-package com.example.tuvi.model
+package com.example.tuvi.data.remote.dto
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -11,7 +11,6 @@ import kotlinx.serialization.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 
 @Serializable
@@ -19,7 +18,7 @@ data class TuViRequest(
     val ngay: Int,
     val thang: Int,
     val nam: Int,
-    val gioi_tinh: Int,          // 1 is Male, -1 is Female
+    val gioi_tinh: Int,
     val gio: Int? = null,
     val phut: Int? = null,
     val gio_sinh: Int? = null,
@@ -28,9 +27,11 @@ data class TuViRequest(
     val time_zone: Int = 7
 )
 
-/** Cho phép giá trị Int đến từ số (1) hoặc chuỗi ("1") trong JSON, tránh lỗi Unexpected token. */
-private object IntOrStringSerializer : KSerializer<Int?> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("IntOrString", PrimitiveKind.INT)
+/** Cho phép giá trị Int đến từ số (1) hoặc chuỗi ("1") trong JSON. */
+object IntOrStringSerializer : KSerializer<Int?> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("IntOrString", PrimitiveKind.INT)
+
     override fun deserialize(decoder: Decoder): Int? {
         if (decoder is JsonDecoder) {
             val el = decoder.decodeJsonElement()
@@ -38,6 +39,7 @@ private object IntOrStringSerializer : KSerializer<Int?> {
         }
         return decoder.decodeNullableSerializableValue(serializer<Int>().nullable)
     }
+
     override fun serialize(encoder: Encoder, value: Int?) {
         if (value != null) encoder.encodeInt(value)
     }
@@ -45,12 +47,12 @@ private object IntOrStringSerializer : KSerializer<Int?> {
 
 @Serializable
 data class TuViResponse(
-    val thien_ban: ThienBan,
-    @SerialName("dia_ban") val dia_ban: List<Cung> = emptyList()
+    val thien_ban: ThienBanDto,
+    @SerialName("dia_ban") val dia_ban: List<CungDto> = emptyList()
 )
 
 @Serializable
-data class ThienBan(
+data class ThienBanDto(
     val ten: String,
     val gioi_tinh: String,
     val ngay_duong: String,
@@ -79,18 +81,21 @@ data class ThienBan(
 )
 
 @Serializable
-data class Cung(
+data class CungDto(
     @SerialName("cung_ten") val cungTen: String,
     @SerialName("cung_chu") val cungChu: String,
     @SerialName("hanh_cung") val hanhCung: String,
     @SerialName("dai_han") val daiHan: Int? = null,
-    val sao: List<Sao>,
+    val thang: Int? = null,
+    val sao: List<SaoDto>,
     val tuan: Boolean = false,
     val triet: Boolean = false
 )
 
 @Serializable
-data class Sao(
+data class SaoDto(
     val ten: String,
-    val dac_tinh: String? = ""
+    val dac_tinh: String? = "",
+    val ngu_hanh: String? = null,
+    @SerialName("vong_trang_sinh") val vongTrangSinh: Int? = 0
 )
