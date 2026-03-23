@@ -104,19 +104,16 @@ run_builder() {
     rm -rf app/build/
     chmod +x ./gradlew
 
-    echo "--- gradle build ---"
-    ./gradlew build
-
     if [ "$current_branch" == "develop" ] || [ "$current_branch" == "testing" ]; then
         echo "--- assembleDebug ---"
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --stacktrace
         find app/build/outputs -type f -name "*-release*" -delete 2>/dev/null || true
 
     elif [ "$current_branch" == "release" ] || [ "$current_branch" == "main" ]; then
         echo "--- assembleRelease ---"
-        ./gradlew assembleRelease
+        ./gradlew assembleRelease --stacktrace
         echo "--- bundleRelease ---"
-        ./gradlew :app:bundleRelease
+        ./gradlew :app:bundleRelease --stacktrace
         find app/build/outputs -type f -name "*-debug*" -delete 2>/dev/null || true
     fi
 }
@@ -128,6 +125,11 @@ auto_create_tag() {
     git config user.email "jenkins@ci.local"
     git config user.name "Jenkins CI"
     git fetch origin --tags
+    # Bỏ qua nếu tag đã tồn tại
+    if git rev-parse "$newTag" >/dev/null 2>&1; then
+        echo "Tag $newTag đã tồn tại, bỏ qua."
+        return 0
+    fi
     git tag -a "$newTag" -m "[$current_branch] Auto create tag $newTag"
     git push origin "$newTag"
     echo "Tag đã push: $newTag"
