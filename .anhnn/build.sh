@@ -100,14 +100,22 @@ run_builder() {
     echo "local.properties:"
     cat local.properties
 
+    echo "--- Working directory ---"
+    pwd
+    ls -la
+
     rm -rf app/build/
     chmod +x ./gradlew
 
+    export GRADLE_OPTS="-Dorg.gradle.daemon=false"
+
     if [ "$current_branch" == "develop" ] || [ "$current_branch" == "testing" ]; then
         echo "--- assembleDebug ---"
-        ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
-        GRADLE_EXIT=$?
+        ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/gradle_build.log
+        GRADLE_EXIT=${PIPESTATUS[0]}
         echo "Gradle exit code: $GRADLE_EXIT"
+        echo "--- Tail gradle log ---"
+        tail -50 /tmp/gradle_build.log
         if [ $GRADLE_EXIT -ne 0 ]; then
             echo "Gradle assembleDebug thất bại!"
             return 1
