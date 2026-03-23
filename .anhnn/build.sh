@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 # Cấu hình
 # ─────────────────────────────────────────────
-HOST="https://production.hihoay.com"
+HOST="https://production.anhnn.com"
 FILE_SERVICE="$HOST/file/service"
 DISCORD_WEBHOOK_TESTING="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
 DISCORD_WEBHOOK_PRODUCTION="https://discord.com/api/webhooks/1485480399210549328/9OkimO32EOZqOW7W290QZwzT807KtixzxjksOsoFot4-QUCl_Kzc2YLvQEqSzZEU2_oa"
