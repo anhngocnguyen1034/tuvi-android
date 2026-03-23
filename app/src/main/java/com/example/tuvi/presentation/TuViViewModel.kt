@@ -24,11 +24,12 @@ class TuViViewModel(
         ngay: Int,
         thang: Int,
         nam: Int,
+        namXem: Int,
         gio: Int,
         phut: Int,
         gioiTinh: Int
     ) {
-        val input = TuViChartInput(ten, ngay, thang, nam, gio, phut, gioiTinh)
+        val input = TuViChartInput(ten, ngay, thang, nam, namXem, gio, phut, gioiTinh)
         viewModelScope.launch {
             _uiState.value = TuViUiState.Loading
             getTuViChart(input)

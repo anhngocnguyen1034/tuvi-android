@@ -18,6 +18,7 @@ class TuViRepositoryImpl(
             ngay       = input.ngay,
             thang      = input.thang,
             nam        = input.nam,
+            nam_xem    = input.namXem,
             gio        = input.gio,
             phut       = input.phut,
             gio_sinh   = gioSinh,

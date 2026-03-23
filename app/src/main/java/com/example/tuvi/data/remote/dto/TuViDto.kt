@@ -18,6 +18,7 @@ data class TuViRequest(
     val ngay: Int,
     val thang: Int,
     val nam: Int,
+    val nam_xem: Int,
     val gioi_tinh: Int,
     val gio: Int? = null,
     val phut: Int? = null,
@@ -97,5 +98,6 @@ data class SaoDto(
     val ten: String,
     val dac_tinh: String? = "",
     val ngu_hanh: String? = null,
-    @SerialName("vong_trang_sinh") val vongTrangSinh: Int? = 0
+    @SerialName("vong_trang_sinh") val vongTrangSinh: Int? = 0,
+    @SerialName("is_luu") val isLuu: Boolean = false
 )

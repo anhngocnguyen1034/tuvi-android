@@ -57,5 +57,6 @@ fun SaoDto.toDomain(): SaoInfo = SaoInfo(
     ten           = ten,
     dacTinh       = dac_tinh,
     nguHanh       = ngu_hanh,
-    vongTrangSinh = vongTrangSinh
+    vongTrangSinh = vongTrangSinh,
+    isLuu         = isLuu
 )

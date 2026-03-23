@@ -508,6 +508,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         CenterLine("Âm",      tb.ngayAm)
         tb.ngayAmLichTen?.let { CenterLine("", it, fontSize = 7.sp) }
         tb.gioSinh?.let       { CenterLine("Giờ", it) }
+        tb.namXem?.let        { CenterLine("Năm xem", it.toString()) }
 
         if (tb.canNam != null || tb.chiNam != null)
             CenterLine("Năm", "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim())
@@ -579,7 +580,7 @@ private fun dacTinhVietTat(dacTinh: String): String = when {
  */
 private fun saoLabel(sao: SaoInfo, chinhTinh: Boolean = false): String {
     val dacTinh = sao.dacTinh?.trim().orEmpty()
-    val isLuu = dacTinh.equals("Lưu", ignoreCase = true)
+    val isLuu = sao.isLuu || dacTinh.equals("Lưu", ignoreCase = true)
     return if (isLuu) {
         val tenRaw = sao.ten.trim()
         val tenNoLuu = tenRaw
@@ -700,7 +701,7 @@ fun PalaceView(cung: CungInfo) {
             val badStars  = phuTinhs.filter { isHungSao(it, hasTuLinh) }
             val goodStars = phuTinhs.filter { !isHungSao(it, hasTuLinh) }
 
-            fun List<SaoInfo>.luuLast() = sortedWith(compareBy { it.dacTinh?.trim().equals("Lưu", ignoreCase = true) })
+            fun List<SaoInfo>.luuLast() = sortedWith(compareBy { it.isLuu || it.dacTinh?.trim().equals("Lưu", ignoreCase = true) })
 
             // Cột trái: sao tốt (cát + trung tính), sao Lưu xuống cuối
             Column(Modifier.weight(1f)) { goodStars.luuLast().forEach { StarText(it, hasTuLinh) } }

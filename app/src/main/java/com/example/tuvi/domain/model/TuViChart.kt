@@ -6,6 +6,7 @@ data class TuViChartInput(
     val ngay: Int,
     val thang: Int,
     val nam: Int,
+    val namXem: Int,
     val gio: Int,
     val phut: Int,
     val gioiTinh: Int   // 1 = Nam, -1 = Nữ
@@ -60,5 +61,6 @@ data class SaoInfo(
     val ten: String,
     val dacTinh: String? = "",
     val nguHanh: String? = null,   // "T"=Thủy, "H"=Hỏa, "K"=Kim, "M"=Mộc, "TH"=Thổ
-    val vongTrangSinh: Int? = 0
+    val vongTrangSinh: Int? = 0,
+    val isLuu: Boolean = false
 )

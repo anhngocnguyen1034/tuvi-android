@@ -48,8 +48,8 @@ fun TuViApp() {
     NavHost(navController = navController, startDestination = "input") {
         composable("input") {
             InputScreen(
-                onViewChart = { name, day, month, year, hour, minute, gender ->
-                    viewModel.getTuVi(name, day, month, year, hour, minute, gender)
+                onViewChart = { name, day, month, year, viewYear, hour, minute, gender ->
+                    viewModel.getTuVi(name, day, month, year, viewYear, hour, minute, gender)
                     navController.navigate("chart")
                 }
             )

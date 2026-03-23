@@ -270,12 +270,14 @@ fun TuViDatePickerDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputScreen(
-    onViewChart: (String, Int, Int, Int, Int, Int, Int) -> Unit
+    onViewChart: (String, Int, Int, Int, Int, Int, Int, Int) -> Unit
 ) {
+    val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     var name by remember { mutableStateOf("") }
     var day by remember { mutableIntStateOf(24) }
     var month by remember { mutableIntStateOf(10) }
     var year by remember { mutableIntStateOf(1991) }
+    var viewYearText by remember { mutableStateOf(currentYear.toString()) }
     var hour by remember { mutableIntStateOf(7) }
     var minute by remember { mutableIntStateOf(0) }
     var gender by remember { mutableIntStateOf(1) }
@@ -494,11 +496,50 @@ fun InputScreen(
                 }
             }
 
+            // ── Năm xem ──
+            SectionCard {
+                FieldLabel("NĂM XEM")
+                OutlinedTextField(
+                    value = viewYearText,
+                    onValueChange = { input ->
+                        viewYearText = input.filter { it.isDigit() }.take(4)
+                    },
+                    placeholder = {
+                        Text(
+                            "Năm hiện tại",
+                            color = TuViIvoryDim.copy(alpha = 0.5f),
+                            fontSize = 14.sp
+                        )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = TuViIvory,
+                        unfocusedTextColor = TuViIvory,
+                        focusedBorderColor = TuViGold,
+                        unfocusedBorderColor = TuViDivider,
+                        focusedLabelColor = TuViGold,
+                        cursorColor = TuViGold,
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Mặc định năm hiện tại theo lịch máy",
+                    color = TuViIvoryDim.copy(alpha = 0.6f),
+                    fontSize = 11.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+
             GoldDivider()
 
             // ── Submit ──
             Button(
-                onClick = { onViewChart(name, day, month, year, hour, minute, gender) },
+                onClick = {
+                    val viewYear = viewYearText.toIntOrNull() ?: currentYear
+                    onViewChart(name, day, month, year, viewYear, hour, minute, gender)
+                },
                 enabled = name.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = TuViGold,
