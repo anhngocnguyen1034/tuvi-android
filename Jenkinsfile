@@ -4,7 +4,7 @@ pipeline {
     environment {
         JAVA_HOME    = '/opt/homebrew/opt/openjdk@21'
         ANDROID_HOME = '/Users/nguyenquocchinh/Library/Android/sdk'
-        PATH         = "${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
+        PATH         = "/opt/homebrew/bin:${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
     }
 
     stages {
@@ -14,7 +14,7 @@ pipeline {
                 echo "Kiểm tra môi trường..."
                 sh 'java -version'
                 sh 'python3 --version'
-                sh 'which jq || brew install jq'
+                sh 'which jq || /opt/homebrew/bin/brew install jq'
             }
         }
 
