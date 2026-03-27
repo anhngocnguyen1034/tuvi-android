@@ -26,9 +26,12 @@ import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
+import com.example.tuvi.ui.browser.BrowserConfig
+import com.example.tuvi.ui.browser.BrowserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.example.tuvi.ui.theme.TuViTheme
+import android.net.Uri
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 
@@ -57,7 +60,11 @@ fun TuViApp() {
         composable("home") {
             HomeScreen(
                 onOpenTuVi = { navController.navigate("input") },
-                onOpenSaved = { navController.navigate("saved_charts") }
+                onOpenSaved = { navController.navigate("saved_charts") },
+                onOpenBrowser = {
+                    val url = Uri.encode("https://www.google.com")
+                    navController.navigate("browser?url=$url&title=Trình+Duyệt")
+                }
             )
         }
         composable("input") {
@@ -112,6 +119,20 @@ fun TuViApp() {
                 }
                 is TuViUiState.Idle -> {}
             }
+        }
+        composable(
+            route = "browser?url={url}&title={title}",
+            arguments = listOf(
+                androidx.navigation.navArgument("url") { defaultValue = "https://www.google.com" },
+                androidx.navigation.navArgument("title") { defaultValue = "Trình duyệt" }
+            )
+        ) { backStackEntry ->
+            val url   = Uri.decode(backStackEntry.arguments?.getString("url") ?: "https://www.google.com")
+            val title = backStackEntry.arguments?.getString("title") ?: "Trình duyệt"
+            BrowserScreen(
+                config = BrowserConfig(initialUrl = url, title = title),
+                onBack = { navController.popBackStack() }
+            )
         }
         composable("saved_charts") {
             val savedVm: SavedChartsViewModel = viewModel(factory = SavedChartsViewModel.Factory)

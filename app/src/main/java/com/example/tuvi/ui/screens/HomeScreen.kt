@@ -62,7 +62,8 @@ private val HomeBg = Brush.verticalGradient(
 @Composable
 fun HomeScreen(
     onOpenTuVi: () -> Unit,
-    onOpenSaved: () -> Unit
+    onOpenSaved: () -> Unit,
+    onOpenBrowser: () -> Unit = {}
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "bagua_rotate")
     val rotation by infiniteTransition.animateFloat(
@@ -192,11 +193,10 @@ fun HomeScreen(
                 )
                 SecondaryFeatureCard(
                     modifier = Modifier.weight(1f),
-                    emoji = "⊕",
-                    title = "Tương Hợp\nCung Mệnh",
-                    description = "Sắp ra mắt",
-                    enabled = false,
-                    onClick = {}
+                    emoji = "🌐",
+                    title = "Trình\nDuyệt",
+                    description = "Duyệt web & tài liệu",
+                    onClick = onOpenBrowser
                 )
             }
 
