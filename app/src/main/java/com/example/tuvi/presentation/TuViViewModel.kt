@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,9 @@ class TuViViewModel(
     private val _uiState = MutableStateFlow<TuViUiState>(TuViUiState.Idle)
     val uiState: StateFlow<TuViUiState> = _uiState
 
+    private val _lastInput = MutableStateFlow<TuViChartInput?>(null)
+    val lastInput: StateFlow<TuViChartInput?> = _lastInput
+
     fun getTuVi(
         ten: String,
         ngay: Int,
@@ -30,6 +34,7 @@ class TuViViewModel(
         gioiTinh: Int
     ) {
         val input = TuViChartInput(ten, ngay, thang, nam, namXem, gio, phut, gioiTinh)
+        _lastInput.value = input
         viewModelScope.launch {
             _uiState.value = TuViUiState.Loading
             getTuViChart(input)
@@ -40,6 +45,11 @@ class TuViViewModel(
 
     fun resetState() {
         _uiState.value = TuViUiState.Idle
+    }
+
+    fun loadSavedChart(input: TuViChartInput, chart: TuViChart) {
+        _lastInput.value = input
+        _uiState.value = TuViUiState.Success(chart)
     }
 
     companion object {

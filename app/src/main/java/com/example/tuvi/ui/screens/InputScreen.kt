@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -270,7 +271,8 @@ fun TuViDatePickerDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputScreen(
-    onViewChart: (String, Int, Int, Int, Int, Int, Int, Int) -> Unit
+    onViewChart: (String, Int, Int, Int, Int, Int, Int, Int) -> Unit,
+    onViewSaved: (() -> Unit)? = null
 ) {
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     var name by remember { mutableStateOf("Anhnn") }
@@ -556,6 +558,20 @@ fun InputScreen(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp
                 )
+            }
+
+            if (onViewSaved != null) {
+                OutlinedButton(
+                    onClick = onViewSaved,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TuViGoldDark),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TuViGold)
+                ) {
+                    Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Lá số đã lưu", fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                }
             }
 
             Text(

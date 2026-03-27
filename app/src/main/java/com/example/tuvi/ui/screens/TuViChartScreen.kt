@@ -14,8 +14,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +56,7 @@ import com.example.tuvi.domain.model.CungInfo
 import com.example.tuvi.domain.model.SaoInfo
 import com.example.tuvi.domain.model.ThienBanInfo
 import com.example.tuvi.domain.model.TuViChart
+import com.example.tuvi.ui.screens.SaveChartDialog
 import java.io.File
 import java.text.Normalizer
 import kotlin.collections.ArrayDeque
@@ -371,11 +377,23 @@ private fun saveBitmapToGallery(context: android.content.Context, bitmap: Bitmap
 @Composable
 fun TuViChartScreen(
     data  : TuViChart,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSave: ((nhom: String) -> Unit)? = null
 ) {
     val context      = LocalContext.current
     val scope        = rememberCoroutineScope()
     val graphicsLayer = rememberGraphicsLayer()
+    var showSaveDialog by remember { mutableStateOf(false) }
+
+    if (showSaveDialog) {
+        SaveChartDialog(
+            onDismiss = { showSaveDialog = false },
+            onConfirm = { nhom ->
+                showSaveDialog = false
+                onSave?.invoke(nhom)
+            }
+        )
+    }
 
     Scaffold(
         containerColor = ChartDeepBg,
@@ -408,6 +426,15 @@ fun TuViChartScreen(
                     }
                 },
                 actions = {
+                    if (onSave != null) {
+                        IconButton(onClick = { showSaveDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Lưu lá số",
+                                tint = ChartGold
+                            )
+                        }
+                    }
                     IconButton(onClick = {
                         scope.launch {
                             val bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
