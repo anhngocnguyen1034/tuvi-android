@@ -206,6 +206,12 @@ notify_discord() {
             qr="$HOST$qr_body"
         fi
     fi
+
+    # Fallback: nếu QR nội bộ lỗi thì dùng api.qrserver.com (public, không cần auth)
+    if [ -z "$qr" ]; then
+        echo "WARN: QR nội bộ thất bại, dùng QR fallback công khai"
+        qr="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=$encoded_url"
+    fi
     echo "QR: $qr"
 
     local size
