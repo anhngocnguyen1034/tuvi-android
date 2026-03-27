@@ -1,0 +1,43 @@
+name: Discord Issue Notification
+
+on:
+  issues:
+    types: [opened, closed, reopened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
+        run: |
+          ACTION="${{ github.event.action }}"
+          case "$ACTION" in
+            opened)   EMOJI="🐛"; COLOR=15158332 ;;
+            closed)   EMOJI="✅"; COLOR=3066993  ;;
+            reopened) EMOJI="🔁"; COLOR=16776960 ;;
+            *)        EMOJI="📌"; COLOR=1752220  ;;
+          esac
+
+          TITLE="$EMOJI [#${{ github.event.issue.number }}] ${{ github.event.issue.title }}"
+          BODY=$(echo "${{ github.event.issue.body }}" | head -c 300)
+          AUTHOR="${{ github.event.issue.user.login }}"
+          URL="${{ github.event.issue.html_url }}"
+          REPO="${{ github.repository }}"
+
+          jq -n \
+            --arg username "GitHub Issues" \
+            --arg title "$TITLE" \
+            --argjson color "$COLOR" \
+            --arg desc "**Repo:** $REPO\n**Người tạo:** $AUTHOR\n**Link:** $URL\n\n$BODY" \
+            '{
+              username: $username,
+              embeds: [{
+                title: $title,
+                description: $desc,
+                color: $color,
+                footer: { text: "GitHub Issues" }
+              }]
+            }' \
+          | curl -sS -H "Content-Type: application/json" -X POST -d @- "$DISCORD_WEBHOOK"
