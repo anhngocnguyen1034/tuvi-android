@@ -1,42 +1,101 @@
 package com.example.tuvi.ui.browser
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.di.AppContainer
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * Quản lý toàn bộ logic multi-tab.
+ *
+ * Vòng đời WebView:
+ * - ViewModel chỉ giữ [TabState] (metadata thuần Kotlin, không có Context/View).
+ * - WebView thực tế được tạo trong Composable [TabWebViewHolder] bằng `remember { WebView(context) }`.
+ * - Compose tự động gắn lifecycle: khi một tab bị xoá khỏi [tabs], Compose dispose
+ *   composable tương ứng → DisposableEffect gọi webView.destroy().
+ * - Khi chuyển tab, WebView của tab cũ bị ẩn (size = 0.dp) nhưng không bị destroy,
+ *   giữ nguyên trạng thái cuộn và dữ liệu.
+ */
 class BrowserViewModel(
     private val historyDao: HistoryDao,
-    /** Khi true, không lưu lịch sử — chuẩn bị cho chế độ ẩn danh sau này */
     private val incognito: Boolean = false
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(BrowserUiState())
-    val uiState: StateFlow<BrowserUiState> = _uiState.asStateFlow()
+    // ── Tab state (Compose-observable SnapshotStateList) ──────────────────────
+    val tabs = mutableStateListOf<TabState>().also {
+        it.add(TabState())
+    }
 
+    var activeTabId by mutableStateOf(tabs.first().id)
+        private set
+
+    var showTabSwitcher by mutableStateOf(false)
+        private set
+
+    /** Tab đang active — derived, tự recompose khi tabs/activeTabId thay đổi */
+    val activeTab by derivedStateOf { tabs.firstOrNull { it.id == activeTabId } }
+
+    // ── Commands gửi tới WebView của tab active ───────────────────────────────
     private val _commands = MutableSharedFlow<BrowserCommand>(extraBufferCapacity = 8)
     val commands: SharedFlow<BrowserCommand> = _commands.asSharedFlow()
 
-    // ── Callbacks từ WebViewClient / WebChromeClient ──────────────────────────
+    // ── Tab management ────────────────────────────────────────────────────────
 
-    fun onPageStarted(url: String) {
-        _uiState.update { it.copy(url = url, isLoading = true, error = null) }
+    /** Thêm tab mới và chuyển sang tab đó. */
+    fun addNewTab(url: String = "https://www.google.com") {
+        val newTab = TabState(url = url, title = "Tab mới")
+        tabs.add(newTab)
+        activeTabId = newTab.id
+        showTabSwitcher = false
     }
 
-    fun onPageFinished(url: String, title: String, canGoBack: Boolean, canGoForward: Boolean) {
-        _uiState.update {
+    /**
+     * Đóng một tab.
+     * - Nếu là tab active, chuyển sang tab liền kề.
+     * - Nếu đóng tab cuối cùng → trả về true để caller navigate về Home.
+     */
+    fun closeTab(id: String): Boolean {
+        val idx = tabs.indexOfFirst { it.id == id }
+        if (idx < 0) return false
+        tabs.removeAt(idx)
+        if (tabs.isEmpty()) return true   // caller phải navigate về Home
+        if (activeTabId == id) {
+            activeTabId = tabs.getOrNull(idx)?.id ?: tabs.last().id
+        }
+        return false
+    }
+
+    fun switchTab(id: String) {
+        if (tabs.any { it.id == id }) {
+            activeTabId = id
+            showTabSwitcher = false
+        }
+    }
+
+    fun openTabSwitcher()  { showTabSwitcher = true }
+    fun closeTabSwitcher() { showTabSwitcher = false }
+
+    // ── Callbacks từ WebViewClient/WebChromeClient (per tab) ─────────────────
+
+    fun onPageStarted(tabId: String, url: String) = updateTab(tabId) {
+        it.copy(url = url, isLoading = true, error = null)
+    }
+
+    fun onPageFinished(tabId: String, url: String, title: String, canGoBack: Boolean, canGoForward: Boolean) {
+        updateTab(tabId) {
             it.copy(
                 url = url,
-                displayTitle = title.ifBlank { url },
+                title = title.ifBlank { url },
                 isLoading = false,
                 progress = 100,
                 canGoBack = canGoBack,
@@ -45,33 +104,25 @@ class BrowserViewModel(
         }
         if (!incognito && url.isNotBlank() && url != "about:blank") {
             viewModelScope.launch {
-                historyDao.upsert(
-                    url = url,
-                    title = title.ifBlank { url },
-                    timestamp = System.currentTimeMillis()
-                )
+                historyDao.upsert(url = url, title = title.ifBlank { url }, timestamp = System.currentTimeMillis())
             }
         }
     }
 
-    fun onProgressChanged(progress: Int) {
-        _uiState.update { it.copy(progress = progress) }
+    fun onProgressChanged(tabId: String, progress: Int) = updateTab(tabId) {
+        it.copy(progress = progress)
     }
 
-    fun onReceivedError(description: String) {
-        _uiState.update { it.copy(isLoading = false, error = description) }
+    fun onReceivedError(tabId: String, description: String) = updateTab(tabId) {
+        it.copy(isLoading = false, error = description)
     }
 
-    fun onNavigationStateChanged(canGoBack: Boolean, canGoForward: Boolean) {
-        _uiState.update { it.copy(canGoBack = canGoBack, canGoForward = canGoForward) }
-    }
-
-    // ── Lệnh ra cho WebViewContainer ─────────────────────────────────────────
+    // ── Lệnh điều hướng (chỉ active tab nhận) ────────────────────────────────
 
     fun navigateTo(rawInput: String) {
         val url = rawInput.trim().toFullUrl()
+        updateTab(activeTabId) { it.copy(url = url, error = null) }
         viewModelScope.launch { _commands.emit(BrowserCommand.LoadUrl(url)) }
-        _uiState.update { it.copy(url = url, error = null) }
     }
 
     fun goBack()    { viewModelScope.launch { _commands.emit(BrowserCommand.GoBack) } }
@@ -79,6 +130,11 @@ class BrowserViewModel(
     fun reload()    { viewModelScope.launch { _commands.emit(BrowserCommand.Reload) } }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private fun updateTab(id: String, transform: (TabState) -> TabState) {
+        val idx = tabs.indexOfFirst { it.id == id }
+        if (idx >= 0) tabs[idx] = transform(tabs[idx])
+    }
 
     private fun String.toFullUrl(): String {
         if (startsWith("http://") || startsWith("https://")) return this
