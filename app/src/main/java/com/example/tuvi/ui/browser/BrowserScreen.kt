@@ -1,6 +1,5 @@
 package com.example.tuvi.ui.browser
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,12 +19,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -41,10 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.ui.theme.TuViDivider
 import com.example.tuvi.ui.theme.TuViGold
-import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
 import com.example.tuvi.ui.theme.TuViNavy
@@ -68,13 +65,13 @@ import com.example.tuvi.ui.theme.TuViRed
 fun BrowserScreen(
     config: BrowserConfig,
     onBack: () -> Unit,
-    viewModel: BrowserViewModel = viewModel()
+    onOpenHistory: () -> Unit = {},
+    viewModel: BrowserViewModel = viewModel(factory = BrowserViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val keyboard = LocalSoftwareKeyboardController.current
+    var showMore by remember { mutableStateOf(false) }
 
-    // Khi WebView canGoBack, ấn Back điều hướng trong trang thay vì pop stack
     BackHandler(enabled = uiState.canGoBack) { viewModel.goBack() }
 
     Scaffold(
@@ -108,8 +105,9 @@ fun BrowserScreen(
                     }
                 },
                 actions = {
+                    // Reload / Stop
                     if (uiState.isLoading) {
-                        IconButton(onClick = { /* stop not exposed by WebView easily */ }) {
+                        IconButton(onClick = {}) {
                             Icon(Icons.Default.Close, contentDescription = "Dừng", tint = TuViIvoryDim)
                         }
                     } else {
@@ -117,14 +115,17 @@ fun BrowserScreen(
                             Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = TuViGold)
                         }
                     }
-                    IconButton(onClick = {
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, uiState.url)
+
+                    // ⋮ More
+                    Box {
+                        IconButton(onClick = { showMore = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Thêm", tint = TuViGold)
                         }
-                        context.startActivity(Intent.createChooser(intent, "Chia sẻ link"))
-                    }) {
-                        Icon(Icons.Default.Share, contentDescription = "Chia sẻ", tint = TuViGold)
+                        MoreDropdownMenu(
+                            expanded = showMore,
+                            onDismiss = { showMore = false },
+                            onOpenHistory = { showMore = false; onOpenHistory() }
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = TuViNavy)
@@ -145,7 +146,6 @@ fun BrowserScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Address bar
             if (config.showAddressBar) {
                 AddressBar(
                     url = uiState.url,
@@ -157,7 +157,6 @@ fun BrowserScreen(
                 )
             }
 
-            // Progress bar
             if (uiState.isLoading) {
                 LinearProgressIndicator(
                     progress = { uiState.progress / 100f },
@@ -170,12 +169,10 @@ fun BrowserScreen(
                 Spacer(Modifier.height(2.dp))
             }
 
-            // Error banner
             if (uiState.error != null) {
                 ErrorBanner(message = uiState.error!!)
             }
 
-            // WebView
             WebViewContainer(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 config = config,
@@ -190,6 +187,38 @@ fun BrowserScreen(
         }
     }
 }
+
+// ── More dropdown ─────────────────────────────────────────────────────────────
+
+@Composable
+private fun MoreDropdownMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onOpenHistory: () -> Unit
+    // Thêm callback mới tại đây khi cần tính năng khác trong More
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss,
+        modifier = Modifier.background(TuViNavyCard)
+    ) {
+        DropdownMenuItem(
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("⏱", fontSize = 16.sp)
+                    Spacer(Modifier.size(10.dp))
+                    Text("Lịch sử duyệt web", color = TuViIvory, fontSize = 14.sp)
+                }
+            },
+            onClick = onOpenHistory,
+            colors = MenuDefaults.itemColors(textColor = TuViIvory)
+        )
+        // ── Slot cho tính năng tương lai ──────────────────────────────────────
+        // DropdownMenuItem( text = { Text("...") }, onClick = { ... } )
+    }
+}
+
+// ── Address bar ───────────────────────────────────────────────────────────────
 
 @Composable
 private fun AddressBar(
@@ -228,6 +257,8 @@ private fun AddressBar(
     }
 }
 
+// ── Bottom bar ────────────────────────────────────────────────────────────────
+
 @Composable
 private fun BrowserBottomBar(
     canGoBack: Boolean,
@@ -240,49 +271,42 @@ private fun BrowserBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .background(TuViNavy)
-            .border(
-                width = 1.dp,
-                color = TuViDivider.copy(alpha = 0.5f)
-            )
+            .border(width = 1.dp, color = TuViDivider.copy(alpha = 0.5f))
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BottomNavButton(
-            modifier = Modifier.weight(1f),
-            icon = { Icon(Icons.Default.ArrowBack, contentDescription = "Lùi", tint = if (canGoBack) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)) },
+        IconButton(
+            onClick = onBack,
             enabled = canGoBack,
-            onClick = onBack
-        )
-        BottomNavButton(
-            modifier = Modifier.weight(1f),
-            icon = { Icon(Icons.Default.ArrowForward, contentDescription = "Tiến", tint = if (canGoForward) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)) },
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = "Lùi",
+                tint = if (canGoBack) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
+            )
+        }
+        IconButton(
+            onClick = onForward,
             enabled = canGoForward,
-            onClick = onForward
-        )
-        BottomNavButton(
-            modifier = Modifier.weight(1f),
-            icon = { Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = TuViGold) },
-            enabled = true,
-            onClick = onReload
-        )
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                Icons.Default.ArrowForward,
+                contentDescription = "Tiến",
+                tint = if (canGoForward) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
+            )
+        }
+        IconButton(
+            onClick = onReload,
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = TuViGold)
+        }
     }
 }
 
-@Composable
-private fun BottomNavButton(
-    modifier: Modifier,
-    icon: @Composable () -> Unit,
-    enabled: Boolean,
-    onClick: () -> Unit
-) {
-    IconButton(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier
-    ) {
-        icon()
-    }
-}
+// ── Error banner ──────────────────────────────────────────────────────────────
 
 @Composable
 private fun ErrorBanner(message: String) {
@@ -293,11 +317,6 @@ private fun ErrorBanner(message: String) {
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "⚠  $message",
-            color = TuViRed,
-            fontSize = 12.sp,
-            modifier = Modifier.weight(1f)
-        )
+        Text("⚠  $message", color = TuViRed, fontSize = 12.sp, modifier = Modifier.weight(1f))
     }
 }

@@ -63,6 +63,8 @@ object AppContainer {
         SavedChartRepositoryImpl(database.savedChartDao())
     }
 
+    val historyDao by lazy { database.historyDao() }
+
     val getAllSavedChartsUseCase by lazy { GetAllSavedChartsUseCase(savedChartRepository) }
     val searchSavedChartsUseCase by lazy { SearchSavedChartsUseCase(savedChartRepository) }
     val getChartsByGroupUseCase by lazy { GetChartsByGroupUseCase(savedChartRepository) }

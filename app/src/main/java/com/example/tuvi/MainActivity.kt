@@ -28,6 +28,7 @@ import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
 import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
+import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.example.tuvi.ui.theme.TuViTheme
@@ -131,7 +132,19 @@ fun TuViApp() {
             val title = backStackEntry.arguments?.getString("title") ?: "Trình duyệt"
             BrowserScreen(
                 config = BrowserConfig(initialUrl = url, title = title),
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onOpenHistory = { navController.navigate("browser_history") }
+            )
+        }
+        composable("browser_history") {
+            HistoryScreen(
+                onBack = { navController.popBackStack() },
+                onOpenUrl = { url ->
+                    val encoded = Uri.encode(url)
+                    navController.navigate("browser?url=$encoded&title=Lịch sử") {
+                        popUpTo("browser_history") { inclusive = true }
+                    }
+                }
             )
         }
         composable("saved_charts") {

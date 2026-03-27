@@ -1,7 +1,10 @@
 package com.example.tuvi.ui.browser
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tuvi.data.local.HistoryDao
+import com.example.tuvi.di.AppContainer
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BrowserViewModel : ViewModel() {
+class BrowserViewModel(
+    private val historyDao: HistoryDao,
+    /** Khi true, không lưu lịch sử — chuẩn bị cho chế độ ẩn danh sau này */
+    private val incognito: Boolean = false
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BrowserUiState())
     val uiState: StateFlow<BrowserUiState> = _uiState.asStateFlow()
@@ -35,6 +42,15 @@ class BrowserViewModel : ViewModel() {
                 canGoBack = canGoBack,
                 canGoForward = canGoForward
             )
+        }
+        if (!incognito && url.isNotBlank() && url != "about:blank") {
+            viewModelScope.launch {
+                historyDao.upsert(
+                    url = url,
+                    title = title.ifBlank { url },
+                    timestamp = System.currentTimeMillis()
+                )
+            }
         }
     }
 
@@ -64,12 +80,19 @@ class BrowserViewModel : ViewModel() {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /** Chuyển input của người dùng thành URL đầy đủ. */
     private fun String.toFullUrl(): String {
         if (startsWith("http://") || startsWith("https://")) return this
-        // Trông như domain? → thêm https
         return if (contains(".") && !contains(" ")) "https://$this"
-        // Ngược lại → Google search
         else "https://www.google.com/search?q=${android.net.Uri.encode(this)}"
+    }
+
+    // ── Factory ───────────────────────────────────────────────────────────────
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                BrowserViewModel(AppContainer.historyDao) as T
+        }
     }
 }

@@ -5,9 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [SavedChartEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [SavedChartEntity::class, HistoryItemEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class TuViDatabase : RoomDatabase() {
     abstract fun savedChartDao(): SavedChartDao
+    abstract fun historyDao(): HistoryDao
 
     companion object {
         @Volatile private var INSTANCE: TuViDatabase? = null
@@ -18,7 +23,9 @@ abstract class TuViDatabase : RoomDatabase() {
                     context.applicationContext,
                     TuViDatabase::class.java,
                     "tuvi_database"
-                ).build().also { INSTANCE = it }
+                )
+                .fallbackToDestructiveMigration(true)
+                .build().also { INSTANCE = it }
             }
     }
 }
