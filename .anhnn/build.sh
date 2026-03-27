@@ -187,11 +187,25 @@ notify_discord() {
     local out_file="$HOST$path_on_server"
     echo "URL file: $out_file"
 
+    local encoded_url
+    encoded_url=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$out_file")
+
     local qr_path
-    echo "DEBUG: Truy cập QR từ: $FILE_SERVICE/qr?text=$out_file"
-    qr_path=$(curl -sS "$FILE_SERVICE/qr?text=$out_file" 2>&1)
-    echo "DEBUG: qr_path result: $qr_path"
-    local qr="$HOST$qr_path"
+    echo "DEBUG: Truy cập QR từ: $FILE_SERVICE/qr?text=$encoded_url"
+    qr_path=$(curl -sS -o /tmp/qr_response.txt -w "%{http_code}" "$FILE_SERVICE/qr?text=$encoded_url")
+    echo "DEBUG: QR HTTP status: $qr_path"
+    echo "DEBUG: QR response: $(cat /tmp/qr_response.txt)"
+
+    local qr=""
+    if [ "$qr_path" = "200" ]; then
+        local qr_body
+        qr_body=$(cat /tmp/qr_response.txt)
+        if [[ "$qr_body" == http* ]]; then
+            qr="$qr_body"
+        else
+            qr="$HOST$qr_body"
+        fi
+    fi
     echo "QR: $qr"
 
     local size
