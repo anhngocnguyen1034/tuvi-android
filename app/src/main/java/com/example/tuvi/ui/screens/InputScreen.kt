@@ -273,13 +273,13 @@ fun InputScreen(
     onViewChart: (String, Int, Int, Int, Int, Int, Int, Int) -> Unit
 ) {
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
-    var name by remember { mutableStateOf("") }
-    var day by remember { mutableIntStateOf(24) }
-    var month by remember { mutableIntStateOf(10) }
-    var year by remember { mutableIntStateOf(1991) }
+    var name by remember { mutableStateOf("Anhnn") }
+    var day by remember { mutableIntStateOf(10) }
+    var month by remember { mutableIntStateOf(3) }
+    var year by remember { mutableIntStateOf(2004) }
     var viewYearText by remember { mutableStateOf(currentYear.toString()) }
     var hour by remember { mutableIntStateOf(7) }
-    var minute by remember { mutableIntStateOf(0) }
+    var minute by remember { mutableIntStateOf(30) }
     var gender by remember { mutableIntStateOf(1) }
 
     var showDatePicker by remember { mutableStateOf(false) }
@@ -306,7 +306,6 @@ fun InputScreen(
         )
     }
 
-    // ── Root ──
     Box(
         modifier = Modifier
             .fillMaxSize()

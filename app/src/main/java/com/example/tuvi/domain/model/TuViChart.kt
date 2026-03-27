@@ -47,6 +47,21 @@ data class ThienBanInfo(
 )
 
 data class CungInfo(
+    /**
+     * **Chỉ số ô trên lưới** (1…12) khớp vòng `gridMapping` trong app — **không** gắn cứng “Tý luôn một ô”;
+     * địa chi từng cung (`cung_ten`) thay đổi theo lá số (Mệnh, …). Engine backend phải map đúng ô hoặc
+     * trả `dia_ban` theo thứ tự vòng khi không gửi `cung_so`.
+     */
+    val cungSo: Int? = null,
+    /**
+     * **Can theo vòng tháng** (cung Dần = tháng Giêng, cùng hệ với `timCuc` trong backend) — chỉ để **hiển thị** góc ô (Can Chi với [cungTen]).
+     * Không thay cho bảng `thienCan[can].vitriDiaBan` dùng khi an Lộc Tồn / Kình Đà / … (hệ lookup 10 Can).
+     */
+    val thienCan: String? = null,
+    /**
+     * Một ký tự `chuCaiDau` (G,A,B,…) — map sang tên Can đầy đủ khi hiển thị; cùng nguồn nghĩa với [thienCan] (ưu tiên chuỗi đầy đủ nếu có).
+     */
+    val chuCaiDau: String? = null,
     val cungTen: String,
     val cungChu: String,
     val hanhCung: String,

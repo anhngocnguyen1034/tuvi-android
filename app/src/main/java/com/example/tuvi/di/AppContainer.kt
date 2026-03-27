@@ -16,7 +16,7 @@ import retrofit2.Retrofit
  */
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.100:8000"
+    private const val BASE_URL = "http://192.168.1.19:8000"
 
     private val json = Json {
         ignoreUnknownKeys = true

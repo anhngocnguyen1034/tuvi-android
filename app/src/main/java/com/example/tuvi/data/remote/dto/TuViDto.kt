@@ -83,6 +83,10 @@ data class ThienBanDto(
 
 @Serializable
 data class CungDto(
+    @SerialName("cung_so") val cungSo: Int? = null,
+    /** Can vòng tháng (hiển thị góc ô); không phải `vitriDiaBan` Lộc Tồn. */
+    @SerialName("thien_can") val thienCan: String? = null,
+    @SerialName("chu_cai_dau") val chuCaiDau: String? = null,
     @SerialName("cung_ten") val cungTen: String,
     @SerialName("cung_chu") val cungChu: String,
     @SerialName("hanh_cung") val hanhCung: String,

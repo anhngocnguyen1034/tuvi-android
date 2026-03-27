@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
@@ -33,6 +34,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.min
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +52,8 @@ import com.example.tuvi.domain.model.SaoInfo
 import com.example.tuvi.domain.model.ThienBanInfo
 import com.example.tuvi.domain.model.TuViChart
 import java.io.File
+import java.text.Normalizer
+import kotlin.collections.ArrayDeque
 import java.io.FileOutputStream
 import com.example.tuvi.R
 // ─── Bảng màu Tử Vi (khớp với InputScreen) ───────────────────────────────────
@@ -117,6 +122,59 @@ private val kimSet_extra = setOf(
     "Bạch Hổ"
 )
 
+/**
+ * Sao phụ luôn hiển thị **cột phải** (khớp tên sau [normalizeSaoNameForColor]).
+ * Backend (vd. Sao.py) có thể gửi `ten` đúng chữ thường như "Phá toái" — [inSetIgnoreCase] đã xử lý;
+ * vẫn liệt kê đủ biến thể để khớp chắc chắn.
+ */
+private val phuTinhRightColumnNames = setOf(
+    "Phục Binh",
+    "Quan Phủ",
+    "Quan Phù",
+    "Tử Phù",
+    "Tuế Phá",
+    "Thiên Diêu",
+    "Bạch Hổ",
+    "Bạch hổ", // Sao.py: saoBachHo = Sao(..., "Bạch hổ", ...)
+    "Thiên La",
+    "Thiên Thương",
+    "Tiểu Hao",
+    "Kiếp Sát",
+    "Địa Kiếp",
+    "Địa Sát",
+    "Hỏa Tinh",
+    "Linh Tinh",
+    "Hóa Kỵ",
+    "Tướng Quân",
+    "Điếu Khách",
+    "Thiên Sứ",
+    "Trực Phù",
+    "Phi Liêm",
+    "Thái Tuế",
+    "Thiên Không",
+    "Lưu Hà",
+    "Phá toái", // Sao.py: saoPhaToai = Sao(..., "Phá toái", ...)
+    "Phá Toái",
+    "Phá Toại",
+    "Phá Toài",
+    "Pha Toai",
+    "Thiên Hình",
+    "Bệnh Phù",
+    "Tang Môn",
+    "Tang môn", // Sao.py: saoTangMon = Sao(..., "Tang môn", ...)
+    "Địa Võng",
+    "Đẩu Quân"
+)
+
+/**
+ * Sao phụ luôn **cột trái** (ưu tiên cao hơn cột phải nếu trùng).
+ * Trước đây đặt nhầm phải; đổi lại: Thiên Mã, Đường Phù nằm trái.
+ */
+private val phuTinhLeftColumnNames = setOf(
+    "Thiên Mã",
+    "Đường Phù"
+)
+
 // Tên 12 vị trí Vòng Tràng Sinh – dùng để lọc sao hiển thị ở footer cung
 private val vongTrangSinhNames = setOf(
     "Trường Sinh", "Mộc Dục", "Quan Đới", "Lâm Quan", "Đế Vượng",
@@ -124,14 +182,71 @@ private val vongTrangSinhNames = setOf(
 )
 
 private fun normalizeSpaces(s: String): String {
-    return s.replace('\u00A0', ' ').replace(Regex("\\s+"), " ").trim()
+    // NFC: backend/Python có thể gửi ký tự tổ hợp khác app → tránh lệch so khớp tên sao
+    val nfc = Normalizer.normalize(s, Normalizer.Form.NFC)
+    return nfc.replace('\u00A0', ' ').replace(Regex("\\s+"), " ").trim()
+}
+
+/**
+ * Góc ô cung (Can Chi): **Địa chi** theo `cung_so` / `cung_ten` (hệ 12, Tý→Hợi);
+ * **Can** từ API `thien_can` / `chu_cai_dau` là **Can vòng tháng** (Dần=Giêng), cùng hệ `timCuc` — chỉ phục vụ hiển thị.
+ * An sao theo Can (Lộc Tồn `vitriDiaBan`, Thiên Khôi/Việt, …) là **lookup 10 Can** trên backend; không dùng các field này thay cho bảng đó.
+ */
+private val thienCanByChuDau = mapOf(
+    'G' to "Giáp", 'A' to "Ất", 'B' to "Bính", 'D' to "Đinh",
+    'M' to "Mậu", 'K' to "Kỷ", 'C' to "Canh", 'T' to "Tân",
+    'N' to "Nhâm", 'Q' to "Quý"
+)
+
+private fun thienCanTuChuCaiDau(ch: String?): String? {
+    val c = ch?.trim()?.firstOrNull() ?: return null
+    return thienCanByChuDau[c.uppercaseChar()]
+}
+
+private val diaChiThuTu = listOf(
+    "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"
+)
+
+/** Lấy địa chi từ `cung_ten` (Tý…Hợi). */
+private fun diaChiTuCungTen(cungTen: String): String {
+    val t = normalizeSpaces(cungTen)
+    for (chi in diaChiThuTu) {
+        if (t.contains(chi, ignoreCase = true)) return chi
+    }
+    return t
+}
+
+private fun resolvedThienCanDayDu(cung: CungInfo): String? {
+    val raw = cung.thienCan?.trim().orEmpty()
+    if (raw.isNotEmpty()) {
+        if (raw.length == 1) return thienCanTuChuCaiDau(raw) ?: raw
+        return raw
+    }
+    return thienCanTuChuCaiDau(cung.chuCaiDau)
+}
+
+/**
+ * Góc trái trên: **Can + Chi** (vd. Bính Ngọ) — chỉ khi API có Thiên Can (`thien_can` / `chu_cai_dau`).
+ * Khi thiếu Can: để trống, không lặp địa chi (địa chi chỉ ở dòng đáy trái).
+ */
+private fun canChiGocTraiTren(cung: CungInfo): String {
+    val chi = diaChiTuCungTen(cung.cungTen)
+    val can = resolvedThienCanDayDu(cung) ?: return ""
+    return when {
+        chi.isNotEmpty() -> "$can $chi"
+        else -> can
+    }
 }
 
 private fun normalizeSaoNameForColor(tenSao: String): String {
-    val raw = tenSao.replace('\u00A0', ' ')
+    val raw = Normalizer.normalize(tenSao.replace('\u00A0', ' '), Normalizer.Form.NFC)
+    val trimmed = raw.trim()
+    // Tên sao đủ là "Lưu Hà" — không bỏ "Lưu " (khác sao Lưu dạng "Lưu Thái Tuế" → hiển thị L.Thái Tuế)
+    if (trimmed.equals("Lưu Hà", ignoreCase = true)) {
+        return normalizeSpaces(trimmed)
+    }
     return normalizeSpaces(
-        raw
-            .trim()
+        trimmed
             .removePrefix("L.")
             .removePrefix("Lưu ")
             .removePrefix("Lưu")
@@ -188,6 +303,36 @@ private fun isHungSao(sao: SaoInfo, hasTuLinh: Boolean): Boolean {
                baseName.equals("Cô Thần",    ignoreCase = true) ||
                baseName.equals("Quả Tú",     ignoreCase = true)
            )
+}
+
+private fun isPhuTinhRightColumn(sao: SaoInfo): Boolean {
+    val baseName = normalizeSaoNameForColor(sao.ten)
+    return inSetIgnoreCase(phuTinhRightColumnNames, baseName)
+}
+
+private fun isPhuTinhLeftColumn(sao: SaoInfo): Boolean {
+    val baseName = normalizeSaoNameForColor(sao.ten)
+    return inSetIgnoreCase(phuTinhLeftColumnNames, baseName)
+}
+
+/** 14 chính tinh — so khớp chuẩn hóa + hậu tố ghi chú; không dùng contains lỏng để tránh nhầm với phụ tinh (vd. "Phá toái"). */
+private val chinhTinhExactNames = listOf(
+    "Tử Vi", "Thiên Cơ", "Thái Dương", "Vũ Khúc", "Thiên Đồng", "Liêm Trinh",
+    "Thiên Phủ", "Thái Âm", "Tham Lang", "Cự Môn",
+    "Thiên Tướng", "Thiên Lương", "Thất Sát", "Phá Quân"
+)
+
+private fun isChinhTinhStar(sao: SaoInfo): Boolean {
+    val n = normalizeSaoNameForColor(sao.ten)
+    // Backend Sao.py: "Phá toái" (phụ) — luôn không phải Phá Quân chính tinh
+    if (n.equals("Phá toái", ignoreCase = true)) return false
+    if (chinhTinhExactNames.any { it.equals(n, ignoreCase = true) }) return true
+    return chinhTinhExactNames.any { ct ->
+        n.startsWith(ct + " ", ignoreCase = true) ||
+            n.startsWith(ct + "(", ignoreCase = true) ||
+            n.startsWith(ct + "（", ignoreCase = true) ||
+            n.contains(ct, ignoreCase = true)
+    }
 }
 
 // ─── Lưu bitmap vào thư viện ảnh ─────────────────────────────────────────────
@@ -324,6 +469,54 @@ fun TuViChartScreen(
     }
 }
 
+/**
+ * Đặt `true` nếu lưới vẽ theo vòng **ngược** chiều so với quy ước `cung_so` → ô UI
+ * (chỉ đảo ô khi render; thứ tự trong JSON backend không đổi).
+ */
+private const val REVERSE_PALACE_RING_RENDER = false
+
+/**
+ * Map `dia_ban` → đúng thứ tự ô lưới UI (index 0..11 theo [gridMapping]).
+ *
+ * **Địa chi trên mỗi lá số không “cố định” một ô màn hình** — Tý/Ngọ/… nằm ô nào phụ thuộc cách an Mệnh
+ * và vòng 12 cung. App **không** xoay cứng theo kiểu “Tý = góc nào”.
+ *
+ * Hợp đồng với backend: `cung_so` (1…12) là **chỉ số ô trên lưới** cùng quy ước với vòng `gridMapping`
+ * (ô 1 → index 0, …, ô 12 → index 11), **không** nên trùng nghĩa với “Tý=1 trong mảng diaChi” nếu hai hệ
+ * không trùng. Nếu engine chỉ có thứ tự chi (Tý→Hợi) mà không có vị trí ô, cần backend map sang đúng ô
+ * hoặc gửi thêm field vị trí — frontend chỉ đặt `uiIndex = cung_so - 1`.
+ *
+ * - Sort theo `cung_so` tăng dần; `uiIndex = cung_so - 1`.
+ * - [reverseRing]: đảo vòng trên 12 ô.
+ * - Không có `cung_so`: giữ thứ tự phần tử trong mảng `dia_ban` (backend trả đúng thứ tự vòng).
+ */
+private fun gridOrderedDiaBan(diaBan: List<CungInfo>, reverseRing: Boolean): List<CungInfo> {
+    if (diaBan.isEmpty()) return diaBan
+    if (diaBan.all { it.cungSo == null }) {
+        return if (reverseRing) diaBan.reversed() else diaBan
+    }
+    val sorted = diaBan.sortedBy { it.cungSo ?: Int.MAX_VALUE }
+    val slots = arrayOfNulls<CungInfo>(12)
+    val queue = ArrayDeque<CungInfo>()
+    for (c in sorted) {
+        val so = c.cungSo
+        if (so == null || so !in 1..12) {
+            queue.addLast(c)
+            continue
+        }
+        var idx = so - 1
+        if (reverseRing) idx = 11 - idx
+        if (slots[idx] != null) queue.addLast(c)
+        else slots[idx] = c
+    }
+    for (i in 0 until 12) {
+        if (slots[i] == null && queue.isNotEmpty()) slots[i] = queue.removeFirst()
+    }
+    return (0 until 12).map { i ->
+        slots[i] ?: sorted.getOrNull(i) ?: diaBan.getOrNull(i) ?: diaBan.first()
+    }
+}
+
 // ─── Lưới 4×4 cung ───────────────────────────────────────────────────────────
 @Composable
 fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
@@ -351,8 +544,10 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
         val cellW = maxWidth  / 4
         val cellH = maxHeight / 4
 
-        // 12 cung xung quanh
-        data.diaBan.forEachIndexed { index, cung ->
+        val diaBanGrid = gridOrderedDiaBan(data.diaBan, REVERSE_PALACE_RING_RENDER)
+
+        // 12 cung xung quanh (index 0..11 = ô lưới; khớp cung_so − 1 sau khi sort/map)
+        diaBanGrid.forEachIndexed { index, cung ->
             val (row, col) = gridMapping[index] ?: (0 to 0)
             Box(
                 modifier = Modifier
@@ -381,8 +576,57 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
             ThienBanCenterContent(data.thienBan)
         }
 
-        // Vẽ Tuần/Triệt tại ranh giới giữa 2 cung kề nhau
-        DrawTuanTriet(data.diaBan, gridMapping, cellW, cellH)
+        // Tuần/Triệt: overlay full size, anchor theo pixel (0..W, 0..H) trùng với offset/size ô cung
+        Box(Modifier.fillMaxSize().zIndex(1f)) {
+            DrawTuanTriet(diaBanGrid, gridMapping)
+        }
+    }
+}
+
+/**
+ * Trả về (midX, midY) theo đơn vị ô (0–4): toạ độ trung điểm cạnh chung của hai ô lưới 4×4.
+ * - Hai ô cùng hàng, kề cột → cạnh dọc chung (đường thẳng đứng giữa hai ô).
+ * - Hai ô cùng cột, kề hàng → cạnh ngang chung (đường ngang giữa hai ô).
+ */
+private fun computeTuanTrietGridAnchor(
+    r1: Int, c1: Int, r2: Int, c2: Int
+): Pair<Float, Float> {
+    return when {
+        r1 == r2 && abs(c1 - c2) == 1 ->
+            (min(c1, c2) + 1).toFloat() to (r1 + 0.5f)
+        c1 == c2 && abs(r1 - r2) == 1 ->
+            (c1 + 0.5f) to (min(r1, r2) + 1).toFloat()
+        else -> {
+            val cx1 = c1 + 0.5f
+            val cy1 = r1 + 0.5f
+            val cx2 = c2 + 0.5f
+            val cy2 = r2 + 0.5f
+            ((cx1 + cx2) / 2f) to ((cy1 + cy2) / 2f)
+        }
+    }
+}
+
+/** Nhãn Tuần/Triệt nhỏ, nền tối + viền vàng — dễ đọc trên ranh giới giữa hai cung. */
+@Composable
+private fun TuanTrietChip(text: String) {
+    Box(
+        Modifier
+            .border(0.5.dp, ChartBorderGold.copy(alpha = 0.85f), RoundedCornerShape(2.dp))
+            .background(ChartNavy.copy(alpha = 0.94f), RoundedCornerShape(2.dp))
+            .padding(horizontal = 3.dp, vertical = 1.dp)
+    ) {
+        Text(
+            text = text,
+            color = ChartIvory,
+            style = TextStyle(
+                fontSize = 6.sp,
+                lineHeight = 6.sp,
+                fontWeight = FontWeight.Bold,
+                platformStyle = PlatformTextStyle(includeFontPadding = false)
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Clip
+        )
     }
 }
 
@@ -390,11 +634,8 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
 @Composable
 private fun DrawTuanTriet(
     diaBan: List<CungInfo>,
-    mapping: Map<Int, Pair<Int, Int>>,
-    cellW: androidx.compose.ui.unit.Dp,
-    cellH: androidx.compose.ui.unit.Dp
+    mapping: Map<Int, Pair<Int, Int>>
 ) {
-    // Thu thập các cặp cung liền nhau cùng có Tuần / Triệt
     val tuanPairs = mutableListOf<Pair<Int, Int>>()
     val trietPairs = mutableListOf<Pair<Int, Int>>()
 
@@ -404,7 +645,6 @@ private fun DrawTuanTriet(
         if (diaBan[i].triet && diaBan[next].triet) trietPairs.add(i to next)
     }
 
-    // Gộp nhãn theo cùng một ranh giới để tránh chồng chữ
     data class Boundary(val a: Int, val b: Int)
     val boundaryToLabels = linkedMapOf<Boundary, MutableList<String>>()
 
@@ -417,68 +657,45 @@ private fun DrawTuanTriet(
     tuanPairs.forEach { addLabel(it, "Tuần") }
     trietPairs.forEach { addLabel(it, "Triệt") }
 
-    // Đặt text theo anchor point và canh giữa theo kích thước đo được (không trừ tay)
-    @Composable
-    fun AnchoredText(text: String, anchorX: androidx.compose.ui.unit.Dp, anchorY: androidx.compose.ui.unit.Dp) {
-        Layout(
-            modifier = Modifier.fillMaxSize(),
-            content = {
-                Text(
-                    text = text,
-                    color = ChartIvory,
-                    fontSize = 7.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip
+    Box(Modifier.fillMaxSize()) {
+        boundaryToLabels.forEach { (boundary, labels) ->
+            val pos1 = mapping[boundary.a] ?: return@forEach
+            val pos2 = mapping[boundary.b] ?: return@forEach
+
+            val r1 = pos1.first
+            val c1 = pos1.second
+            val r2 = pos2.first
+            val c2 = pos2.second
+
+            val (midX, midY) = computeTuanTrietGridAnchor(r1, c1, r2, c2)
+            val labelText = labels.distinct().joinToString("/")
+
+            // Căn giữa chip tại điểm (midX/4 * W, midY/4 * H) — cùng hệ với offset/size ô cung
+            Layout(
+                modifier = Modifier.fillMaxSize(),
+                content = { TuanTrietChip(labelText) }
+            ) { measurables, constraints ->
+                val loose = Constraints(
+                    minWidth = 0,
+                    minHeight = 0,
+                    maxWidth = Constraints.Infinity,
+                    maxHeight = Constraints.Infinity
                 )
-            }
-        ) { measurables, constraints ->
-            val loose = Constraints(
-                minWidth = 0,
-                minHeight = 0,
-                maxWidth = Constraints.Infinity,
-                maxHeight = Constraints.Infinity
-            )
-            val placeable = measurables.first().measure(loose)
-            val xPx = anchorX.roundToPx()
-            val yPx = anchorY.roundToPx()
-            layout(constraints.maxWidth, constraints.maxHeight) {
-                placeable.placeRelative(
-                    x = xPx - placeable.width / 2,
-                    y = yPx - placeable.height / 2
-                )
+                val placeable = measurables.first().measure(loose)
+                val w = constraints.maxWidth.toFloat().coerceAtLeast(1f)
+                val h = constraints.maxHeight.toFloat().coerceAtLeast(1f)
+                val cxPx = midX / 4f * w
+                val cyPx = midY / 4f * h
+                layout(constraints.maxWidth, constraints.maxHeight) {
+                    val left = cxPx - placeable.width / 2f
+                    val top = cyPx - placeable.height / 2f
+                    placeable.placeRelative(
+                        x = (left + 0.5f).toInt(),
+                        y = (top + 0.5f).toInt()
+                    )
+                }
             }
         }
-    }
-
-    boundaryToLabels.forEach { (boundary, labels) ->
-        val pos1 = mapping[boundary.a] ?: return@forEach
-        val pos2 = mapping[boundary.b] ?: return@forEach
-
-        val r1 = pos1.first
-        val c1 = pos1.second
-        val r2 = pos2.first
-        val c2 = pos2.second
-
-        // Anchor tại trung điểm CẠNH CHUNG giữa 2 ô
-        val (midX, midY) = when {
-            r1 == r2 && abs(c1 - c2) == 1 -> (min(c1, c2) + 1).toFloat() to (r1 + 0.5f)
-            c1 == c2 && abs(r1 - r2) == 1 -> (c1 + 0.5f) to (min(r1, r2) + 1).toFloat()
-            else -> {
-                val cx1 = c1 + 0.5f
-                val cy1 = r1 + 0.5f
-                val cx2 = c2 + 0.5f
-                val cy2 = r2 + 0.5f
-                ((cx1 + cx2) / 2f) to ((cy1 + cy2) / 2f)
-            }
-        }
-
-        val text = labels.distinct().joinToString("/")
-        AnchoredText(
-            text = text,
-            anchorX = cellW * midX,
-            anchorY = cellH * midY
-        )
     }
 }
 
@@ -610,14 +827,7 @@ fun PalaceView(cung: CungInfo) {
         !vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
     }
 
-    val chinhTinhNames = listOf(
-        "Tử Vi", "Thiên Cơ", "Thái Dương", "Vũ Khúc", "Thiên Đồng", "Liêm Trinh",
-        "Thiên Phủ", "Thái Âm", "Tham Lang", "Cự Môn",
-        "Thiên Tướng", "Thiên Lương", "Thất Sát", "Phá Quân"
-    )
-    val (chinhTinhs, phuTinhs) = saoKhongTrangSinh.partition { sao ->
-        chinhTinhNames.any { sao.ten.contains(it, ignoreCase = true) }
-    }
+    val (chinhTinhs, phuTinhs) = saoKhongTrangSinh.partition { isChinhTinhStar(it) }
 
     // Dùng để phân biệt Bạch Hổ theo danh sách: Bạch Hổ chỉ là cát khi đi cùng bộ Tứ Linh.
     val saoTenSetForColor = cung.sao.map { normalizeSaoNameForColor(it.ten) }.toSet()
@@ -635,13 +845,20 @@ fun PalaceView(cung: CungInfo) {
             )
             .padding(horizontal = 2.dp, vertical = 2.dp)
     ) {
-        // ── Hàng 1: Can Chi | Tên Cung | Đại Hạn ──
+        // ── Hàng 1: Can Chi (trái trên) | Tên Cung | Đại Hạn ──
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Căn trái (Để trống cho Cung Tên chiếm ưu thế hoặc sau này thêm info)
-            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = canChiGocTraiTren(cung),
+                fontSize = 5.5.sp,
+                color = ChartIvoryDim,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Start
+            )
             // Cung chức (Giữa) - Mệnh, Phụ Mẫu, Phúc Đức...
             Box(
                 modifier = Modifier.weight(1.5f),
@@ -698,25 +915,37 @@ fun PalaceView(cung: CungInfo) {
                 .weight(1f)
                 .padding(top = 1.dp)
         ) {
-            val badStars  = phuTinhs.filter { isHungSao(it, hasTuLinh) }
-            val goodStars = phuTinhs.filter { !isHungSao(it, hasTuLinh) }
+            // Cột trái: cát/trung tính + [phuTinhLeftColumnNames], trừ sao thuộc [phuTinhRightColumnNames] (ưu tiên phải).
+            // Cột phải: [phuTinhRightColumnNames] hoặc hung không được “trái” bằng [phuTinhLeftColumnNames].
+            val goodStars = phuTinhs.filter {
+                !isPhuTinhRightColumn(it) && (!isHungSao(it, hasTuLinh) || isPhuTinhLeftColumn(it))
+            }
+            val badStars = phuTinhs.filter {
+                isPhuTinhRightColumn(it) || (isHungSao(it, hasTuLinh) && !isPhuTinhLeftColumn(it))
+            }
 
             fun List<SaoInfo>.luuLast() = sortedWith(compareBy { it.isLuu || it.dacTinh?.trim().equals("Lưu", ignoreCase = true) })
 
-            // Cột trái: sao tốt (cát + trung tính), sao Lưu xuống cuối
-            Column(Modifier.weight(1f)) { goodStars.luuLast().forEach { StarText(it, hasTuLinh) } }
-            // Cột phải: sao xấu (hung), sao Lưu xuống cuối
-            Column(Modifier.weight(1f)) { badStars.luuLast().forEach { StarText(it, hasTuLinh) } }
+            // verticalScroll: tránh cắt mất sao cuối khi ô cung nhiều phụ tinh
+            Column(
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) { goodStars.luuLast().forEach { StarText(it, hasTuLinh) } }
+            Column(
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) { badStars.luuLast().forEach { StarText(it, hasTuLinh) } }
         }
 
-        // ── Hàng 4: Địa chi | Vòng Tràng Sinh | Tháng ──
+        // ── Hàng 4: Địa chi (trái dưới) | Vòng Tràng Sinh | Tháng ──
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment     = Alignment.Bottom
         ) {
-            // Địa chi (Tý/Sửu/Dần/Mão...) (Căn trái dưới)
             Text(
-                cung.cungTen,
+                text = diaChiTuCungTen(cung.cungTen),
                 fontSize = 5.5.sp,
                 color    = ChartIvoryDim,
                 maxLines = 1,
