@@ -26,6 +26,7 @@ import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
+import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import kotlinx.coroutines.launch
@@ -52,14 +53,20 @@ fun TuViApp() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    NavHost(navController = navController, startDestination = "input") {
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(
+                onOpenTuVi = { navController.navigate("input") },
+                onOpenSaved = { navController.navigate("saved_charts") }
+            )
+        }
         composable("input") {
             InputScreen(
                 onViewChart = { name, day, month, year, viewYear, hour, minute, gender ->
                     viewModel.getTuVi(name, day, month, year, viewYear, hour, minute, gender)
                     navController.navigate("chart")
                 },
-                onViewSaved = { navController.navigate("saved_charts") }
+                onBack = { navController.popBackStack() }
             )
         }
         composable("chart") {

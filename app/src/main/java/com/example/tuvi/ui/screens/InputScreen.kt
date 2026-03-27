@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
@@ -272,7 +273,7 @@ fun TuViDatePickerDialog(
 @Composable
 fun InputScreen(
     onViewChart: (String, Int, Int, Int, Int, Int, Int, Int) -> Unit,
-    onViewSaved: (() -> Unit)? = null
+    onBack: (() -> Unit)? = null
 ) {
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     var name by remember { mutableStateOf("Anhnn") }
@@ -313,6 +314,20 @@ fun InputScreen(
             .fillMaxSize()
             .background(brush = BgGradient)
     ) {
+        if (onBack != null) {
+            androidx.compose.material3.IconButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 12.dp, start = 4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Quay lại",
+                    tint = TuViGold
+                )
+            }
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -558,20 +573,6 @@ fun InputScreen(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp
                 )
-            }
-
-            if (onViewSaved != null) {
-                OutlinedButton(
-                    onClick = onViewSaved,
-                    modifier = Modifier.fillMaxWidth().height(48.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, TuViGoldDark),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TuViGold)
-                ) {
-                    Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Lá số đã lưu", fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                }
             }
 
             Text(
