@@ -15,5 +15,6 @@ data class TabState(
     val isLoading: Boolean = false,
     val canGoBack: Boolean = false,
     val canGoForward: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isIncognito: Boolean = false
 )

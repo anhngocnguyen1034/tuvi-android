@@ -26,6 +26,7 @@ import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
+import com.example.tuvi.ui.browser.BookmarkScreen
 import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
 import com.example.tuvi.ui.browser.HistoryScreen
@@ -84,6 +85,7 @@ fun TuViApp() {
                         CircularProgressIndicator()
                     }
                 }
+
                 is TuViUiState.Success -> {
                     TuViChartScreen(
                         data = state.data,
@@ -92,32 +94,43 @@ fun TuViApp() {
                             navController.popBackStack()
                         },
                         onSave = { nhom ->
-                            val input = lastInput ?: return@TuViChartScreen
-                            scope.launch {
-                                val chart = SavedChart(
-                                    ten = input.ten,
-                                    ngaySinh = "${input.ngay}/${input.thang}/${input.nam}",
-                                    gioiTinh = if (input.gioiTinh == 1) "Nam" else "Nữ",
-                                    nhom = nhom,
-                                    ngayLuu = System.currentTimeMillis(),
-                                    inputJson = AppContainer.appJson.encodeToString(input),
-                                    chartJson = AppContainer.appJson.encodeToString(state.data)
-                                )
-                                AppContainer.saveChartUseCase(chart)
-                                    .onSuccess {
-                                        Toast.makeText(context, "Đã lưu lá số của ${input.ten}", Toast.LENGTH_SHORT).show()
-                                    }
-                                    .onFailure {
-                                        Toast.makeText(context, "Lỗi khi lưu: ${it.message}", Toast.LENGTH_SHORT).show()
-                                    }
+                            lastInput?.let { input ->
+                                scope.launch {
+                                    val chart = SavedChart(
+                                        ten = input.ten,
+                                        ngaySinh = "${input.ngay}/${input.thang}/${input.nam}",
+                                        gioiTinh = if (input.gioiTinh == 1) "Nam" else "Nữ",
+                                        nhom = nhom,
+                                        ngayLuu = System.currentTimeMillis(),
+                                        inputJson = AppContainer.appJson.encodeToString(input),
+                                        chartJson = AppContainer.appJson.encodeToString(state.data)
+                                    )
+                                    AppContainer.saveChartUseCase(chart)
+                                        .onSuccess {
+                                            Toast.makeText(
+                                                context,
+                                                "Đã lưu lá số của ${input.ten}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        .onFailure {
+                                            Toast.makeText(
+                                                context,
+                                                "Lỗi khi lưu: ${it.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
                             }
                         }
                     )
                 }
+
                 is TuViUiState.Error -> {
                     Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                     navController.popBackStack()
                 }
+
                 is TuViUiState.Idle -> {}
             }
         }
@@ -128,12 +141,14 @@ fun TuViApp() {
                 androidx.navigation.navArgument("title") { defaultValue = "Trình duyệt" }
             )
         ) { backStackEntry ->
-            val url   = Uri.decode(backStackEntry.arguments?.getString("url") ?: "https://www.google.com")
+            val url =
+                Uri.decode(backStackEntry.arguments?.getString("url") ?: "https://www.google.com")
             val title = backStackEntry.arguments?.getString("title") ?: "Trình duyệt"
             BrowserScreen(
                 config = BrowserConfig(initialUrl = url, title = title),
                 onBack = { navController.popBackStack() },
-                onOpenHistory = { navController.navigate("browser_history") }
+                onOpenHistory = { navController.navigate("browser_history") },
+                onOpenBookmarks = { navController.navigate("browser_bookmarks") }
             )
         }
         composable("browser_history") {
@@ -147,6 +162,17 @@ fun TuViApp() {
                 }
             )
         }
+        composable("browser_bookmarks") {
+            BookmarkScreen(
+                onBack = { navController.popBackStack() },
+                onOpenUrl = { url ->
+                    val encoded = Uri.encode(url)
+                    navController.navigate("browser?url=$encoded&title=Dấu trang") {
+                        popUpTo("browser_bookmarks") { inclusive = true }
+                    }
+                }
+            )
+        }
         composable("saved_charts") {
             val savedVm: SavedChartsViewModel = viewModel(factory = SavedChartsViewModel.Factory)
             SavedChartsScreen(
@@ -154,12 +180,22 @@ fun TuViApp() {
                 onOpenChart = { saved ->
                     scope.launch {
                         runCatching {
-                            val chart = AppContainer.appJson.decodeFromString<com.example.tuvi.domain.model.TuViChart>(saved.chartJson)
-                            val input = AppContainer.appJson.decodeFromString<com.example.tuvi.domain.model.TuViChartInput>(saved.inputJson)
+                            val chart =
+                                AppContainer.appJson.decodeFromString<com.example.tuvi.domain.model.TuViChart>(
+                                    saved.chartJson
+                                )
+                            val input =
+                                AppContainer.appJson.decodeFromString<com.example.tuvi.domain.model.TuViChartInput>(
+                                    saved.inputJson
+                                )
                             viewModel.loadSavedChart(input, chart)
                             navController.navigate("chart")
                         }.onFailure {
-                            Toast.makeText(context, "Không thể mở lá số: ${it.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Không thể mở lá số: ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 },

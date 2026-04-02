@@ -43,9 +43,6 @@ fun ThienBanDto.toDomain(): ThienBanInfo = ThienBanInfo(
 )
 
 fun CungDto.toDomain(): CungInfo = CungInfo(
-    cungSo   = cungSo,
-    thienCan = thienCan,
-    chuCaiDau = chuCaiDau,
     cungTen  = cungTen,
     cungChu  = cungChu,
     hanhCung = hanhCung,

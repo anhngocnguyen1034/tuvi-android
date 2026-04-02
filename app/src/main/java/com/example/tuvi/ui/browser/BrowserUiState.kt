@@ -15,4 +15,5 @@ sealed interface BrowserCommand {
     object GoBack    : BrowserCommand
     object GoForward : BrowserCommand
     object Reload    : BrowserCommand
+    object Stop      : BrowserCommand
 }

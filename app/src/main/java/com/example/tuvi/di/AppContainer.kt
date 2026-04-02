@@ -64,6 +64,7 @@ object AppContainer {
     }
 
     val historyDao by lazy { database.historyDao() }
+    val bookmarkDao by lazy { database.bookmarkDao() }
 
     val getAllSavedChartsUseCase by lazy { GetAllSavedChartsUseCase(savedChartRepository) }
     val searchSavedChartsUseCase by lazy { SearchSavedChartsUseCase(savedChartRepository) }

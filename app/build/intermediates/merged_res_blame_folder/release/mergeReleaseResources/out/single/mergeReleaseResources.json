@@ -1,0 +1,70 @@
+[
+    {
+        "merged": "com.example.tuvi.app-release-40:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/xml_backup_rules.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/drawable_ic_download.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/drawable/ic_download.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.tuvi.app-main-41:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.tuvi.app-release-40:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.tuvi.app-main-41:/mipmap-hdpi/ic_launcher.webp"
+    }
+]

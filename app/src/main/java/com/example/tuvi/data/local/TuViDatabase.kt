@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [SavedChartEntity::class, HistoryItemEntity::class],
-    version = 2,
+    entities = [SavedChartEntity::class, HistoryItemEntity::class, BookmarkItemEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class TuViDatabase : RoomDatabase() {
     abstract fun savedChartDao(): SavedChartDao
     abstract fun historyDao(): HistoryDao
+    abstract fun bookmarkDao(): BookmarkDao
 
     companion object {
         @Volatile private var INSTANCE: TuViDatabase? = null
