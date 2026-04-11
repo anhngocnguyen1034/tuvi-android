@@ -26,7 +26,7 @@ import retrofit2.Retrofit
  */
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.1.19:8000"
+    private const val BASE_URL = "http://192.168.0.101:8000"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -65,6 +65,7 @@ object AppContainer {
 
     val historyDao by lazy { database.historyDao() }
     val bookmarkDao by lazy { database.bookmarkDao() }
+    val tabSessionDao by lazy { database.tabSessionDao() }
 
     val getAllSavedChartsUseCase by lazy { GetAllSavedChartsUseCase(savedChartRepository) }
     val searchSavedChartsUseCase by lazy { SearchSavedChartsUseCase(savedChartRepository) }

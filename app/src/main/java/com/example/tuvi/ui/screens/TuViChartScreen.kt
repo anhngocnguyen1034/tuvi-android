@@ -58,6 +58,7 @@ import com.example.tuvi.domain.model.ThienBanInfo
 import com.example.tuvi.domain.model.TuViChart
 import java.io.File
 import java.io.FileOutputStream
+import java.text.Normalizer
 import com.example.tuvi.R
 import com.example.tuvi.ui.screens.SaveChartDialog
 // ─── Bảng màu Tử Vi (khớp với InputScreen) ───────────────────────────────────
@@ -126,6 +127,32 @@ private val kimSet_extra = setOf(
     "Bạch Hổ"
 )
 
+
+/**
+ * Sao phụ ép cột phải theo yêu cầu UI.
+ */
+private val phuTinhRightColumnNames = setOf(
+    "Thiên Không", "Lưu Hà", "Phá Toái", "Phá toái", "Phi Liêm", "Thái Tuế", "Trực Phù",
+    "Hóa Kỵ", "Hoá Kỵ", "Tướng Quân", "Điếu Khách", "Thiên Sứ", "Kiếp Sát", "Bạch Hổ", "Tang Môn",
+    "Bạch hổ", "Thiên La", "Thiên Thương", "Thiên Diêu", "Thiên diêu",
+    "Thiên Riêu", "Thiên riêu", // biến thể gõ / API (cùng nhóm Thiên Diêu)
+    "Tuế Phá", "Quan Phủ", "Tử Phù",
+    "Phục Binh", "Quan Phù", "Đẩu Quân", "Thiên Hình", "Bệnh Phù", "Địa Võng"
+)
+
+/** Sao phụ ép cột trái theo yêu cầu UI. */
+private val phuTinhLeftColumnNames = setOf("Đường Phù", "Thiên Mã")
+
+private fun isPhuTinhRightColumn(sao: SaoInfo): Boolean {
+    val baseName = normalizeSaoNameForColor(sao.ten)
+    return inSetIgnoreCase(phuTinhRightColumnNames, baseName)
+}
+
+private fun isPhuTinhLeftColumn(sao: SaoInfo): Boolean {
+    val baseName = normalizeSaoNameForColor(sao.ten)
+    return inSetIgnoreCase(phuTinhLeftColumnNames, baseName)
+}
+
 // Tên 12 vị trí Vòng Tràng Sinh – dùng để lọc sao hiển thị ở footer cung
 private val vongTrangSinhNames = setOf(
     "Trường Sinh", "Mộc Dục", "Quan Đới", "Lâm Quan", "Đế Vượng",
@@ -138,10 +165,14 @@ private fun normalizeSpaces(s: String): String {
 
 private fun normalizeSaoNameForColor(tenSao: String): String {
     val raw = tenSao.replace('\u00A0', ' ')
+    val trimmed = raw.trim()
+    val withoutLdot = trimmed.removePrefix("L.")
+    // "Lưu Hà" là tên sao đầy đủ — không strip "Lưu " (sẽ còn "Hà" và không khớp phuTinhRightColumnNames)
+    if (withoutLdot.equals("Lưu Hà", ignoreCase = true)) {
+        return normalizeSpaces("Lưu Hà")
+    }
     return normalizeSpaces(
-        raw
-            .trim()
-            .removePrefix("L.")
+        withoutLdot
             .removePrefix("Lưu ")
             .removePrefix("Lưu")
             .removePrefix("LƯU ")
@@ -151,6 +182,16 @@ private fun normalizeSaoNameForColor(tenSao: String): String {
 
 private fun inSetIgnoreCase(set: Set<String>, value: String): Boolean {
     return set.any { it.equals(value, ignoreCase = true) }
+}
+
+private fun displayCungChuLabel(cungChu: String): String {
+    val stripped = cungChu.replace("\u200B", "").replace("\uFEFF", "")
+    val normalized = normalizeSpaces(Normalizer.normalize(stripped, Normalizer.Form.NFC))
+    return when {
+        normalized.equals("Điền", ignoreCase = true) -> "Điền Trạch"
+        normalized.equals("Phúc", ignoreCase = true) -> "Phúc Đức"
+        else -> normalized
+    }
 }
 
 /** Trả về màu sao theo Ngũ Hành. Ưu tiên dùng ngu_hanh từ API, fallback hardcode. */
@@ -701,19 +742,17 @@ fun PalaceView(cung: CungInfo) {
                 modifier = Modifier.weight(1.5f),
                 contentAlignment = Alignment.Center
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = cung.cungChu.uppercase(),
-                        fontSize = 6.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ChartGold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Clip
-                    )
-                }
+                Text(
+                    text = displayCungChuLabel(cung.cungChu).uppercase(),
+                    fontSize = 6.5.sp,
+                    lineHeight = 7.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ChartGold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             // Đại Hạn (Căn phải)
             Text(
@@ -752,14 +791,18 @@ fun PalaceView(cung: CungInfo) {
                 .weight(1f)
                 .padding(top = 1.dp)
         ) {
-            val badStars  = phuTinhs.filter { isHungSao(it, hasTuLinh) }
-            val goodStars = phuTinhs.filter { !isHungSao(it, hasTuLinh) }
+            val goodStars = phuTinhs.filter {
+                isPhuTinhLeftColumn(it) || (!isPhuTinhRightColumn(it) && !isHungSao(it, hasTuLinh))
+            }
+            val badStars  = phuTinhs.filter {
+                isPhuTinhRightColumn(it) || (!isPhuTinhLeftColumn(it) && isHungSao(it, hasTuLinh))
+            }
 
             fun List<SaoInfo>.luuLast() = sortedWith(compareBy { it.isLuu || it.dacTinh?.trim().equals("Lưu", ignoreCase = true) })
 
-            // Cột trái: sao tốt (cát + trung tính), sao Lưu xuống cuối
+            // Cột trái: ép trái (Đường Phù, Thiên Mã) + sao cát/trung tính còn lại
             Column(Modifier.weight(1f)) { goodStars.luuLast().forEach { StarText(it, hasTuLinh) } }
-            // Cột phải: sao xấu (hung), sao Lưu xuống cuối
+            // Cột phải: ép phải theo danh sách yêu cầu + sao hung còn lại
             Column(Modifier.weight(1f)) { badStars.luuLast().forEach { StarText(it, hasTuLinh) } }
         }
 

@@ -1,6 +1,7 @@
 package com.example.tuvi.ui.browser
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -41,6 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -70,6 +73,7 @@ private val IncogDim      = Color(0xFF757575)
 fun TabSwitcherOverlay(
     visible: Boolean,
     tabs: List<TabState>,
+    thumbnails: Map<String, ImageBitmap> = emptyMap(),
     activeTabId: String,
     showIncognitoList: Boolean,
     onSelectTab: (String) -> Unit,
@@ -174,6 +178,7 @@ fun TabSwitcherOverlay(
                         items(displayedTabs, key = { it.id }) { tab ->
                             TabCard(
                                 tab = tab,
+                                thumbnail = thumbnails[tab.id],
                                 isActive = tab.id == activeTabId,
                                 isIncognito = showIncognitoList,
                                 onSelect = { onSelectTab(tab.id) },
@@ -248,6 +253,7 @@ private fun PanelTab(label: String, selected: Boolean, accent: Color, onClick: (
 @Composable
 private fun TabCard(
     tab: TabState,
+    thumbnail: ImageBitmap?,
     isActive: Boolean,
     isIncognito: Boolean,
     onSelect: () -> Unit,
@@ -281,20 +287,37 @@ private fun TabCard(
                     .background(Brush.verticalGradient(listOf(gradFrom, gradTo))),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = if (isIncognito) "\uD83D\uDD75\uFE0F" else tab.url.toFavicon(),
-                        fontSize = 32.sp
+                if (thumbnail != null && !isIncognito) {
+                    // Hiển thị screenshot thực của trang (theo doc tab.md)
+                    Image(
+                        bitmap = thumbnail,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        text = tab.url.toDomain(),
-                        color = if (isIncognito) IncogAccent else TuViIvoryDim,
-                        fontSize = 10.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                    // Lớp phủ mờ nhẹ để title bar phía dưới dễ đọc hơn
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.08f))
                     )
+                } else {
+                    // Fallback: emoji + domain khi chưa có thumbnail hoặc tab ẩn danh
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = if (isIncognito) "\uD83D\uDD75\uFE0F" else tab.url.toFavicon(),
+                            fontSize = 32.sp
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            text = tab.url.toDomain(),
+                            color = if (isIncognito) IncogAccent else TuViIvoryDim,
+                            fontSize = 10.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
                 }
                 if (tab.isLoading) {
                     Box(

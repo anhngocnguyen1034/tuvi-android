@@ -12,8 +12,13 @@ data class BrowserUiState(
 
 sealed interface BrowserCommand {
     data class LoadUrl(val url: String) : BrowserCommand
-    object GoBack    : BrowserCommand
-    object GoForward : BrowserCommand
+    /**
+     * [fallbackUrl]: URL tại mục trước trong navHistory — dùng khi WebView không còn stack
+     * (vd. vừa khôi phục tab sau khi thoát app), vì `webView.goBack()` không hoạt động.
+     */
+    data class GoBack(val fallbackUrl: String? = null) : BrowserCommand
+    /** Tương tự [GoBack], cho bước tiếp trong lịch sử đã lưu. */
+    data class GoForward(val fallbackUrl: String? = null) : BrowserCommand
     object Reload    : BrowserCommand
     object Stop      : BrowserCommand
 }

@@ -27,8 +27,10 @@ import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
 import com.example.tuvi.ui.browser.BookmarkScreen
+import androidx.compose.runtime.LaunchedEffect
 import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
+import com.example.tuvi.ui.browser.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
@@ -71,8 +73,8 @@ fun TuViApp() {
         }
         composable("input") {
             InputScreen(
-                onViewChart = { name, day, month, year, viewYear, hour, minute, gender ->
-                    viewModel.getTuVi(name, day, month, year, viewYear, hour, minute, gender)
+                onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
+                    viewModel.getTuVi(name, day, month, year, viewYear, hour, minute, gender, duongLich)
                     navController.navigate("chart")
                 },
                 onBack = { navController.popBackStack() }
@@ -144,21 +146,35 @@ fun TuViApp() {
             val url =
                 Uri.decode(backStackEntry.arguments?.getString("url") ?: "https://www.google.com")
             val title = backStackEntry.arguments?.getString("title") ?: "Trình duyệt"
+            // ViewModel gắn với backStackEntry để sống cùng lifecycle của destination này
+            val browserVm: BrowserViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                factory = BrowserViewModel.Factory
+            )
+            // Nhận URL từ HistoryScreen / BookmarkScreen qua savedStateHandle
+            val pendingUrl by backStackEntry.savedStateHandle
+                .getStateFlow("pendingUrl", "")
+                .collectAsState()
+            LaunchedEffect(pendingUrl) {
+                if (pendingUrl.isNotEmpty()) {
+                    browserVm.navigateTo(pendingUrl)
+                    backStackEntry.savedStateHandle["pendingUrl"] = ""
+                }
+            }
             BrowserScreen(
                 config = BrowserConfig(initialUrl = url, title = title),
                 onBack = { navController.popBackStack() },
-                onOpenHistory = { navController.navigate("browser_history") },
-                onOpenBookmarks = { navController.navigate("browser_bookmarks") }
+                viewModel = browserVm
             )
         }
         composable("browser_history") {
             HistoryScreen(
                 onBack = { navController.popBackStack() },
                 onOpenUrl = { url ->
-                    val encoded = Uri.encode(url)
-                    navController.navigate("browser?url=$encoded&title=Lịch sử") {
-                        popUpTo("browser_history") { inclusive = true }
-                    }
+                    // Truyền URL về browser cũ qua savedStateHandle, giữ nguyên tabs
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle?.set("pendingUrl", url)
+                    navController.popBackStack()
                 }
             )
         }
@@ -166,10 +182,9 @@ fun TuViApp() {
             BookmarkScreen(
                 onBack = { navController.popBackStack() },
                 onOpenUrl = { url ->
-                    val encoded = Uri.encode(url)
-                    navController.navigate("browser?url=$encoded&title=Dấu trang") {
-                        popUpTo("browser_bookmarks") { inclusive = true }
-                    }
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle?.set("pendingUrl", url)
+                    navController.popBackStack()
                 }
             )
         }

@@ -73,8 +73,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-// ── ViewModel ────────────────────────────────────────────────────────────────
-
 class BookmarkViewModel(private val dao: BookmarkDao) : ViewModel() {
 
     val bookmarks: StateFlow<List<BookmarkItemEntity>> = dao.getAllBookmarks()
@@ -297,8 +295,6 @@ private fun EditTitleDialog(
     )
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
-
 @Composable
 private fun BookmarkEmptyState(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -313,8 +309,6 @@ private fun BookmarkEmptyState(modifier: Modifier) {
         }
     }
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 private fun String.toFaviconEmoji(): String {
     val domain = toDomainDisplay().lowercase()

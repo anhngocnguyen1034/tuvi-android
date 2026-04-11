@@ -2,6 +2,7 @@ package com.example.tuvi.ui.browser
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.webkit.DownloadListener
 import android.webkit.WebChromeClient
@@ -15,8 +16,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.flow.SharedFlow
@@ -79,11 +83,15 @@ fun TabWebViewHolder(
     isIncognito: Boolean = false,
     config: BrowserConfig,
     commands: SharedFlow<BrowserCommand>,
+    pendingLoadUrl: String? = null,
+    onPendingLoadConsumed: () -> Unit = {},
     onPageStarted: (url: String) -> Unit,
     onPageFinished: (url: String, title: String, canGoBack: Boolean, canGoForward: Boolean) -> Unit,
     onProgressChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onLongPressMedia: (url: String) -> Unit = {},
+    onNavigationStateSync: (canGoBack: Boolean, canGoForward: Boolean) -> Unit = { _, _ -> },
+    onCaptureThumbnail: (ImageBitmap) -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -177,17 +185,53 @@ fun TabWebViewHolder(
         }
     }
 
+    // Load URL theo yêu cầu từ navigateTo / lịch sử / bookmark (state-based, không bao giờ bị mất)
+    LaunchedEffect(pendingLoadUrl) {
+        if (!pendingLoadUrl.isNullOrBlank()) {
+            webView.loadUrl(pendingLoadUrl)
+            onPendingLoadConsumed()
+        }
+    }
+
+    // Chụp thumbnail ngay khi tab bị ẩn (active → inactive)
+    val wasActive = remember { mutableStateOf(isActive) }
+    LaunchedEffect(isActive) {
+        if (wasActive.value && !isActive) {
+            // Tab vừa bị ẩn — chụp screenshot WebView để làm thumbnail
+            if (webView.width > 0 && webView.height > 0) {
+                try {
+                    // Scale 0.5x để tiết kiệm bộ nhớ
+                    val scale = 0.5f
+                    val bmpW = (webView.width * scale).toInt().coerceAtLeast(1)
+                    val bmpH = (webView.height * scale).toInt().coerceAtLeast(1)
+                    val bmp = Bitmap.createBitmap(bmpW, bmpH, Bitmap.Config.RGB_565)
+                    val canvas = Canvas(bmp)
+                    canvas.scale(scale, scale)
+                    webView.draw(canvas)
+                    onCaptureThumbnail(bmp.asImageBitmap())
+                } catch (_: Exception) { /* bỏ qua nếu WebView chưa sẵn sàng */ }
+            }
+        }
+        wasActive.value = isActive
+    }
+
     // Chỉ tab active mới collect và thực thi commands
     LaunchedEffect(isActive) {
         if (isActive) {
             try {
                 commands.collect { cmd ->
                     when (cmd) {
-                        is BrowserCommand.LoadUrl   -> webView.loadUrl(cmd.url)
-                        is BrowserCommand.GoBack    -> if (webView.canGoBack()) webView.goBack()
-                        is BrowserCommand.GoForward -> if (webView.canGoForward()) webView.goForward()
-                        is BrowserCommand.Reload    -> webView.reload()
-                        is BrowserCommand.Stop      -> webView.stopLoading()
+                        is BrowserCommand.LoadUrl -> webView.loadUrl(cmd.url)
+                        is BrowserCommand.GoBack -> when {
+                            webView.canGoBack() -> webView.goBack()
+                            !cmd.fallbackUrl.isNullOrBlank() -> webView.loadUrl(cmd.fallbackUrl)
+                        }
+                        is BrowserCommand.GoForward -> when {
+                            webView.canGoForward() -> webView.goForward()
+                            !cmd.fallbackUrl.isNullOrBlank() -> webView.loadUrl(cmd.fallbackUrl)
+                        }
+                        is BrowserCommand.Reload -> webView.reload()
+                        is BrowserCommand.Stop -> webView.stopLoading()
                     }
                 }
             } catch (_: Exception) {
@@ -213,5 +257,13 @@ fun TabWebViewHolder(
         }
     }
 
-    AndroidView(factory = { webView }, modifier = modifier)
+    // Ẩn (INVISIBLE) thay vì hủy tab không active — giữ nguyên WebView trong bộ nhớ
+    // cùng trạng thái scroll, form data, back/forward stack (đúng theo Chrome-style tab)
+    AndroidView(
+        factory = { webView },
+        modifier = modifier,
+        update = { wv ->
+            wv.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
+        }
+    )
 }

@@ -16,5 +16,16 @@ data class TabState(
     val canGoBack: Boolean = false,
     val canGoForward: Boolean = false,
     val error: String? = null,
-    val isIncognito: Boolean = false
+    val isIncognito: Boolean = false,
+    /** URL cần load ngay (set bởi navigateTo/lịch sử/bookmark). Null = không có lệnh load mới. */
+    val pendingLoadUrl: String? = null,
+    /** Stack URL đã visit trong tab này — dùng để khôi phục back/forward sau khi app restart. */
+    val navHistory: List<String> = emptyList(),
+    /** Index hiện tại trong navHistory. -1 = chưa load trang nào. */
+    val navHistoryIndex: Int = -1,
+    /**
+     * true khi navigation đang xảy ra do goBack()/goForward().
+     * onPageFinished sẽ không push vào navHistory khi flag này bật.
+     */
+    val isHistoryNav: Boolean = false,
 )

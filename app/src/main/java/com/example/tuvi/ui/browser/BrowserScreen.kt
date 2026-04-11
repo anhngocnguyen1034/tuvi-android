@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
@@ -69,6 +70,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.ui.theme.TuViDivider
+import com.example.tuvi.ui.browser.BookmarkScreen
+import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViIvory
@@ -91,8 +94,6 @@ private val IncogDiv    = Color(0xFF2C2C2C)
 fun BrowserScreen(
     config: BrowserConfig,
     onBack: () -> Unit,
-    onOpenHistory: () -> Unit = {},
-    onOpenBookmarks: () -> Unit = {},
     viewModel: BrowserViewModel = viewModel(factory = BrowserViewModel.Factory)
 ) {
     val tabs              = viewModel.tabs
@@ -101,7 +102,6 @@ fun BrowserScreen(
     val isIncognito       = viewModel.isActiveIncognito
     val isBookmarked      by viewModel.isCurrentUrlBookmarked.collectAsState()
     val keyboard          = LocalSoftwareKeyboardController.current
-    var showMore          by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope             = rememberCoroutineScope()
     val density           = LocalDensity.current
@@ -131,9 +131,11 @@ fun BrowserScreen(
     // BackHandler
     BackHandler(enabled = true) {
         when {
-            viewModel.showTabSwitcher    -> viewModel.closeTabSwitcher()
-            activeTab?.canGoBack == true -> viewModel.goBack()
-            else                         -> viewModel.openTabSwitcher()
+            viewModel.showHistoryOverlay  -> viewModel.closeHistory()
+            viewModel.showBookmarkOverlay -> viewModel.closeBookmarks()
+            viewModel.showTabSwitcher     -> viewModel.closeTabSwitcher()
+            activeTab?.canGoBack == true  -> viewModel.goBack()
+            else                          -> viewModel.openTabSwitcher()
         }
     }
 
@@ -144,14 +146,18 @@ fun BrowserScreen(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = bgColor,
-            // topBar: toolbar cố định phía trên WebView
             bottomBar = {
                 BrowserBottomBar(
                     canGoBack = activeTab?.canGoBack ?: false,
                     canGoForward = activeTab?.canGoForward ?: false,
                     isIncognito = isIncognito,
+                    tabCount = tabs.size,
                     onBack = { viewModel.goBack() },
                     onForward = { viewModel.goForward() },
+                    onNewIncognitoTab = { viewModel.addNewIncognitoTab() },
+                    onOpenTabs = { viewModel.openTabSwitcher() },
+                    onOpenHistory = { viewModel.openHistory() },
+                    onOpenBookmarks = { viewModel.openBookmarks() },
                     onReload = { viewModel.reload() }
                 )
             }
@@ -195,7 +201,8 @@ fun BrowserScreen(
                                 state = pullState,
                                 isRefreshing = activeTab?.isLoading == true,
                                 color = accentColor,
-                                containerColor = cardColor
+                                containerColor = cardColor,
+                                modifier = Modifier.align(Alignment.TopCenter)
                             )
                         }
                     ) {
@@ -204,21 +211,28 @@ fun BrowserScreen(
                                 key(tab.id) {
                                     val isActive = tab.id == activeTabId
                                     TabWebViewHolder(
-                                        modifier = if (isActive) Modifier.fillMaxSize()
-                                                   else Modifier.size(0.dp),
+                                        modifier = Modifier.fillMaxSize(),
                                         tabId = tab.id,
                                         initialUrl = tab.url,
                                         isActive = isActive,
                                         isIncognito = tab.isIncognito,
                                         config = config,
                                         commands = viewModel.commands,
+                                        pendingLoadUrl = tab.pendingLoadUrl,
+                                        onPendingLoadConsumed = { viewModel.consumePendingLoad(tab.id) },
                                         onPageStarted = { url -> viewModel.onPageStarted(tab.id, url) },
                                         onPageFinished = { url, title, canBack, canFwd ->
                                             viewModel.onPageFinished(tab.id, url, title, canBack, canFwd)
                                         },
                                         onProgressChanged = { viewModel.onProgressChanged(tab.id, it) },
                                         onError = { viewModel.onReceivedError(tab.id, it) },
-                                        onLongPressMedia = { url -> pendingDownloadUrl = url }
+                                        onLongPressMedia = { url -> pendingDownloadUrl = url },
+                                        onNavigationStateSync = { canBack, canFwd ->
+                                            viewModel.syncTabNavState(tab.id, canBack, canFwd)
+                                        },
+                                        onCaptureThumbnail = { bmp ->
+                                            viewModel.updateThumbnail(tab.id, bmp)
+                                        }
                                     )
                                 }
                             }
@@ -262,7 +276,7 @@ fun BrowserScreen(
                         },
                         navigationIcon = {
                             IconButton(onClick = onBack) {
-                                Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = accentColor)
+                                Icon(Icons.Default.Home, contentDescription = "Về trang chủ", tint = accentColor)
                             }
                         },
                         actions = {
@@ -272,7 +286,7 @@ fun BrowserScreen(
                                 }
                             } else {
                                 IconButton(onClick = { viewModel.reload() }) {
-                                    Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = accentColor)
+                                    Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = dimColor)
                                 }
                             }
                             if (!isIncognito) {
@@ -290,21 +304,6 @@ fun BrowserScreen(
                                         tint = if (isBookmarked) TuViGold else TuViIvoryDim.copy(alpha = 0.4f)
                                     )
                                 }
-                            }
-                            TabCountButton(count = tabs.size, isIncognito = isIncognito,
-                                onClick = { viewModel.openTabSwitcher() })
-                            Box {
-                                IconButton(onClick = { showMore = true }) {
-                                    Icon(Icons.Default.MoreVert, contentDescription = "Thêm", tint = accentColor)
-                                }
-                                MoreDropdownMenu(
-                                    expanded = showMore,
-                                    isIncognito = isIncognito,
-                                    onDismiss = { showMore = false },
-                                    onOpenHistory = { showMore = false; onOpenHistory() },
-                                    onOpenTabs = { showMore = false; viewModel.openTabSwitcher() },
-                                    onOpenBookmarks = { showMore = false; onOpenBookmarks() }
-                                )
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = bgColor)
@@ -330,6 +329,7 @@ fun BrowserScreen(
         TabSwitcherOverlay(
             visible = viewModel.showTabSwitcher,
             tabs = tabs,
+            thumbnails = viewModel.thumbnails,
             activeTabId = activeTabId,
             showIncognitoList = viewModel.showIncognitoList,
             onSelectTab = { viewModel.switchTab(it) },
@@ -342,8 +342,34 @@ fun BrowserScreen(
             onCloseAllIncognito = { viewModel.closeAllIncognitoTabs() },
             onSwitchPanel = { viewModel.setTabSwitcherPanel(it) },
             onDismiss = { viewModel.closeTabSwitcher() },
-            onOpenBookmarks = { viewModel.closeTabSwitcher(); onOpenBookmarks() }
+            onOpenBookmarks = { viewModel.closeTabSwitcher(); viewModel.openBookmarks() }
         )
+
+        // ── History overlay (không navigate ra ngoài, giữ WebView sống) ──
+        if (viewModel.showHistoryOverlay) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                HistoryScreen(
+                    onBack = { viewModel.closeHistory() },
+                    onOpenUrl = { url ->
+                        viewModel.closeHistory()
+                        viewModel.navigateTo(url)
+                    }
+                )
+            }
+        }
+
+        // ── Bookmarks overlay ──
+        if (viewModel.showBookmarkOverlay) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                BookmarkScreen(
+                    onBack = { viewModel.closeBookmarks() },
+                    onOpenUrl = { url ->
+                        viewModel.closeBookmarks()
+                        viewModel.navigateTo(url)
+                    }
+                )
+            }
+        }
 
         // ── Image / file long-press bottom sheet ──
         pendingDownloadUrl?.let { url ->
@@ -371,22 +397,27 @@ fun BrowserScreen(
 // ── Tab count button ──────────────────────────────────────────────────────────
 
 @Composable
-private fun TabCountButton(count: Int, isIncognito: Boolean, onClick: () -> Unit) {
+private fun TabCountButton(
+    count: Int,
+    isIncognito: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val border = if (isIncognito) IncogAccent else TuViGold
     val bg     = if (isIncognito) IncogCard   else TuViNavyCard
-    IconButton(onClick = onClick) {
+    IconButton(onClick = onClick, modifier = modifier) {
         Box(
             modifier = Modifier
-                .size(26.dp)
-                .clip(RoundedCornerShape(6.dp))
+                .size(24.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .background(bg)
-                .border(1.5.dp, border, RoundedCornerShape(6.dp)),
+                .border(1.5.dp, border, RoundedCornerShape(5.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = if (count > 99) "99+" else count.toString(),
                 color = border,
-                fontSize = if (count > 9) 9.sp else 12.sp,
+                fontSize = if (count > 9) 8.sp else 11.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -403,7 +434,8 @@ private fun MoreDropdownMenu(
     onDismiss: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenTabs: () -> Unit,
-    onOpenBookmarks: () -> Unit
+    onOpenBookmarks: () -> Unit,
+    onReload: () -> Unit = {}
 ) {
     val bg   = if (isIncognito) IncogCard else TuViNavyCard
     val text = if (isIncognito) IncogAccent else TuViIvory
@@ -413,6 +445,17 @@ private fun MoreDropdownMenu(
         onDismissRequest = onDismiss,
         modifier = Modifier.background(bg)
     ) {
+        DropdownMenuItem(
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("🔄", fontSize = 15.sp)
+                    Spacer(Modifier.size(10.dp))
+                    Text("Tải lại trang", color = text, fontSize = 14.sp)
+                }
+            },
+            onClick = onReload,
+            colors = MenuDefaults.itemColors(textColor = text)
+        )
         DropdownMenuItem(
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -453,6 +496,17 @@ private fun MoreDropdownMenu(
 
 // ── Address bar ───────────────────────────────────────────────────────────────
 
+/** Trả về text hiển thị Chrome-style: domain khi unfocused, full URL khi focused. */
+private fun displayUrl(url: String): String {
+    if (url.isBlank() || url == "about:blank") return ""
+    return try {
+        val uri = android.net.Uri.parse(url)
+        val host = uri.host ?: return url
+        // Bỏ tiền tố "www."
+        host.removePrefix("www.")
+    } catch (_: Exception) { url }
+}
+
 @Composable
 private fun AddressBar(
     url: String,
@@ -460,7 +514,8 @@ private fun AddressBar(
     isIncognito: Boolean,
     onNavigate: (String) -> Unit
 ) {
-    var text by remember(url) { mutableStateOf(url) }
+    var isFocused by remember { mutableStateOf(false) }
+    var editText  by remember { mutableStateOf(url) }
 
     val bg       = if (isIncognito) IncogBg   else TuViNavy
     val cardBg   = if (isIncognito) IncogCard else TuViNavyCard
@@ -468,6 +523,11 @@ private fun AddressBar(
     val unfocus  = if (isIncognito) IncogDiv  else TuViDivider
     val textCol  = if (isIncognito) IncogAccent else TuViIvory
     val hintCol  = if (isIncognito) IncogDim  else TuViIvoryDim
+
+    // Khi trang mới load xong (url đổi) và user không đang gõ → đồng bộ editText
+    androidx.compose.runtime.LaunchedEffect(url) {
+        if (!isFocused) editText = url
+    }
 
     Row(
         modifier = Modifier
@@ -485,61 +545,139 @@ private fun AddressBar(
             )
         }
         OutlinedTextField(
-            value = text,
-            onValueChange = { if (enabled) text = it },
+            value = if (isFocused) editText else displayUrl(url),
+            onValueChange = { if (enabled) editText = it },
             readOnly = !enabled,
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(10.dp),
-            textStyle = TextStyle(fontSize = 13.sp, color = textCol),
-            placeholder = { Text("Nhập URL hoặc tìm kiếm...", color = hintCol, fontSize = 13.sp) },
+            textStyle = TextStyle(
+                fontSize = 13.sp,
+                color = textCol,
+                // Unfocused: căn giữa giống Chrome
+                textAlign = if (isFocused) TextAlign.Start else TextAlign.Center
+            ),
+            placeholder = { Text("Tìm kiếm hoặc nhập địa chỉ...", color = hintCol, fontSize = 13.sp,
+                modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-            keyboardActions = KeyboardActions(onGo = { onNavigate(text) }),
+            keyboardActions = KeyboardActions(onGo = { onNavigate(editText) }),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = focused,
-                unfocusedBorderColor = unfocus,
+                unfocusedBorderColor = unfocus.copy(alpha = 0.4f),
                 focusedContainerColor = cardBg,
                 unfocusedContainerColor = cardBg,
                 cursorColor = focused
-            )
+            ),
+            // Khi focus: hiện full URL, select all để dễ gõ đè
+            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }.also { src ->
+                androidx.compose.runtime.LaunchedEffect(src) {
+                    src.interactions.collect { interaction ->
+                        when (interaction) {
+                            is androidx.compose.foundation.interaction.FocusInteraction.Focus -> {
+                                editText = url
+                                isFocused = true
+                            }
+                            is androidx.compose.foundation.interaction.FocusInteraction.Unfocus -> {
+                                isFocused = false
+                            }
+                        }
+                    }
+                }
+            }
         )
     }
 }
 
-// ── Bottom bar ────────────────────────────────────────────────────────────────
+// ── Bottom bar (Chrome-style) ─────────────────────────────────────────────────
 
 @Composable
 private fun BrowserBottomBar(
     canGoBack: Boolean,
     canGoForward: Boolean,
     isIncognito: Boolean,
+    tabCount: Int,
     onBack: () -> Unit,
     onForward: () -> Unit,
-    onReload: () -> Unit
+    onNewIncognitoTab: () -> Unit,
+    onOpenTabs: () -> Unit,
+    onOpenHistory: () -> Unit,
+    onOpenBookmarks: () -> Unit,
+    onReload: () -> Unit,
 ) {
     val bg      = if (isIncognito) IncogBg   else TuViNavy
     val divider = if (isIncognito) IncogDiv  else TuViDivider
     val accent  = if (isIncognito) IncogAccent else TuViGold
     val dim     = if (isIncognito) IncogDim  else TuViIvoryDim
+    var showMenu by remember { mutableStateOf(false) }
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(bg)
             .border(width = 1.dp, color = divider.copy(alpha = 0.5f))
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBack, enabled = canGoBack, modifier = Modifier.weight(1f)) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Lùi",
-                tint = if (canGoBack) accent else dim.copy(alpha = 0.3f))
-        }
-        IconButton(onClick = onForward, enabled = canGoForward, modifier = Modifier.weight(1f)) {
-            Icon(Icons.Default.ArrowForward, contentDescription = "Tiến",
-                tint = if (canGoForward) accent else dim.copy(alpha = 0.3f))
-        }
-        IconButton(onClick = onReload, modifier = Modifier.weight(1f)) {
-            Icon(Icons.Default.Refresh, contentDescription = "Tải lại", tint = accent)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // ← Back
+            IconButton(onClick = onBack, enabled = canGoBack, modifier = Modifier.weight(1f)) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Lùi",
+                    tint = if (canGoBack) accent else dim.copy(alpha = 0.3f),
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            // → Forward
+            IconButton(onClick = onForward, enabled = canGoForward, modifier = Modifier.weight(1f)) {
+                Icon(
+                    Icons.Default.ArrowForward,
+                    contentDescription = "Tiến",
+                    tint = if (canGoForward) accent else dim.copy(alpha = 0.3f),
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            // 🕵️ Incognito — tạo tab ẩn danh mới
+            IconButton(onClick = onNewIncognitoTab, modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "\uD83D\uDD75\uFE0F",
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(2.dp)
+                )
+            }
+            // ⬜ Tab count
+            TabCountButton(
+                count = tabCount,
+                isIncognito = isIncognito,
+                onClick = onOpenTabs,
+                modifier = Modifier.weight(1f)
+            )
+            // ⋮ Menu
+            Box(modifier = Modifier.weight(1f)) {
+                IconButton(
+                    onClick = { showMenu = true },
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "Thêm",
+                        tint = accent,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                MoreDropdownMenu(
+                    expanded = showMenu,
+                    isIncognito = isIncognito,
+                    onDismiss = { showMenu = false },
+                    onOpenHistory = { showMenu = false; onOpenHistory() },
+                    onOpenTabs = { showMenu = false; onOpenTabs() },
+                    onOpenBookmarks = { showMenu = false; onOpenBookmarks() },
+                    onReload = { showMenu = false; onReload() }
+                )
+            }
         }
     }
 }

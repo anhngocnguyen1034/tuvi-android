@@ -1,6 +1,9 @@
 package com.example.tuvi.domain.model
 
+import kotlinx.serialization.Serializable
+
 /** Input từ người dùng để tra lá số. */
+@Serializable
 data class TuViChartInput(
     val ten: String,
     val ngay: Int,
@@ -9,15 +12,19 @@ data class TuViChartInput(
     val namXem: Int,
     val gio: Int,
     val phut: Int,
-    val gioiTinh: Int   // 1 = Nam, -1 = Nữ
+    val gioiTinh: Int,   // 1 = Nam, -1 = Nữ
+    /** `true` = ngày/tháng/năm theo dương lịch; `false` = theo âm lịch (gửi API `duong_lich: false`). */
+    val duongLich: Boolean = true
 )
 
 /** Domain entity – toàn bộ lá số Tử Vi (không có annotation mạng). */
+@Serializable
 data class TuViChart(
     val thienBan: ThienBanInfo,
     val diaBan: List<CungInfo>
 )
 
+@Serializable
 data class ThienBanInfo(
     val ten: String,
     val gioiTinh: String,
@@ -46,6 +53,7 @@ data class ThienBanInfo(
     val tuoiAm: Int? = null
 )
 
+@Serializable
 data class CungInfo(
     val cungTen: String,
     val cungChu: String,
@@ -57,6 +65,7 @@ data class CungInfo(
     val triet: Boolean = false
 )
 
+@Serializable
 data class SaoInfo(
     val ten: String,
     val dacTinh: String? = "",

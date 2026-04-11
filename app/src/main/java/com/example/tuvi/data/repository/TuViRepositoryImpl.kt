@@ -22,7 +22,8 @@ class TuViRepositoryImpl(
             gio        = input.gio,
             phut       = input.phut,
             gio_sinh   = gioSinh,
-            gioi_tinh  = input.gioiTinh
+            gioi_tinh  = input.gioiTinh,
+            duong_lich = input.duongLich
         )
         return apiService.getTuVi(request).toDomain()
     }
