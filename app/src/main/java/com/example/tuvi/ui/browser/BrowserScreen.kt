@@ -1,5 +1,6 @@
 package com.example.tuvi.ui.browser
 
+import android.net.Uri
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,15 +26,9 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -104,7 +100,6 @@ fun BrowserScreen(
     val keyboard          = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope             = rememberCoroutineScope()
-    val density           = LocalDensity.current
 
     // ── Download / long-press media ───────────────────────────────────────────
     var pendingDownloadUrl by remember { mutableStateOf<String?>(null) }
@@ -125,9 +120,6 @@ fun BrowserScreen(
         onDispose { activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE) }
     }
 
-    // ── Toolbar cố định (không thu/ẩn theo cuộn WebView) ─────────────────────
-    var toolbarHeightPx by remember { mutableStateOf(0) }
-
     // BackHandler
     BackHandler(enabled = true) {
         when {
@@ -139,11 +131,9 @@ fun BrowserScreen(
         }
     }
 
-    val toolbarHeightDp = with(density) { toolbarHeightPx.toDp() }
-    val contentTopPadding = toolbarHeightDp
-
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = bgColor,
             bottomBar = {
@@ -162,96 +152,16 @@ fun BrowserScreen(
                 )
             }
         ) { padding ->
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = padding.calculateBottomPadding())
             ) {
-                // ── Vùng nội dung (đẩy xuống dưới toolbar) ───────────────────
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = contentTopPadding)
-                ) {
-                    if (activeTab?.isLoading == true) {
-                        LinearProgressIndicator(
-                            progress = { (activeTab.progress / 100f).coerceIn(0f, 1f) },
-                            modifier = Modifier.fillMaxWidth().height(2.dp),
-                            color = accentColor,
-                            trackColor = progressTrack,
-                            strokeCap = StrokeCap.Round
-                        )
-                    } else {
-                        Spacer(Modifier.height(2.dp))
-                    }
-
-                    if (activeTab?.error != null) {
-                        ErrorBanner(message = activeTab.error!!)
-                    }
-
-                    // ── Multi-WebView box với Pull-to-Refresh ─────────────────
-                    val pullState = rememberPullToRefreshState()
-                    PullToRefreshBox(
-                        isRefreshing = activeTab?.isLoading == true,
-                        onRefresh = { viewModel.reload() },
-                        state = pullState,
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        indicator = {
-                            PullToRefreshDefaults.Indicator(
-                                state = pullState,
-                                isRefreshing = activeTab?.isLoading == true,
-                                color = accentColor,
-                                containerColor = cardColor,
-                                modifier = Modifier.align(Alignment.TopCenter)
-                            )
-                        }
-                    ) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            tabs.forEach { tab ->
-                                key(tab.id) {
-                                    val isActive = tab.id == activeTabId
-                                    TabWebViewHolder(
-                                        modifier = Modifier.fillMaxSize(),
-                                        tabId = tab.id,
-                                        initialUrl = tab.url,
-                                        isActive = isActive,
-                                        isIncognito = tab.isIncognito,
-                                        config = config,
-                                        commands = viewModel.commands,
-                                        pendingLoadUrl = tab.pendingLoadUrl,
-                                        onPendingLoadConsumed = { viewModel.consumePendingLoad(tab.id) },
-                                        onPageStarted = { url -> viewModel.onPageStarted(tab.id, url) },
-                                        onPageFinished = { url, title, canBack, canFwd ->
-                                            viewModel.onPageFinished(tab.id, url, title, canBack, canFwd)
-                                        },
-                                        onProgressChanged = { viewModel.onProgressChanged(tab.id, it) },
-                                        onError = { viewModel.onReceivedError(tab.id, it) },
-                                        onLongPressMedia = { url -> pendingDownloadUrl = url },
-                                        onNavigationStateSync = { canBack, canFwd ->
-                                            viewModel.syncTabNavState(tab.id, canBack, canFwd)
-                                        },
-                                        onCaptureThumbnail = { bmp ->
-                                            viewModel.updateThumbnail(tab.id, bmp)
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // ── Toolbar + address bar — cố định phía trên ──
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.TopStart)
                         .background(bgColor)
-                        .onGloballyPositioned { coords ->
-                            if (coords.size.height > 0) toolbarHeightPx = coords.size.height
-                        }
                 ) {
-                    // TopAppBar
                     TopAppBar(
                         title = {
                             Column {
@@ -265,7 +175,7 @@ fun BrowserScreen(
                                 )
                                 if (activeTab?.url?.isNotBlank() == true) {
                                     Text(
-                                        text = activeTab.url,
+                                        text = displayUrl(activeTab.url),
                                         color = dimColor,
                                         fontSize = 11.sp,
                                         maxLines = 1,
@@ -309,7 +219,6 @@ fun BrowserScreen(
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = bgColor)
                     )
 
-                    // AddressBar
                     if (config.showAddressBar) {
                         AddressBar(
                             url = activeTab?.url ?: "",
@@ -320,6 +229,54 @@ fun BrowserScreen(
                                 viewModel.navigateTo(input)
                             }
                         )
+                    }
+                }
+
+                if (activeTab?.isLoading == true) {
+                    LinearProgressIndicator(
+                        progress = { (activeTab.progress / 100f).coerceIn(0f, 1f) },
+                        modifier = Modifier.fillMaxWidth().height(2.dp),
+                        color = accentColor,
+                        trackColor = progressTrack,
+                        strokeCap = StrokeCap.Round
+                    )
+                } else {
+                    Spacer(Modifier.height(2.dp))
+                }
+
+                if (activeTab?.error != null) {
+                    ErrorBanner(message = activeTab.error!!)
+                }
+
+                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    tabs.forEach { tab ->
+                        key(tab.id) {
+                            val isActive = tab.id == activeTabId
+                            TabWebViewHolder(
+                                modifier = Modifier.fillMaxSize(),
+                                tabId = tab.id,
+                                initialUrl = tab.url,
+                                isActive = isActive,
+                                isIncognito = tab.isIncognito,
+                                config = config,
+                                commands = viewModel.commands,
+                                pendingLoadUrl = tab.pendingLoadUrl,
+                                onPendingLoadConsumed = { viewModel.consumePendingLoad(tab.id) },
+                                onPageStarted = { url -> viewModel.onPageStarted(tab.id, url) },
+                                onPageFinished = { url, title, canBack, canFwd ->
+                                    viewModel.onPageFinished(tab.id, url, title, canBack, canFwd)
+                                },
+                                onProgressChanged = { viewModel.onProgressChanged(tab.id, it) },
+                                onError = { viewModel.onReceivedError(tab.id, it) },
+                                onLongPressMedia = { url -> pendingDownloadUrl = url },
+                                onNavigationStateSync = { canBack, canFwd ->
+                                    viewModel.syncTabNavState(tab.id, canBack, canFwd)
+                                },
+                                onCaptureThumbnail = { bmp ->
+                                    viewModel.updateThumbnail(tab.id, bmp)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -496,15 +453,43 @@ private fun MoreDropdownMenu(
 
 // ── Address bar ───────────────────────────────────────────────────────────────
 
-/** Trả về text hiển thị Chrome-style: domain khi unfocused, full URL khi focused. */
+/**
+ * Trang kết quả tìm Google: chỉ hiện từ khóa `q`, không hiện google.com/search…
+ */
+private fun googleSearchQueryForDisplay(url: String): String? {
+    return try {
+        val uri = Uri.parse(url.trim())
+        val host = uri.host?.lowercase() ?: return null
+        // Chỉ google.com / www.google.com / google.com.vn… — không khớp apis.google.com
+        if (!host.matches(Regex("^(www\\.)?google\\.[a-z.]{2,}$", RegexOption.IGNORE_CASE))) return null
+        val path = uri.path ?: return null
+        if (!path.startsWith("/search") && !path.startsWith("/m/search")) return null
+        val q = uri.getQueryParameter("q")?.trim() ?: return null
+        if (q.isEmpty()) null else q
+    } catch (_: Exception) {
+        null
+    }
+}
+
+/**
+ * Hiển thị thanh địa chỉ không có `http://` / `https://` (giống Chrome).
+ * Trang tìm Google → chỉ hiện nội dung ô tìm (tham số `q`).
+ * Các trang khác: host + path + query (đã bỏ scheme); bỏ `www.` ở đầu tên miền.
+ */
 private fun displayUrl(url: String): String {
     if (url.isBlank() || url == "about:blank") return ""
-    return try {
-        val uri = android.net.Uri.parse(url)
-        val host = uri.host ?: return url
-        // Bỏ tiền tố "www."
-        host.removePrefix("www.")
-    } catch (_: Exception) { url }
+    googleSearchQueryForDisplay(url)?.let { return it }
+    val t = url.trim()
+    val withoutScheme = when {
+        t.startsWith("https://", ignoreCase = true) -> t.substring(8)
+        t.startsWith("http://", ignoreCase = true) -> t.substring(7)
+        else -> t
+    }
+    val firstSlash = withoutScheme.indexOf('/')
+    val hostPort = if (firstSlash == -1) withoutScheme else withoutScheme.substring(0, firstSlash)
+    val rest = if (firstSlash == -1) "" else withoutScheme.substring(firstSlash)
+    val hostNoWww = if (hostPort.startsWith("www.", ignoreCase = true)) hostPort.substring(4) else hostPort
+    return hostNoWww + rest
 }
 
 @Composable
@@ -515,7 +500,7 @@ private fun AddressBar(
     onNavigate: (String) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    var editText  by remember { mutableStateOf(url) }
+    var editText  by remember { mutableStateOf(displayUrl(url)) }
 
     val bg       = if (isIncognito) IncogBg   else TuViNavy
     val cardBg   = if (isIncognito) IncogCard else TuViNavyCard
@@ -524,9 +509,10 @@ private fun AddressBar(
     val textCol  = if (isIncognito) IncogAccent else TuViIvory
     val hintCol  = if (isIncognito) IncogDim  else TuViIvoryDim
 
-    // Khi trang mới load xong (url đổi) và user không đang gõ → đồng bộ editText
+    // Mỗi khi URL tab đổi (tải trang, Back/Forward, chọn từ lịch sử…) → đồng bộ thanh tìm.
+    // Phải cập nhật cả khi đang focus: lúc focus field đang hiện editText, không phải displayUrl(url).
     androidx.compose.runtime.LaunchedEffect(url) {
-        if (!isFocused) editText = url
+        editText = displayUrl(url)
     }
 
     Row(
@@ -574,7 +560,7 @@ private fun AddressBar(
                     src.interactions.collect { interaction ->
                         when (interaction) {
                             is androidx.compose.foundation.interaction.FocusInteraction.Focus -> {
-                                editText = url
+                                editText = displayUrl(url)
                                 isFocused = true
                             }
                             is androidx.compose.foundation.interaction.FocusInteraction.Unfocus -> {

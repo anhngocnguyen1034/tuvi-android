@@ -11,6 +11,8 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.view.ViewGroup
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -61,6 +63,11 @@ private fun createWebView(
         android.webkit.WebStorage.getInstance().deleteAllData()
     }
 }
+
+private data class SwipeWebHost(
+    val swipeRefreshLayout: SwipeRefreshLayout,
+    val webView: WebView
+)
 
 /**
  * Giữ và hiển thị một WebView cho một tab cụ thể.
@@ -113,77 +120,94 @@ fun TabWebViewHolder(
         fileChooserCallbackRef.callback = null
     }
 
-    val webView = remember {
-        createWebView(context, config, isIncognito).apply {
-            webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                    onPageStarted(url ?: "")
-                }
-                override fun onPageFinished(view: WebView, url: String?) {
-                    onPageFinished(url ?: "", view.title ?: "", view.canGoBack(), view.canGoForward())
-                }
-                override fun onReceivedError(
-                    view: WebView,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?
-                ) {
-                    if (request?.isForMainFrame == true)
-                        onError(error?.description?.toString() ?: "Lỗi không xác định")
-                }
-            }
-
-            webChromeClient = object : WebChromeClient() {
-                override fun onProgressChanged(view: WebView, newProgress: Int) {
-                    onProgressChanged(newProgress)
-                }
-
-                // ── Upload file/ảnh từ web ────────────────────────────────────
-                override fun onShowFileChooser(
-                    webView: WebView,
-                    filePathCallback: android.webkit.ValueCallback<Array<Uri>>,
-                    fileChooserParams: FileChooserParams
-                ): Boolean {
-                    // Nếu có callback cũ chưa xử lý → huỷ để tránh treo
-                    fileChooserCallbackRef.callback?.onReceiveValue(null)
-                    fileChooserCallbackRef.callback = filePathCallback
-
-                    // Lấy MIME type mà web yêu cầu (vd: "image/*", "application/pdf")
-                    val acceptTypes = fileChooserParams.acceptTypes
-                    val mimeType = when {
-                        acceptTypes.isNullOrEmpty() || acceptTypes.all { it.isBlank() } -> "*/*"
-                        acceptTypes.size == 1 -> acceptTypes[0].ifBlank { "*/*" }
-                        else -> acceptTypes.filter { it.isNotBlank() }.joinToString(",")
-                    }
-                    filePickerLauncher.launch(mimeType)
-                    return true
-                }
-            }
-
-            // ── Download: web trigger (Content-Disposition attachment, blob…) ──
-            setDownloadListener(DownloadListener { url, _, _, _, _ ->
-                onLongPressMedia(url)
-            })
-
-            // ── Long-press trên ảnh / link ────────────────────────────────────
-            setOnLongClickListener {
-                val result = hitTestResult
-                val mediaUrl = when (result.type) {
-                    WebView.HitTestResult.IMAGE_TYPE,
-                    WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE -> result.extra
-                    WebView.HitTestResult.SRC_ANCHOR_TYPE        -> result.extra
-                    else -> null
-                }
-                if (!mediaUrl.isNullOrBlank()) {
-                    onLongPressMedia(mediaUrl)
-                    true
-                } else {
-                    false
-                }
-            }
-
-            loadUrl(initialUrl)
+    val host = remember {
+        val wv = createWebView(context, config, isIncognito)
+        val srl = SwipeRefreshLayout(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            addView(
+                wv,
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            )
+            setColorSchemeColors(0xFFD4AF37.toInt(), 0xFF8B7020.toInt())
+            setOnRefreshListener { wv.reload() }
         }
+
+        wv.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+                onPageStarted(url ?: "")
+            }
+            override fun onPageFinished(view: WebView, url: String?) {
+                srl.isRefreshing = false
+                onPageFinished(url ?: "", view.title ?: "", view.canGoBack(), view.canGoForward())
+            }
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                if (request?.isForMainFrame == true) {
+                    srl.isRefreshing = false
+                    onError(error?.description?.toString() ?: "Lỗi không xác định")
+                }
+            }
+        }
+
+        wv.webChromeClient = object : WebChromeClient() {
+            override fun onProgressChanged(view: WebView, newProgress: Int) {
+                onProgressChanged(newProgress)
+                if (newProgress >= 99) srl.isRefreshing = false
+            }
+
+            // ── Upload file/ảnh từ web ────────────────────────────────────────
+            override fun onShowFileChooser(
+                webView: WebView,
+                filePathCallback: android.webkit.ValueCallback<Array<Uri>>,
+                fileChooserParams: FileChooserParams
+            ): Boolean {
+                fileChooserCallbackRef.callback?.onReceiveValue(null)
+                fileChooserCallbackRef.callback = filePathCallback
+                val acceptTypes = fileChooserParams.acceptTypes
+                val mimeType = when {
+                    acceptTypes.isNullOrEmpty() || acceptTypes.all { it.isBlank() } -> "*/*"
+                    acceptTypes.size == 1 -> acceptTypes[0].ifBlank { "*/*" }
+                    else -> acceptTypes.filter { it.isNotBlank() }.joinToString(",")
+                }
+                filePickerLauncher.launch(mimeType)
+                return true
+            }
+        }
+
+        wv.setDownloadListener(DownloadListener { url, _, _, _, _ ->
+            onLongPressMedia(url)
+        })
+
+        wv.setOnLongClickListener {
+            val result = wv.hitTestResult
+            val mediaUrl = when (result.type) {
+                WebView.HitTestResult.IMAGE_TYPE,
+                WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE -> result.extra
+                WebView.HitTestResult.SRC_ANCHOR_TYPE -> result.extra
+                else -> null
+            }
+            if (!mediaUrl.isNullOrBlank()) {
+                onLongPressMedia(mediaUrl)
+                true
+            } else {
+                false
+            }
+        }
+
+        wv.loadUrl(initialUrl)
+        SwipeWebHost(srl, wv)
     }
+    val webView = host.webView
+    val swipeRefreshLayout = host.swipeRefreshLayout
 
     // Load URL theo yêu cầu từ navigateTo / lịch sử / bookmark (state-based, không bao giờ bị mất)
     LaunchedEffect(pendingLoadUrl) {
@@ -230,7 +254,10 @@ fun TabWebViewHolder(
                             webView.canGoForward() -> webView.goForward()
                             !cmd.fallbackUrl.isNullOrBlank() -> webView.loadUrl(cmd.fallbackUrl)
                         }
-                        is BrowserCommand.Reload -> webView.reload()
+                        is BrowserCommand.Reload -> {
+                            swipeRefreshLayout.isRefreshing = true
+                            webView.reload()
+                        }
                         is BrowserCommand.Stop -> webView.stopLoading()
                     }
                 }
@@ -253,17 +280,17 @@ fun TabWebViewHolder(
                 webView.clearFormData()
                 android.webkit.CookieManager.getInstance().removeSessionCookies(null)
             }
+            (webView.parent as? ViewGroup)?.removeView(webView)
             webView.destroy()
         }
     }
 
-    // Ẩn (INVISIBLE) thay vì hủy tab không active — giữ nguyên WebView trong bộ nhớ
-    // cùng trạng thái scroll, form data, back/forward stack (đúng theo Chrome-style tab)
+    // SwipeRefreshLayout: kéo xuống khi trang ở đầu = refresh (WebView không gửi gesture lên Compose)
     AndroidView(
-        factory = { webView },
+        factory = { swipeRefreshLayout },
         modifier = modifier,
-        update = { wv ->
-            wv.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
+        update = { srl ->
+            srl.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
         }
     )
 }

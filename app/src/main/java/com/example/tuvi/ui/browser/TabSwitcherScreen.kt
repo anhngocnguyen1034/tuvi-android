@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -97,31 +99,8 @@ fun TabSwitcherOverlay(
         enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
         exit  = slideOutVertically(targetOffsetY = { it }) + fadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize().background(bg)) {
+        Box(modifier = Modifier.fillMaxSize().background(bg).statusBarsPadding().navigationBarsPadding()) {
             Column(modifier = Modifier.fillMaxSize()) {
-
-                // ── Panel selector ──
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(cardBg)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    PanelTab(
-                        label = "${normalTabs.size} Thường",
-                        selected = !showIncognitoList,
-                        accent = TuViGold,
-                        onClick = { onSwitchPanel(false) }
-                    )
-                    PanelTab(
-                        label = "${incognitoTabs.size} Ẩn danh \uD83D\uDD75\uFE0F",
-                        selected = showIncognitoList,
-                        accent = IncogSelected,
-                        onClick = { onSwitchPanel(true) }
-                    )
-                }
-
                 // ── Header ──
                 Row(
                     modifier = Modifier

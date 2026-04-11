@@ -1,5 +1,6 @@
 package com.example.tuvi
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -9,12 +10,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,7 +64,24 @@ fun TuViApp() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    NavHost(navController = navController, startDestination = "home") {
+    // Edge-to-edge: icon đồng hồ / pin… dùng màu sáng trên nền app tối (đọc được)
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = false
+                isAppearanceLightNavigationBars = false
+            }
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            startDestination = "home"
+        ) {
         composable("home") {
             HomeScreen(
                 onOpenTuVi = { navController.navigate("input") },
@@ -216,6 +237,7 @@ fun TuViApp() {
                 },
                 viewModel = savedVm
             )
+        }
         }
     }
 }

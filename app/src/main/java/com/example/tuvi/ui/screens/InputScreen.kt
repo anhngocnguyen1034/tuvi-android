@@ -319,6 +319,8 @@ fun InputScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = BgGradient)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         if (onBack != null) {
             androidx.compose.material3.IconButton(

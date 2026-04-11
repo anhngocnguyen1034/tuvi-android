@@ -71,6 +71,9 @@ dependencies {
     
     // Navigation
     implementation(libs.androidx.navigation.compose)
+
+    // WebView: pull-to-refresh (Compose PullToRefresh không nhận gesture từ WebView)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     
     // Lifecycle & ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
