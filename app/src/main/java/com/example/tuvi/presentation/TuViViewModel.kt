@@ -11,6 +11,7 @@ import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TuViViewModel(
@@ -22,6 +23,14 @@ class TuViViewModel(
 
     private val _lastInput = MutableStateFlow<TuViChartInput?>(null)
     val lastInput: StateFlow<TuViChartInput?> = _lastInput
+
+    /** Lá số mở từ mục đã lưu → coi như đã có trong DB (icon ic_saved). */
+    private val _openedFromSavedLibrary = MutableStateFlow(false)
+    val openedFromSavedLibrary: StateFlow<Boolean> = _openedFromSavedLibrary.asStateFlow()
+
+    /** Id bản ghi trong `saved_charts`; null = chưa lưu DB (icon ic_save). */
+    private val _savedChartId = MutableStateFlow<Long?>(null)
+    val savedChartId: StateFlow<Long?> = _savedChartId.asStateFlow()
 
     fun getTuVi(
         ten: String,
@@ -36,6 +45,8 @@ class TuViViewModel(
     ) {
         val input = TuViChartInput(ten, ngay, thang, nam, namXem, gio, phut, gioiTinh, duongLich)
         _lastInput.value = input
+        _openedFromSavedLibrary.value = false
+        _savedChartId.value = null
         viewModelScope.launch {
             _uiState.value = TuViUiState.Loading
             getTuViChart(input)
@@ -46,11 +57,25 @@ class TuViViewModel(
 
     fun resetState() {
         _uiState.value = TuViUiState.Idle
+        _openedFromSavedLibrary.value = false
+        _savedChartId.value = null
     }
 
-    fun loadSavedChart(input: TuViChartInput, chart: TuViChart) {
+    fun loadSavedChart(input: TuViChartInput, chart: TuViChart, savedChartId: Long) {
         _lastInput.value = input
+        _openedFromSavedLibrary.value = true
+        _savedChartId.value = savedChartId
         _uiState.value = TuViUiState.Success(chart)
+    }
+
+    fun setSavedChartId(id: Long?) {
+        _savedChartId.value = id
+    }
+
+    /** Sau khi xóa khỏi thư viện: bỏ cờ “mở từ đã lưu”. */
+    fun markChartRemovedFromLibrary() {
+        _savedChartId.value = null
+        _openedFromSavedLibrary.value = false
     }
 
     companion object {

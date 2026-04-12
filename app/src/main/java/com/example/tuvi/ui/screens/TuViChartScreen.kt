@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,23 +60,21 @@ import java.io.FileOutputStream
 import java.text.Normalizer
 import com.example.tuvi.R
 import com.example.tuvi.ui.screens.SaveChartDialog
-// ─── Bảng màu Tử Vi (khớp với InputScreen) ───────────────────────────────────
-private val ChartDeepBg    = Color(0xFF0F0510)
-private val ChartNavy      = Color(0xFF12082A)
-private val ChartCardBg    = Color(0xFF1C0D30)
-private val ChartGold      = Color(0xFFD4AF37)
-private val ChartGoldDim   = Color(0xFF8B7020)
-private val ChartIvory     = Color(0xFFF5E6C8)
-private val ChartIvoryDim  = Color(0xFFBBA080)
-private val ChartRed       = Color(0xFF8B0000)
-private val ChartBorderGold= Color(0xFF5C3D0A)
-
-// ─── Màu Ngũ Hành ─────────────────────────────────────────────────────────────
-private val HanhThuy = Color(0xFF4A90D9)   // Thủy  – xanh dương
-private val HanhHoa  = Color(0xFFE84040)   // Hỏa   – đỏ
-private val HanhKim  = Color(0xFFE8D5A3)   // Kim   – vàng kim / trắng ngà
-private val HanhMoc  = Color(0xFF4CAF50)   // Mộc   – xanh lá
-private val HanhTho  = Color(0xFFD4A017)   // Thổ   – vàng nâu
+import com.example.tuvi.ui.theme.ChartBorderGold
+import com.example.tuvi.ui.theme.ChartCardBg
+import com.example.tuvi.ui.theme.ChartDeepBg
+import com.example.tuvi.ui.theme.ChartGold
+import com.example.tuvi.ui.theme.ChartGoldDim
+import com.example.tuvi.ui.theme.ChartIvory
+import com.example.tuvi.ui.theme.ChartIvoryDim
+import com.example.tuvi.ui.theme.ChartLabelWeekOther
+import com.example.tuvi.ui.theme.ChartNavy
+import com.example.tuvi.ui.theme.ChartRed
+import com.example.tuvi.ui.theme.HanhHoa
+import com.example.tuvi.ui.theme.HanhKim
+import com.example.tuvi.ui.theme.HanhMoc
+import com.example.tuvi.ui.theme.HanhTho
+import com.example.tuvi.ui.theme.HanhThuy
 
 // ─── Ánh xạ tên sao → Ngũ Hành ───────────────────────────────────────────────
 private val thuySet = setOf(
@@ -277,13 +274,19 @@ private fun saveBitmapToGallery(context: android.content.Context, bitmap: Bitmap
 fun TuViChartScreen(
     data  : TuViChart,
     onBack: () -> Unit,
+    /** Id bản ghi DB; khác null → icon ic_saved, bấm để huỷ lưu (có dialog). */
+    savedChartId: Long? = null,
     /** Lưu lá số vào DB (nhóm); null = ẩn nút Lưu. */
-    onSave: ((String) -> Unit)? = null
+    onSave: ((String, (Boolean) -> Unit) -> Unit)? = null,
+    /** Xóa bản ghi đã lưu (id); null = không cho huỷ lưu. */
+    onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null
 ) {
     val context      = LocalContext.current
     val scope        = rememberCoroutineScope()
     val graphicsLayer = rememberGraphicsLayer()
     var showSaveDialog by remember { mutableStateOf(false) }
+    var showUnsaveDialog by remember { mutableStateOf(false) }
+    val inLibrary = savedChartId != null
 
     Scaffold(
         containerColor = ChartDeepBg,
@@ -317,10 +320,20 @@ fun TuViChartScreen(
                 },
                 actions = {
                     if (onSave != null) {
-                        IconButton(onClick = { showSaveDialog = true }) {
+                        IconButton(
+                            onClick = {
+                                if (inLibrary && onRemoveSave != null) {
+                                    showUnsaveDialog = true
+                                } else {
+                                    showSaveDialog = true
+                                }
+                            }
+                        ) {
                             Icon(
-                                Icons.Default.Star,
-                                contentDescription = "Lưu lá số",
+                                painter = painterResource(
+                                    if (inLibrary) R.drawable.ic_saved else R.drawable.ic_save
+                                ),
+                                contentDescription = if (inLibrary) "Đã lưu — huỷ lưu" else "Lưu lá số",
                                 tint = ChartGold
                             )
                         }
@@ -352,12 +365,45 @@ fun TuViChartScreen(
         }
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
+            if (showUnsaveDialog && savedChartId != null && onRemoveSave != null) {
+                AlertDialog(
+                    onDismissRequest = { showUnsaveDialog = false },
+                    containerColor = ChartNavy,
+                    titleContentColor = ChartGold,
+                    textContentColor = ChartIvoryDim,
+                    title = { Text("Huỷ lưu lá số?", fontWeight = FontWeight.Bold) },
+                    text = {
+                        Text(
+                            "Lá số sẽ bị xóa khỏi danh sách đã lưu trên máy. Bạn có chắc không?",
+                            fontSize = 14.sp
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val id = savedChartId
+                                showUnsaveDialog = false
+                                if (id != null) {
+                                    onRemoveSave(id) { }
+                                }
+                            }
+                        ) {
+                            Text("Huỷ lưu", color = ChartRed, fontWeight = FontWeight.SemiBold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showUnsaveDialog = false }) {
+                            Text("Không", color = ChartIvory)
+                        }
+                    }
+                )
+            }
             if (showSaveDialog && onSave != null) {
                 SaveChartDialog(
                     onDismiss = { showSaveDialog = false },
                     onConfirm = { nhom ->
-                        onSave(nhom)
                         showSaveDialog = false
+                        onSave(nhom) { }
                     }
                 )
             }
@@ -874,7 +920,7 @@ fun BoxScope.TuKhoiView(text: String, alignment: Alignment) {
         modifier = Modifier
             .align(alignment)
             .background(
-                color = if (text == "Tuần") ChartRed else Color(0xFF2E1B6B),
+                color = if (text == "Tuần") ChartRed else ChartLabelWeekOther,
                 shape = RoundedCornerShape(2.dp)
             )
             .padding(horizontal = 3.dp, vertical = 1.dp)
