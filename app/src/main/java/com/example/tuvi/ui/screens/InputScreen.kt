@@ -9,6 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,9 +43,10 @@ import com.example.tuvi.ui.theme.*
 import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
+import com.example.tuvi.R
 
 // ── Palette shortcuts ──────────────────────────────────────────────────
-private val BgGradient = Brush.verticalGradient(listOf(TuViNavy, Color(0xFF071330)))
+private fun inputScreenBgBrush() = Brush.verticalGradient(listOf(TuViNavy, InputBgGradientBottom))
 private val CardBorder = Brush.linearGradient(listOf(TuViGold, TuViGoldDark, TuViGold))
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -52,7 +55,9 @@ private val CardBorder = Brush.linearGradient(listOf(TuViGold, TuViGoldDark, TuV
 private fun GoldDivider() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = TuViDivider, thickness = 1.dp)
         Text(
@@ -86,7 +91,10 @@ private fun SectionCard(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 private fun FieldLabel(text: String, icon: ImageVector? = null) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, tint = TuViGold, modifier = Modifier.size(16.dp))
         }
@@ -143,6 +151,68 @@ private fun TuViDropdownBox(
     }
 }
 
+/** Dialog chọn năm xem — tránh ExposedDropdown trong verticalScroll (hay bị khựng / chạm lỗi). */
+@Composable
+private fun ViewYearPickerDialog(
+    selectedYear: Int,
+    minYear: Int,
+    maxYear: Int,
+    onYearSelected: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val years = remember(minYear, maxYear) { (maxYear downTo minYear).toList() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = TuViNavyCard,
+        titleContentColor = TuViGold,
+        textContentColor = TuViIvory,
+        title = {
+            Text(
+                "Chọn năm xem lá số",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                letterSpacing = 0.5.sp
+            )
+        },
+        text = {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 360.dp)
+            ) {
+                items(years, key = { it }) { y ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (y == selectedYear) TuViGold.copy(alpha = 0.22f) else TuViNavyLight
+                            )
+                            .clickable {
+                                onYearSelected(y)
+                                onDismiss()
+                            }
+                    ) {
+                        Text(
+                            text = y.toString(),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                            color = if (y == selectedYear) TuViGold else TuViIvory,
+                            fontSize = 17.sp,
+                            fontWeight = if (y == selectedYear) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Đóng", color = TuViIvoryDim)
+            }
+        }
+    )
+}
+
 // ── Custom Tử Vi DatePickerDialog ──────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -188,24 +258,24 @@ fun TuViDatePickerDialog(
             }
         },
         colors = DatePickerDefaults.colors(
-            containerColor            = Color(0xFF12082A),          // nền dialog tím đen
-            titleContentColor         = TuViGold,
-            headlineContentColor      = TuViGold,
-            weekdayContentColor       = TuViIvoryDim,
-            subheadContentColor       = TuViIvoryDim,
-            navigationContentColor    = TuViGold,
-            yearContentColor          = TuViIvory,
-            currentYearContentColor   = TuViGold,
-            selectedYearContentColor  = Color(0xFF12082A),
-            selectedYearContainerColor= TuViGold,
-            dayContentColor           = TuViIvory,
-            selectedDayContentColor   = Color(0xFF12082A),
+            containerColor = InputDatePickerSurface,
+            titleContentColor = TuViGold,
+            headlineContentColor = TuViGold,
+            weekdayContentColor = TuViIvoryDim,
+            subheadContentColor = TuViIvoryDim,
+            navigationContentColor = TuViGold,
+            yearContentColor = TuViIvory,
+            currentYearContentColor = TuViGold,
+            selectedYearContentColor = InputDatePickerSurface,
+            selectedYearContainerColor = TuViGold,
+            dayContentColor = TuViIvory,
+            selectedDayContentColor = InputDatePickerSurface,
             selectedDayContainerColor = TuViGold,
-            todayContentColor         = TuViGold,
-            todayDateBorderColor      = TuViGold,
-            disabledDayContentColor   = TuViIvoryDim.copy(alpha = 0.35f),
+            todayContentColor = TuViGold,
+            todayDateBorderColor = TuViGold,
+            disabledDayContentColor = TuViIvoryDim.copy(alpha = 0.35f),
             dayInSelectionRangeContainerColor = TuViGold.copy(alpha = 0.2f),
-            dayInSelectionRangeContentColor   = TuViIvory,
+            dayInSelectionRangeContentColor = TuViIvory,
         ),
         shape = RoundedCornerShape(20.dp),
     ) {
@@ -244,24 +314,24 @@ fun TuViDatePickerDialog(
             },
             showModeToggle = false,
             colors = DatePickerDefaults.colors(
-                containerColor            = Color(0xFF12082A),
-                titleContentColor         = TuViGold,
-                headlineContentColor      = TuViGold,
-                weekdayContentColor       = TuViIvoryDim,
-                subheadContentColor       = TuViIvoryDim,
-                navigationContentColor    = TuViGold,
-                yearContentColor          = TuViIvory,
-                currentYearContentColor   = TuViGold,
-                selectedYearContentColor  = Color(0xFF12082A),
-                selectedYearContainerColor= TuViGold,
-                dayContentColor           = TuViIvory,
-                selectedDayContentColor   = Color(0xFF12082A),
+                containerColor = InputDatePickerSurface,
+                titleContentColor = TuViGold,
+                headlineContentColor = TuViGold,
+                weekdayContentColor = TuViIvoryDim,
+                subheadContentColor = TuViIvoryDim,
+                navigationContentColor = TuViGold,
+                yearContentColor = TuViIvory,
+                currentYearContentColor = TuViGold,
+                selectedYearContentColor = InputDatePickerSurface,
+                selectedYearContainerColor = TuViGold,
+                dayContentColor = TuViIvory,
+                selectedDayContentColor = InputDatePickerSurface,
                 selectedDayContainerColor = TuViGold,
-                todayContentColor         = TuViGold,
-                todayDateBorderColor      = TuViGold,
-                disabledDayContentColor   = TuViIvoryDim.copy(alpha = 0.35f),
+                todayContentColor = TuViGold,
+                todayDateBorderColor = TuViGold,
+                disabledDayContentColor = TuViIvoryDim.copy(alpha = 0.35f),
                 dayInSelectionRangeContainerColor = TuViGold.copy(alpha = 0.2f),
-                dayInSelectionRangeContentColor   = TuViIvory,
+                dayInSelectionRangeContentColor = TuViIvory,
             )
         )
     }
@@ -278,11 +348,15 @@ fun InputScreen(
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     val minBirthYear = 1900
     val maxBirthYear = currentYear + 1
+    val minViewYear = 1900
+    val maxViewYear = 2050
     var name by remember { mutableStateOf("Anhnn") }
     var day by remember { mutableIntStateOf(10) }
     var month by remember { mutableIntStateOf(3) }
     var year by remember { mutableIntStateOf(2004) }
-    var viewYearText by remember { mutableStateOf(currentYear.toString()) }
+    var viewYear by remember {
+        mutableIntStateOf(currentYear.coerceIn(minViewYear, maxViewYear))
+    }
     var hour by remember { mutableIntStateOf(7) }
     var minute by remember { mutableIntStateOf(30) }
     var gender by remember { mutableIntStateOf(1) }
@@ -303,22 +377,32 @@ fun InputScreen(
 
     var hourExpanded by remember { mutableStateOf(false) }
     var minExpanded by remember { mutableStateOf(false) }
+    var showViewYearPicker by remember { mutableStateOf(false) }
 
     // Dialog chọn ngày (dương lịch)
     if (showDatePicker && duongLich) {
         TuViDatePickerDialog(
-            initialYear  = year,
+            initialYear = year,
             initialMonth = month,
-            initialDay   = day,
+            initialDay = day,
             onDateSelected = { y, m, d -> year = y; month = m; day = d },
-            onDismiss    = { showDatePicker = false }
+            onDismiss = { showDatePicker = false }
+        )
+    }
+    if (showViewYearPicker) {
+        ViewYearPickerDialog(
+            selectedYear = viewYear,
+            minYear = minViewYear,
+            maxYear = maxViewYear,
+            onYearSelected = { viewYear = it },
+            onDismiss = { showViewYearPicker = false }
         )
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = BgGradient)
+            .background(brush = inputScreenBgBrush())
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -360,14 +444,6 @@ fun InputScreen(
                     letterSpacing = 4.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "NHẬP THÔNG TIN LÁ SỐ",
-                    color = TuViIvoryDim,
-                    fontSize = 12.sp,
-                    letterSpacing = 2.sp,
-                    fontStyle = FontStyle.Italic
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 GoldDivider()
             }
 
@@ -378,7 +454,11 @@ fun InputScreen(
                     value = name,
                     onValueChange = { name = it },
                     placeholder = {
-                        Text("Nhập họ tên đầy đủ…", color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 14.sp)
+                        Text(
+                            "Nhập họ tên đầy đủ…",
+                            color = TuViIvoryDim.copy(alpha = 0.5f),
+                            fontSize = 14.sp
+                        )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = TuViIvory,
@@ -396,7 +476,7 @@ fun InputScreen(
 
             // ── Ngày sinh (dương / âm) ──
             SectionCard {
-                FieldLabel("NGÀY SINH", Icons.Default.MoreVert)
+                FieldLabel("NGÀY SINH")
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -431,7 +511,10 @@ fun InputScreen(
                         onClick = { showDatePicker = true },
                         colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
                         shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, TuViGold.copy(alpha = 0.7f)),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            TuViGold.copy(alpha = 0.7f)
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
@@ -442,13 +525,6 @@ fun InputScreen(
                             letterSpacing = 1.sp
                         )
                     }
-                    Text(
-                        text = "Nhấn để chọn ngày dương lịch",
-                        color = TuViIvoryDim.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
                 } else {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -525,9 +601,10 @@ fun InputScreen(
                 }
             }
 
-            // ── Giờ sinh ──
+
+            // Giờ sinh
             SectionCard {
-                FieldLabel("GIỜ SINH", Icons.Default.Edit)
+                FieldLabel("GIỜ SINH")
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -584,7 +661,12 @@ fun InputScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("☽", color = TuViGold, fontSize = 18.sp)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_time),
+                        contentDescription = null,
+                        tint = TuViGold,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Column {
                         Text(
                             text = "Giờ địa chi",
@@ -602,7 +684,6 @@ fun InputScreen(
                 }
             }
 
-            // ── Giới tính ──
             SectionCard {
                 FieldLabel("GIỚI TÍNH")
                 Row(
@@ -610,13 +691,15 @@ fun InputScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     GenderButton(
-                        label = "Nam ♂",
+                        label = "Nam",
+                        icon = R.drawable.ic_male,
                         selected = gender == 1,
                         onClick = { gender = 1 },
                         modifier = Modifier.weight(1f)
                     )
                     GenderButton(
-                        label = "Nữ ♀",
+                        label = "Nữ",
+                        icon = R.drawable.ic_female,
                         selected = gender == -1,
                         onClick = { gender = -1 },
                         modifier = Modifier.weight(1f)
@@ -627,32 +710,42 @@ fun InputScreen(
             // ── Năm xem ──
             SectionCard {
                 FieldLabel("NĂM XEM")
-                OutlinedTextField(
-                    value = viewYearText,
-                    onValueChange = { input ->
-                        viewYearText = input.filter { it.isDigit() }.take(4)
-                    },
-                    placeholder = {
-                        Text(
-                            "Năm hiện tại",
-                            color = TuViIvoryDim.copy(alpha = 0.5f),
-                            fontSize = 14.sp
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TuViIvory,
-                        unfocusedTextColor = TuViIvory,
-                        focusedBorderColor = TuViGold,
-                        unfocusedBorderColor = TuViDivider,
-                        focusedLabelColor = TuViGold,
-                        cursorColor = TuViGold,
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedTextField(
+                        value = viewYear.toString(),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = {
+                            Text(
+                                "Năm xem lá số",
+                                color = TuViIvoryDim,
+                                fontSize = 12.sp
+                            )
+                        },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = false)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = TuViIvory,
+                            unfocusedTextColor = TuViIvory,
+                            focusedBorderColor = TuViGold,
+                            unfocusedBorderColor = TuViDivider,
+                            focusedLabelColor = TuViGold,
+                            focusedTrailingIconColor = TuViGold,
+                            unfocusedTrailingIconColor = TuViIvoryDim
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Box(
+                        Modifier
+                            .matchParentSize()
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable { showViewYearPicker = true }
+                    )
+                }
                 Text(
-                    text = "Mặc định năm hiện tại theo lịch máy",
+                    text = "Chọn năm từ $minViewYear đến $maxViewYear (mặc định: năm hiện tại)",
                     color = TuViIvoryDim.copy(alpha = 0.6f),
                     fontSize = 11.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -665,7 +758,6 @@ fun InputScreen(
             // ── Submit ──
             Button(
                 onClick = {
-                    val viewYear = viewYearText.toIntOrNull() ?: currentYear
                     onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich)
                 },
                 enabled = name.isNotBlank(),
@@ -705,13 +797,13 @@ fun InputScreen(
 // Mỗi quẻ có 3 vạch: vạch liên (dương ─) hoặc vạch đứt (âm - -)
 // true = vạch liên (dương), false = vạch đứt (âm)
 private val baguaTrigramLines = listOf(
-    listOf(true,  true,  true ),  // ☰ Càn   (Trời)
-    listOf(true,  true,  false),  // ☱ Đoài  (Đầm)
-    listOf(true,  false, true ),  // ☲ Ly    (Lửa)
-    listOf(true,  false, false),  // ☳ Chấn  (Sấm)
-    listOf(false, true,  true ),  // ☴ Tốn   (Gió)
-    listOf(false, true,  false),  // ☵ Khảm  (Nước)
-    listOf(false, false, true ),  // ☶ Cấn   (Núi)
+    listOf(true, true, true),  // ☰ Càn   (Trời)
+    listOf(true, true, false),  // ☱ Đoài  (Đầm)
+    listOf(true, false, true),  // ☲ Ly    (Lửa)
+    listOf(true, false, false),  // ☳ Chấn  (Sấm)
+    listOf(false, true, true),  // ☴ Tốn   (Gió)
+    listOf(false, true, false),  // ☵ Khảm  (Nước)
+    listOf(false, false, true),  // ☶ Cấn   (Núi)
     listOf(false, false, false)   // ☷ Khôn  (Đất)
 )
 
@@ -719,38 +811,38 @@ private val baguaNames = listOf("☰", "☱", "☲", "☳", "☴", "☵", "☶",
 
 @Composable
 fun BaguaDecoration(modifier: Modifier = Modifier) {
-    val goldColor   = TuViGold
+    val goldColor = TuViGold
     val goldDimColor = TuViGoldDark
-    val bgColor     = TuViNavy
-    val redColor    = Color(0xFF8B0000)
+    val bgColor = TuViNavy
+    val redColor = InputChartRed
 
     Canvas(modifier = modifier) {
         val cx = size.width / 2f
         val cy = size.height / 2f
-        val outerR   = size.minDimension / 2f
-        val innerR   = outerR * 0.58f
+        val outerR = size.minDimension / 2f
+        val innerR = outerR * 0.58f
         val lineAreaW = outerR * 0.28f  // vùng vẽ vạch quẻ (giữa innerR và outerR)
-        val lineR     = (innerR + outerR) / 2f // tâm vùng vạch
+        val lineR = (innerR + outerR) / 2f // tâm vùng vạch
 
         // 1. Vòng ngoài viền vàng
         drawCircle(
-            color  = goldColor,
+            color = goldColor,
             radius = outerR - 1f,
             center = Offset(cx, cy),
-            style  = Stroke(width = 2.5f)
+            style = Stroke(width = 2.5f)
         )
 
         // 2. Vòng trong phân cách
         drawCircle(
-            color  = goldDimColor.copy(alpha = 0.5f),
+            color = goldDimColor.copy(alpha = 0.5f),
             radius = innerR,
             center = Offset(cx, cy),
-            style  = Stroke(width = 1.2f)
+            style = Stroke(width = 1.2f)
         )
 
         // 3. Nền vòng giữa (giữa innerR và outerR)
         drawCircle(
-            color  = redColor.copy(alpha = 0.12f),
+            color = redColor.copy(alpha = 0.12f),
             radius = (innerR + outerR) / 2f + lineAreaW / 2f,
             center = Offset(cx, cy)
         )
@@ -762,18 +854,18 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
             val cos = cos(angleRad).toFloat()
             val sin = sin(angleRad).toFloat()
             drawLine(
-                color       = goldDimColor.copy(alpha = 0.45f),
-                start       = Offset(cx + innerR * cos, cy + innerR * sin),
-                end         = Offset(cx + outerR * cos, cy + outerR * sin),
+                color = goldDimColor.copy(alpha = 0.45f),
+                start = Offset(cx + innerR * cos, cy + innerR * sin),
+                end = Offset(cx + outerR * cos, cy + outerR * sin),
                 strokeWidth = 1f
             )
         }
 
         // 5. Vẽ 3 vạch của từng quẻ
-        val lineLen      = lineAreaW * 0.75f  // độ dài nửa vạch liên
-        val gapHalf      = lineLen * 0.18f    // khoảng hở giữa 2 đoạn vạch đứt
-        val lineSpacing  = lineAreaW * 0.22f  // khoảng cách giữa 3 vạch
-        val lineStroke   = outerR * 0.04f
+        val lineLen = lineAreaW * 0.75f  // độ dài nửa vạch liên
+        val gapHalf = lineLen * 0.18f    // khoảng hở giữa 2 đoạn vạch đứt
+        val lineSpacing = lineAreaW * 0.22f  // khoảng cách giữa 3 vạch
+        val lineStroke = outerR * 0.04f
 
         for (i in 0 until 8) {
             val centerAngleDeg = i * 45.0 + 22.5  // giữa khe phân cách
@@ -792,23 +884,23 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
                     if (lines[j]) {
                         // Vạch liên (dương) — một đường
                         drawLine(
-                            color       = goldColor,
-                            start       = Offset(-lineLen, yOff),
-                            end         = Offset(lineLen, yOff),
+                            color = goldColor,
+                            start = Offset(-lineLen, yOff),
+                            end = Offset(lineLen, yOff),
                             strokeWidth = lineStroke
                         )
                     } else {
                         // Vạch đứt (âm) — hai đoạn
                         drawLine(
-                            color       = goldColor,
-                            start       = Offset(-lineLen, yOff),
-                            end         = Offset(-gapHalf, yOff),
+                            color = goldColor,
+                            start = Offset(-lineLen, yOff),
+                            end = Offset(-gapHalf, yOff),
                             strokeWidth = lineStroke
                         )
                         drawLine(
-                            color       = goldColor,
-                            start       = Offset(gapHalf, yOff),
-                            end         = Offset(lineLen, yOff),
+                            color = goldColor,
+                            start = Offset(gapHalf, yOff),
+                            end = Offset(lineLen, yOff),
                             strokeWidth = lineStroke
                         )
                     }
@@ -817,8 +909,8 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
         }
 
         // 6. Vòng tròn âm dương ở giữa — vẽ bằng nativeCanvas để dùng drawText
-        val yinYangR  = innerR * 0.62f
-        val halfR     = yinYangR / 2f
+        val yinYangR = innerR * 0.62f
+        val halfR = yinYangR / 2f
         val paint = android.graphics.Paint().apply {
             isAntiAlias = true
         }
@@ -855,13 +947,13 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
     }
 }
 
-// ── Gender pill button ─────────────────────────────────────────────────
 @Composable
 private fun GenderButton(
     label: String,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: Int
 ) {
     val bgColor by animateColorAsState(
         targetValue = if (selected) TuViGold else TuViNavyLight,
@@ -884,12 +976,25 @@ private fun GenderButton(
             .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = label,
-            color = textColor,
-            fontSize = 15.sp,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-            letterSpacing = 0.5.sp
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = label,
+                modifier = Modifier.size(18.dp),
+                tint = textColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = label,
+                color = textColor,
+                fontSize = 15.sp,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                letterSpacing = 0.5.sp
+            )
+        }
     }
 }
