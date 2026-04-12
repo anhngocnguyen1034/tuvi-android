@@ -50,6 +50,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tuvi.ui.theme.IncognitoBg
+import com.example.tuvi.ui.theme.IncognitoCard
+import com.example.tuvi.ui.theme.IncognitoDimDark
+import com.example.tuvi.ui.theme.IncognitoEmphasis
+import com.example.tuvi.ui.theme.IncognitoMuted
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -59,13 +64,6 @@ import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViRed
-
-// ── Incognito palette ──────────────────────────────────────────────────────────
-private val IncogBg       = Color(0xFF0D0D0D)
-private val IncogCard     = Color(0xFF1C1C1C)
-private val IncogAccent   = Color(0xFF9E9E9E)
-private val IncogSelected = Color(0xFFE0E0E0)
-private val IncogDim      = Color(0xFF757575)
 
 /**
  * Màn hình quản lý tab dạng lưới 2 cột (Chrome-style).
@@ -90,9 +88,9 @@ fun TabSwitcherOverlay(
     val normalTabs    = tabs.filter { !it.isIncognito }
     val incognitoTabs = tabs.filter { it.isIncognito }
 
-    val bg       = if (showIncognitoList) IncogBg    else TuViNavy
-    val cardBg   = if (showIncognitoList) IncogCard  else TuViNavyCard
-    val accent   = if (showIncognitoList) IncogSelected else TuViGold
+    val bg       = if (showIncognitoList) IncognitoBg    else TuViNavy
+    val cardBg   = if (showIncognitoList) IncognitoCard  else TuViNavyCard
+    val accent   = if (showIncognitoList) IncognitoEmphasis else TuViGold
 
     AnimatedVisibility(
         visible = visible,
@@ -141,7 +139,7 @@ fun TabSwitcherOverlay(
                             Text(
                                 text = if (showIncognitoList) "Không có tab ẩn danh nào"
                                        else "Không có tab nào",
-                                color = if (showIncognitoList) IncogDim else TuViIvoryDim,
+                                color = if (showIncognitoList) IncognitoDimDark else TuViIvoryDim,
                                 fontSize = 14.sp
                             )
                         }
@@ -179,7 +177,7 @@ fun TabSwitcherOverlay(
                     FloatingActionButton(
                         onClick = if (showIncognitoList) onNewIncognitoTab else onNewTab,
                         containerColor = accent,
-                        contentColor = if (showIncognitoList) IncogBg else TuViNavy,
+                        contentColor = if (showIncognitoList) IncognitoBg else TuViNavy,
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.weight(1f).height(50.dp)
                     ) {
@@ -239,14 +237,14 @@ private fun TabCard(
     onClose: () -> Unit
 ) {
     val borderColor = if (isActive) {
-        if (isIncognito) IncogSelected else TuViGold
+        if (isIncognito) IncognitoEmphasis else TuViGold
     } else {
-        if (isIncognito) IncogCard else TuViNavyCard
+        if (isIncognito) IncognitoCard else TuViNavyCard
     }
     val borderWidth = if (isActive) 2.dp else 1.dp
-    val bgColor     = if (isIncognito) IncogCard else TuViNavyLight
-    val gradFrom    = if (isIncognito) IncogCard else TuViNavyCard
-    val gradTo      = if (isIncognito) IncogBg   else TuViNavy
+    val bgColor     = if (isIncognito) IncognitoCard else TuViNavyLight
+    val gradFrom    = if (isIncognito) IncognitoCard else TuViNavyCard
+    val gradTo      = if (isIncognito) IncognitoBg   else TuViNavy
 
     Box(
         modifier = Modifier
@@ -290,7 +288,7 @@ private fun TabCard(
                         Spacer(Modifier.height(6.dp))
                         Text(
                             text = tab.url.toDomain(),
-                            color = if (isIncognito) IncogAccent else TuViIvoryDim,
+                            color = if (isIncognito) IncognitoMuted else TuViIvoryDim,
                             fontSize = 10.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -305,7 +303,7 @@ private fun TabCard(
                             .fillMaxWidth()
                             .height(2.dp)
                             .background(
-                                (if (isIncognito) IncogSelected else TuViGold).copy(alpha = 0.6f)
+                                (if (isIncognito) IncognitoEmphasis else TuViGold).copy(alpha = 0.6f)
                             )
                     )
                 }
@@ -315,16 +313,16 @@ private fun TabCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(if (isIncognito) IncogCard else TuViNavyCard)
+                    .background(if (isIncognito) IncognitoCard else TuViNavyCard)
                     .padding(start = 8.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = tab.title.ifBlank { tab.url.toDomain() },
                     color = if (isActive) {
-                        if (isIncognito) IncogSelected else TuViGoldLight
+                        if (isIncognito) IncognitoEmphasis else TuViGoldLight
                     } else {
-                        if (isIncognito) IncogAccent else TuViIvory
+                        if (isIncognito) IncognitoMuted else TuViIvory
                     },
                     fontSize = 11.sp,
                     fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
@@ -336,7 +334,7 @@ private fun TabCard(
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(if (isIncognito) IncogBg else TuViNavyLight)
+                        .background(if (isIncognito) IncognitoBg else TuViNavyLight)
                         .clickable { onClose() },
                     contentAlignment = Alignment.Center
                 ) {
