@@ -2,30 +2,60 @@ package com.example.tuvi.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// --- Tử Vi Palette ---
-// Background / surfaces
-val TuViNavy       = Color(0xFF0D1B3E)   // deep night sky
-val TuViNavyLight  = Color(0xFF162450)   // card surface
-val TuViNavyCard   = Color(0xFF1C2D5E)   // elevated card
+// --- Tử Vi (đọc từ colors.xml qua [TuViComposeColors]) ---
+val TuViNavy: Color get() = TuViComposeColors.TuViNavy
+val TuViNavyLight: Color get() = TuViComposeColors.TuViNavyLight
+val TuViNavyCard: Color get() = TuViComposeColors.TuViNavyCard
+val TuViGold: Color get() = TuViComposeColors.TuViGold
+val TuViGoldLight: Color get() = TuViComposeColors.TuViGoldLight
+val TuViGoldDark: Color get() = TuViComposeColors.TuViGoldDark
+val TuViRed: Color get() = TuViComposeColors.TuViRed
+val TuViRedLight: Color get() = TuViComposeColors.TuViRedLight
+val TuViIvory: Color get() = TuViComposeColors.TuViIvory
+val TuViIvoryDim: Color get() = TuViComposeColors.TuViIvoryDim
+val TuViDivider: Color get() = TuViComposeColors.TuViDivider
 
-// Primary accent – warm gold
-val TuViGold       = Color(0xFFD4A843)
-val TuViGoldLight  = Color(0xFFF5CB6A)
-val TuViGoldDark   = Color(0xFFAA8020)
+// --- Input / Home ---
+val InputBgGradientBottom: Color get() = TuViComposeColors.InputBgGradientBottom
+val InputDatePickerSurface: Color get() = TuViComposeColors.InputDatePickerSurface
+val InputChartRed: Color get() = TuViComposeColors.InputChartRed
+val HomeBgGradientTop: Color get() = TuViComposeColors.HomeBgGradientTop
+val HomeBgGradientBottom: Color get() = TuViComposeColors.HomeBgGradientBottom
+val HomeCardGradientStart: Color get() = TuViComposeColors.HomeCardGradientStart
+val HomeCardGradientMid: Color get() = TuViComposeColors.HomeCardGradientMid
+val HomeCardGradientEnd: Color get() = TuViComposeColors.HomeCardGradientEnd
 
-// Secondary accent – silk crimson
-val TuViRed        = Color(0xFFC0392B)
-val TuViRedLight   = Color(0xFFE57369)
+// --- Lá số (màn chart) ---
+val ChartDeepBg: Color get() = TuViComposeColors.ChartDeepBg
+val ChartNavy: Color get() = TuViComposeColors.ChartNavy
+val ChartCardBg: Color get() = TuViComposeColors.ChartCardBg
+val ChartGold: Color get() = TuViComposeColors.ChartGold
+val ChartGoldDim: Color get() = TuViComposeColors.ChartGoldDim
+val ChartIvory: Color get() = TuViComposeColors.ChartIvory
+val ChartIvoryDim: Color get() = TuViComposeColors.ChartIvoryDim
+val ChartRed: Color get() = TuViComposeColors.ChartRed
+val ChartBorderGold: Color get() = TuViComposeColors.ChartBorderGold
+val ChartLabelWeekOther: Color get() = TuViComposeColors.ChartLabelWeekOther
 
-// Text / neutral
-val TuViIvory      = Color(0xFFF5EED8)   // primary text
-val TuViIvoryDim   = Color(0xFFC5BAA0)   // secondary / hint text
-val TuViDivider    = Color(0xFF2E4080)
+// --- Ngũ hành ---
+val HanhThuy: Color get() = TuViComposeColors.HanhThuy
+val HanhHoa: Color get() = TuViComposeColors.HanhHoa
+val HanhKim: Color get() = TuViComposeColors.HanhKim
+val HanhMoc: Color get() = TuViComposeColors.HanhMoc
+val HanhTho: Color get() = TuViComposeColors.HanhTho
 
-// Legacy references kept so Theme.kt still compiles
-val Purple80       = TuViGoldLight
-val PurpleGrey80   = TuViIvoryDim
-val Pink80         = TuViRedLight
-val Purple40       = TuViGold
-val PurpleGrey40   = TuViNavyLight
-val Pink40         = TuViRed
+// --- Ẩn danh (browser / tab switcher) ---
+val IncognitoBg: Color get() = TuViComposeColors.IncognitoBg
+val IncognitoCard: Color get() = TuViComposeColors.IncognitoCard
+val IncognitoEmphasis: Color get() = TuViComposeColors.IncognitoEmphasis
+val IncognitoMuted: Color get() = TuViComposeColors.IncognitoMuted
+val IncognitoDivider: Color get() = TuViComposeColors.IncognitoDivider
+val IncognitoDimDark: Color get() = TuViComposeColors.IncognitoDimDark
+
+// Legacy MaterialTheme bridge (Theme.kt)
+val Purple80 get() = TuViGoldLight
+val PurpleGrey80 get() = TuViIvoryDim
+val Pink80 get() = TuViRedLight
+val Purple40 get() = TuViGold
+val PurpleGrey40 get() = TuViNavyLight
+val Pink40 get() = TuViRed

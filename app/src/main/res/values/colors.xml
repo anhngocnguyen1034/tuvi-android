@@ -1,10 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- Chế độ sáng (ban ngày): nền sáng, chữ tối, giữ vàng đỏ làm điểm nhấn -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="tuvi_navy">#FFF2EFE8</color>
+    <color name="tuvi_navy_light">#FFE8E4DA</color>
+    <color name="tuvi_navy_card">#FFFFFFFF</color>
+
+    <color name="tuvi_gold">#FFB8860B</color>
+    <color name="tuvi_gold_light">#FFD4A843</color>
+    <color name="tuvi_gold_dark">#FF8B6914</color>
+    <color name="tuvi_red">#FFC0392B</color>
+    <color name="tuvi_red_light">#FFE57369</color>
+
+    <color name="tuvi_ivory">#FF1C2238</color>
+    <color name="tuvi_ivory_dim">#FF4A5168</color>
+    <color name="tuvi_divider">#FFC8C2B8</color>
+
+    <color name="input_bg_gradient_bottom">#FFE5E0D6</color>
+    <color name="input_date_picker_surface">#FFFFFFFF</color>
+    <color name="input_chart_red">#FF8B0000</color>
+
+    <color name="home_bg_gradient_top">#FFF8F4EC</color>
+    <color name="home_bg_gradient_bottom">#FFE8E2D6</color>
+    <color name="home_card_gradient_start">#FFFFFFFF</color>
+    <color name="home_card_gradient_mid">#FFF0EBE3</color>
+    <color name="home_card_gradient_end">#FFE4DDD2</color>
+
+    <color name="chart_deep_bg">#FFF0ECF5</color>
+    <color name="chart_navy">#FFF5F1FA</color>
+    <color name="chart_card_bg">#FFFFFFFF</color>
+    <color name="chart_gold">#FFB8860B</color>
+    <color name="chart_gold_dim">#FF8B6914</color>
+    <color name="chart_ivory">#FF1E1A24</color>
+    <color name="chart_ivory_dim">#FF5A5660</color>
+    <color name="chart_red">#FF8B0000</color>
+    <color name="chart_border_gold">#FFD4C4A8</color>
+    <color name="chart_label_week_other">#FFE0D8F0</color>
+
+    <color name="hanh_thuy">#FF2E6BB5</color>
+    <color name="hanh_hoa">#FFD32F2F</color>
+    <color name="hanh_kim">#FFB8956A</color>
+    <color name="hanh_moc">#FF2E7D32</color>
+    <color name="hanh_tho">#FFB28704</color>
+
+    <color name="incognito_bg">#FFF2F2F2</color>
+    <color name="incognito_card">#FFFFFFFF</color>
+    <color name="incognito_emphasis">#FF212121</color>
+    <color name="incognito_muted">#FF616161</color>
+    <color name="incognito_divider">#FFE0E0E0</color>
+    <color name="incognito_dim_dark">#FF9E9E9E</color>
 </resources>
