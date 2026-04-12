@@ -81,6 +81,9 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

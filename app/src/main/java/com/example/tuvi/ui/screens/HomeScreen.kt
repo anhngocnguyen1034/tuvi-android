@@ -26,26 +26,32 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tuvi.presentation.screens.BaguaDecoration
+import com.example.tuvi.ui.theme.HomeBgGradientBottom
+import com.example.tuvi.ui.theme.HomeBgGradientTop
+import com.example.tuvi.ui.theme.HomeCardGradientEnd
+import com.example.tuvi.ui.theme.HomeCardGradientMid
+import com.example.tuvi.ui.theme.HomeCardGradientStart
 import com.example.tuvi.ui.theme.TuViDivider
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -55,18 +61,19 @@ import com.example.tuvi.ui.theme.TuViIvoryDim
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.TuViRed
-
-private val HomeBg = Brush.verticalGradient(
-    listOf(Color(0xFF060E24), TuViNavy, Color(0xFF0A1535))
-)
 
 @Composable
 fun HomeScreen(
     onOpenTuVi: () -> Unit,
     onOpenSaved: () -> Unit,
-    onOpenBrowser: () -> Unit = {}
+    onOpenBrowser: () -> Unit = {},
+    onOpenSettings: () -> Unit = {}
 ) {
+    val homeBg = remember {
+        Brush.verticalGradient(listOf(HomeBgGradientTop, TuViNavy, HomeBgGradientBottom))
+    }
     val infiniteTransition = rememberInfiniteTransition(label = "bagua_rotate")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -90,10 +97,23 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(HomeBg)
+            .background(homeBg)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
+        IconButton(
+            onClick = onOpenSettings,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 8.dp, end = 8.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_settings),
+                contentDescription = stringResource(R.string.content_desc_settings),
+                tint = TuViGold
+            )
+        }
+
         // Ánh sáng nền phía sau Bát Quái
         Box(
             modifier = Modifier
@@ -163,21 +183,13 @@ fun HomeScreen(
 
             Spacer(Modifier.height(6.dp))
 
-            Text(
-                text = "Tử Vi Đẩu Số cổ truyền\nKhám phá vận mệnh theo năm sinh",
-                color = TuViIvoryDim.copy(alpha = 0.65f),
-                fontSize = 13.sp,
-                textAlign = TextAlign.Center,
-                lineHeight = 20.sp
-            )
-
             Spacer(Modifier.height(40.dp))
 
             // ── Card chính: Lá số Tử Vi ──
             MainFeatureCard(
                 emoji = "☯",
                 title = "Lá Số Tử Vi",
-                description = "Xem lá số cá nhân theo ngày sinh\nPhân tích 12 cung mệnh và sao chiếu",
+                description = "Xem lá số cá nhân theo ngày sinh",
                 onClick = onOpenTuVi
             )
 
@@ -190,55 +202,17 @@ fun HomeScreen(
             ) {
                 SecondaryFeatureCard(
                     modifier = Modifier.weight(1f),
-                    emoji = "☆",
                     title = "Lá Số\nĐã Lưu",
                     description = "Xem lại & quản lý",
                     onClick = onOpenSaved
                 )
                 SecondaryFeatureCard(
                     modifier = Modifier.weight(1f),
-                    emoji = "🌐",
                     title = "Trình\nDuyệt",
                     description = "Duyệt web & tài liệu",
                     onClick = onOpenBrowser
                 )
             }
-
-            Spacer(Modifier.height(14.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                SecondaryFeatureCard(
-                    modifier = Modifier.weight(1f),
-                    emoji = "⊙",
-                    title = "Hạn Vận\nTheo Năm",
-                    description = "Sắp ra mắt",
-                    enabled = false,
-                    onClick = {}
-                )
-                SecondaryFeatureCard(
-                    modifier = Modifier.weight(1f),
-                    emoji = "☽",
-                    title = "Lịch\nÂm Dương",
-                    description = "Sắp ra mắt",
-                    enabled = false,
-                    onClick = {}
-                )
-            }
-
-            Spacer(Modifier.height(40.dp))
-
-            Text(
-                text = "✦ Tử Vi Đẩu Số ✦",
-                color = TuViGoldDark.copy(alpha = 0.5f),
-                fontSize = 11.sp,
-                fontStyle = FontStyle.Italic,
-                letterSpacing = 2.sp
-            )
-
-            Spacer(Modifier.height(24.dp))
         }
     }
 }
@@ -257,7 +231,7 @@ private fun MainFeatureCard(
             .clip(RoundedCornerShape(20.dp))
             .background(
                 Brush.linearGradient(
-                    listOf(Color(0xFF1E2D5E), Color(0xFF0F1B3E), Color(0xFF1A2650))
+                    listOf(HomeCardGradientStart, HomeCardGradientMid, HomeCardGradientEnd)
                 )
             )
             .border(
@@ -312,7 +286,7 @@ private fun MainFeatureCard(
                         .padding(horizontal = 16.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "Xem ngay  →",
+                        text = "Xem ngay",
                         color = TuViNavy,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
@@ -326,7 +300,6 @@ private fun MainFeatureCard(
 @Composable
 private fun SecondaryFeatureCard(
     modifier: Modifier = Modifier,
-    emoji: String,
     title: String,
     description: String,
     enabled: Boolean = true,
@@ -350,12 +323,6 @@ private fun SecondaryFeatureCard(
             .padding(16.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = emoji,
-                fontSize = 28.sp,
-                color = if (enabled) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
-            )
-            Spacer(Modifier.height(8.dp))
             Text(
                 text = title,
                 color = textColor,

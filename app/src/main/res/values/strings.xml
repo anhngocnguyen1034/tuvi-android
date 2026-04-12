@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">TuVi</string>
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_back">Quay lại</string>
+    <string name="settings_theme">Giao diện</string>
+    <string name="settings_theme_dark">Tối</string>
+    <string name="settings_theme_light">Sáng</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_lang_vi">Tiếng Việt</string>
+    <string name="settings_lang_en">English</string>
+    <string name="content_desc_settings">Mở cài đặt</string>
+    <string name="settings_footer_hint">Đổi ngôn ngữ áp dụng cho nhãn hệ thống và màn Cài đặt; các màn khác có thể vẫn hiển thị tiếng Việt cho đến khi được chuyển hết sang tài nguyên chuỗi.</string>
 </resources>

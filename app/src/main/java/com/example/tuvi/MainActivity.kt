@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +39,7 @@ import com.example.tuvi.ui.browser.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
+import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
 import kotlinx.coroutines.launch
@@ -64,14 +66,14 @@ fun TuViApp() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Edge-to-edge: icon đồng hồ / pin… dùng màu sáng trên nền app tối (đọc được)
+    val isDarkTheme = isSystemInDarkTheme()
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = false
-                isAppearanceLightNavigationBars = false
+                isAppearanceLightStatusBars = !isDarkTheme
+                isAppearanceLightNavigationBars = !isDarkTheme
             }
         }
     }
@@ -89,8 +91,12 @@ fun TuViApp() {
                 onOpenBrowser = {
                     val url = Uri.encode("https://www.google.com")
                     navController.navigate("browser?url=$url&title=Trình+Duyệt")
-                }
+                },
+                onOpenSettings = { navController.navigate("settings") }
             )
+        }
+        composable("settings") {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
         composable("input") {
             InputScreen(
@@ -102,6 +108,7 @@ fun TuViApp() {
             )
         }
         composable("chart") {
+            val savedChartIdVm by viewModel.savedChartId.collectAsState()
             when (val state = uiState) {
                 is TuViUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -112,11 +119,12 @@ fun TuViApp() {
                 is TuViUiState.Success -> {
                     TuViChartScreen(
                         data = state.data,
+                        savedChartId = savedChartIdVm,
                         onBack = {
                             viewModel.resetState()
                             navController.popBackStack()
                         },
-                        onSave = { nhom ->
+                        onSave = { nhom, onResult ->
                             lastInput?.let { input ->
                                 scope.launch {
                                     val chart = SavedChart(
@@ -129,12 +137,14 @@ fun TuViApp() {
                                         chartJson = AppContainer.appJson.encodeToString(state.data)
                                     )
                                     AppContainer.saveChartUseCase(chart)
-                                        .onSuccess {
+                                        .onSuccess { insertedId ->
+                                            viewModel.setSavedChartId(insertedId)
                                             Toast.makeText(
                                                 context,
                                                 "Đã lưu lá số của ${input.ten}",
                                                 Toast.LENGTH_SHORT
                                             ).show()
+                                            onResult(true)
                                         }
                                         .onFailure {
                                             Toast.makeText(
@@ -142,7 +152,29 @@ fun TuViApp() {
                                                 "Lỗi khi lưu: ${it.message}",
                                                 Toast.LENGTH_SHORT
                                             ).show()
+                                            onResult(false)
                                         }
+                                }
+                            } ?: onResult(false)
+                        },
+                        onRemoveSave = { id, onResult ->
+                            scope.launch {
+                                try {
+                                    AppContainer.deleteSavedChartUseCase(id)
+                                    viewModel.markChartRemovedFromLibrary()
+                                    Toast.makeText(
+                                        context,
+                                        "Đã huỷ lưu lá số",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    onResult(true)
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Không thể huỷ lưu: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    onResult(false)
                                 }
                             }
                         }
@@ -224,7 +256,7 @@ fun TuViApp() {
                                 AppContainer.appJson.decodeFromString<com.example.tuvi.domain.model.TuViChartInput>(
                                     saved.inputJson
                                 )
-                            viewModel.loadSavedChart(input, chart)
+                            viewModel.loadSavedChart(input, chart, saved.id)
                             navController.navigate("chart")
                         }.onFailure {
                             Toast.makeText(
