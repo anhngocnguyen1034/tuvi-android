@@ -7,12 +7,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuvi.TuViApplication
 import com.example.tuvi.data.preferences.UserPreferencesRepository
+import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Immutable
 data class SettingsUiState(
     val themeDark: Boolean,
     val localeTag: String

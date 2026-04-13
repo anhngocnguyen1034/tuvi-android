@@ -28,13 +28,19 @@ class SavedChartsViewModel(
     private val deleteChart: DeleteSavedChartUseCase
 ) : ViewModel() {
 
-    val searchQuery = MutableStateFlow("")
-    val selectedGroup = MutableStateFlow("Tất cả")
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    private val _selectedGroup = MutableStateFlow("Tất cả")
+    val selectedGroup: StateFlow<String> = _selectedGroup
+
+    fun setSearchQuery(query: String) { _searchQuery.value = query }
+    fun setSelectedGroup(group: String) { _selectedGroup.value = group }
 
     val groups: StateFlow<List<String>> = getAllGroups()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val charts: StateFlow<List<SavedChart>> = combine(searchQuery, selectedGroup) { q, g -> q to g }
+    val charts: StateFlow<List<SavedChart>> = combine(_searchQuery, _selectedGroup) { q, g -> q to g }
         .flatMapLatest { (q, g) ->
             when {
                 q.isNotBlank() -> searchCharts(q)

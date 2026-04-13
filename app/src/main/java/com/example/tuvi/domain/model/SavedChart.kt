@@ -1,6 +1,9 @@
 package com.example.tuvi.domain.model
 
+import androidx.compose.runtime.Immutable
+
 /** Lá số đã lưu vào cơ sở dữ liệu cục bộ. */
+@Immutable
 data class SavedChart(
     val id: Long = 0,
     val ten: String,

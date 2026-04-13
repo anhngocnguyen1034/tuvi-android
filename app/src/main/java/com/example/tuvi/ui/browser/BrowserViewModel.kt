@@ -18,7 +18,9 @@ import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.TabSessionDao
 import com.example.tuvi.data.local.TabSessionEntity
 import com.example.tuvi.di.AppContainer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,8 +45,8 @@ class BrowserViewModel(
     init {
         if (!incognito) {
             viewModelScope.launch {
-                // Khôi phục toàn bộ tab session từ DB
-                val saved = tabSessionDao.getAll()
+                // Đọc DB trên IO thread
+                val saved = withContext(Dispatchers.IO) { tabSessionDao.getAll() }
                 if (saved.isNotEmpty()) {
                     tabs.clear()
                     saved.forEach { entity ->
@@ -71,7 +73,7 @@ class BrowserViewModel(
                     }
                 } else {
                     // Lần đầu mở app: khôi phục URL gần nhất từ history
-                    val latest = historyDao.getLatestUrl().orEmpty().trim()
+                    val latest = withContext(Dispatchers.IO) { historyDao.getLatestUrl().orEmpty().trim() }
                     if (latest.isNotEmpty() && tabs.isNotEmpty()) {
                         val first = tabs.first()
                         tabs[0] = first.copy(url = latest, pendingLoadUrl = latest)
@@ -84,20 +86,20 @@ class BrowserViewModel(
 
     /** Lưu toàn bộ tab thường (không lưu tab ẩn danh) vào DB. */
     private fun saveTabs() {
-        viewModelScope.launch {
-            val entities = tabs
-                .filter { !it.isIncognito }
-                .mapIndexed { idx, tab ->
-                    TabSessionEntity(
-                        id = tab.id,
-                        url = tab.url,
-                        title = tab.title,
-                        sortOrder = idx,
-                        isActive = tab.id == activeTabId,
-                        navHistoryJson = tab.navHistory.joinToString("\n"),
-                        navHistoryIndex = tab.navHistoryIndex
-                    )
-                }
+        val entities = tabs
+            .filter { !it.isIncognito }
+            .mapIndexed { idx, tab ->
+                TabSessionEntity(
+                    id = tab.id,
+                    url = tab.url,
+                    title = tab.title,
+                    sortOrder = idx,
+                    isActive = tab.id == activeTabId,
+                    navHistoryJson = tab.navHistory.joinToString("\n"),
+                    navHistoryIndex = tab.navHistoryIndex
+                )
+            }
+        viewModelScope.launch(Dispatchers.IO) {
             tabSessionDao.clearAll()
             if (entities.isNotEmpty()) tabSessionDao.insertAll(entities)
         }

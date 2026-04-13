@@ -32,8 +32,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -99,7 +99,7 @@ fun HistoryScreen(
     onOpenUrl: (String) -> Unit,
     vm: HistoryViewModel = viewModel(factory = HistoryViewModel.Factory)
 ) {
-    val history by vm.history.collectAsState()
+    val history by vm.history.collectAsStateWithLifecycle()
     var showClearDialog by remember { mutableStateOf(false) }
 
     if (showClearDialog) {

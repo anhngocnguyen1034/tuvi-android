@@ -134,7 +134,10 @@ fun TabWebViewHolder(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             )
-            setColorSchemeColors(0xFFD4AF37.toInt(), 0xFF8B7020.toInt())
+            setColorSchemeColors(
+                com.example.tuvi.ui.theme.TuViGold.value.toInt(),
+                com.example.tuvi.ui.theme.TuViGoldDark.value.toInt()
+            )
             setOnRefreshListener { wv.reload() }
         }
 

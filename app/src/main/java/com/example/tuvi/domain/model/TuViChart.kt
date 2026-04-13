@@ -1,5 +1,6 @@
 package com.example.tuvi.domain.model
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /** Input từ người dùng để tra lá số. */
@@ -18,12 +19,14 @@ data class TuViChartInput(
 )
 
 /** Domain entity – toàn bộ lá số Tử Vi (không có annotation mạng). */
+@Immutable
 @Serializable
 data class TuViChart(
     val thienBan: ThienBanInfo,
     val diaBan: List<CungInfo>
 )
 
+@Immutable
 @Serializable
 data class ThienBanInfo(
     val ten: String,
@@ -53,6 +56,7 @@ data class ThienBanInfo(
     val tuoiAm: Int? = null
 )
 
+@Immutable
 @Serializable
 data class CungInfo(
     val cungTen: String,
@@ -65,6 +69,7 @@ data class CungInfo(
     val triet: Boolean = false
 )
 
+@Immutable
 @Serializable
 data class SaoInfo(
     val ten: String,

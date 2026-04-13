@@ -46,8 +46,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,10 +83,10 @@ fun SavedChartsScreen(
     onOpenChart: (SavedChart) -> Unit,
     viewModel: SavedChartsViewModel = viewModel(factory = SavedChartsViewModel.Factory)
 ) {
-    val charts by viewModel.charts.collectAsState()
-    val groups by viewModel.groups.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState()
-    val selectedGroup by viewModel.selectedGroup.collectAsState()
+    val charts by viewModel.charts.collectAsStateWithLifecycle()
+    val groups by viewModel.groups.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val selectedGroup by viewModel.selectedGroup.collectAsStateWithLifecycle()
 
     val allGroups = listOf("Tất cả") + groups
 
@@ -119,12 +119,12 @@ fun SavedChartsScreen(
             // Search bar
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = { viewModel.searchQuery.value = it },
+                onValueChange = { viewModel.setSearchQuery(it) },
                 placeholder = { Text("Tìm kiếm theo tên...", color = TuViIvoryDim) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = TuViGold) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.searchQuery.value = "" }) {
+                        IconButton(onClick = { viewModel.setSearchQuery("") }) {
                             Icon(Icons.Default.Clear, contentDescription = "Xoá", tint = TuViIvoryDim)
                         }
                     }
@@ -151,10 +151,10 @@ fun SavedChartsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 4.dp)
             ) {
-                items(allGroups) { group ->
+                items(allGroups, key = { it }) { group ->
                     FilterChip(
                         selected = selectedGroup == group,
-                        onClick = { viewModel.selectedGroup.value = group },
+                        onClick = { viewModel.setSelectedGroup(group) },
                         label = { Text(group, fontSize = 13.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = TuViGold,

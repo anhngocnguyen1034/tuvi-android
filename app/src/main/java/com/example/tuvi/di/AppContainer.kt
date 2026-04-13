@@ -20,13 +20,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
-/**
- * Composition root – khởi tạo và wiring toàn bộ dependency thủ công.
- * Đây là nơi DUY NHẤT biết về cả data layer và domain layer.
- */
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.101:8000"
+//    private const val BASE_URL = "http://192.168.1.15:8000"
+    private const val BASE_URL = "http://192.168.0.100:8000"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -52,7 +49,6 @@ object AppContainer {
 
     val getTuViChartUseCase by lazy { GetTuViChartUseCase(repository) }
 
-    // ── Room DB (cần Context — được khởi tạo từ Application) ──────────────────
     private lateinit var database: TuViDatabase
 
     fun init(context: Context) {

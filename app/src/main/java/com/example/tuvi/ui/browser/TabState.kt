@@ -1,5 +1,6 @@
 package com.example.tuvi.ui.browser
 
+import androidx.compose.runtime.Immutable
 import java.util.UUID
 
 /**
@@ -7,6 +8,7 @@ import java.util.UUID
  * WebView thực tế được tạo & giữ bên ngoài ViewModel (trong Composable) để tránh
  * memory leak — ViewModel chỉ giữ metadata và không có reference đến Context/View.
  */
+@Immutable
 data class TabState(
     val id: String = UUID.randomUUID().toString(),
     val url: String = "https://www.google.com",

@@ -39,8 +39,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -102,7 +102,7 @@ fun BookmarkScreen(
     onOpenUrl: (String) -> Unit,
     vm: BookmarkViewModel = viewModel(factory = BookmarkViewModel.Factory)
 ) {
-    val bookmarks by vm.bookmarks.collectAsState()
+    val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = TuViNavy,

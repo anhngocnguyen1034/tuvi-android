@@ -41,8 +41,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,7 +92,7 @@ fun BrowserScreen(
     val activeTabId       = viewModel.activeTabId
     val activeTab         = viewModel.activeTab
     val isIncognito       = viewModel.isActiveIncognito
-    val isBookmarked      by viewModel.isCurrentUrlBookmarked.collectAsState()
+    val isBookmarked      by viewModel.isCurrentUrlBookmarked.collectAsStateWithLifecycle()
     val keyboard          = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope             = rememberCoroutineScope()

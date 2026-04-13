@@ -1,5 +1,9 @@
 package com.example.tuvi.ui.browser
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+
+@Immutable
 data class BrowserUiState(
     val url: String = "",
     val displayTitle: String = "",
@@ -10,15 +14,16 @@ data class BrowserUiState(
     val error: String? = null
 )
 
+@Stable
 sealed interface BrowserCommand {
-    data class LoadUrl(val url: String) : BrowserCommand
+    @Immutable data class LoadUrl(val url: String) : BrowserCommand
     /**
      * [fallbackUrl]: URL tại mục trước trong navHistory — dùng khi WebView không còn stack
      * (vd. vừa khôi phục tab sau khi thoát app), vì `webView.goBack()` không hoạt động.
      */
-    data class GoBack(val fallbackUrl: String? = null) : BrowserCommand
+    @Immutable data class GoBack(val fallbackUrl: String? = null) : BrowserCommand
     /** Tương tự [GoBack], cho bước tiếp trong lịch sử đã lưu. */
-    data class GoForward(val fallbackUrl: String? = null) : BrowserCommand
+    @Immutable data class GoForward(val fallbackUrl: String? = null) : BrowserCommand
     object Reload    : BrowserCommand
     object Stop      : BrowserCommand
 }
