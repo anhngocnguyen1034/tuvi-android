@@ -23,7 +23,10 @@ import retrofit2.Retrofit
 object AppContainer {
 
 //    private const val BASE_URL = "http://192.168.1.15:8000"
-    private const val BASE_URL = "http://192.168.0.100:8000"
+    private const val BASE_URL = "http://192.168.0.103:8000"
+
+    lateinit var app: android.app.Application
+        private set
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -36,7 +39,7 @@ object AppContainer {
         })
         .build()
 
-    private val apiService: TuViApiService by lazy {
+    val apiService: TuViApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
@@ -52,6 +55,7 @@ object AppContainer {
     private lateinit var database: TuViDatabase
 
     fun init(context: Context) {
+        app = context.applicationContext as android.app.Application
         database = TuViDatabase.getInstance(context)
     }
 
@@ -62,6 +66,7 @@ object AppContainer {
     val historyDao by lazy { database.historyDao() }
     val bookmarkDao by lazy { database.bookmarkDao() }
     val tabSessionDao by lazy { database.tabSessionDao() }
+    val suKienDao by lazy { database.suKienDao() }
 
     val getAllSavedChartsUseCase by lazy { GetAllSavedChartsUseCase(savedChartRepository) }
     val searchSavedChartsUseCase by lazy { SearchSavedChartsUseCase(savedChartRepository) }

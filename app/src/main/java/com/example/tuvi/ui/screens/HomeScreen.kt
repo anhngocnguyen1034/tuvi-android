@@ -69,6 +69,7 @@ fun HomeScreen(
     onOpenTuVi: () -> Unit,
     onOpenSaved: () -> Unit,
     onOpenBrowser: () -> Unit = {},
+    onOpenCalendar: () -> Unit = {},
     onOpenSettings: () -> Unit = {}
 ) {
     val homeBg = remember {
@@ -213,6 +214,15 @@ fun HomeScreen(
                     onClick = onOpenBrowser
                 )
             }
+
+            Spacer(Modifier.height(14.dp))
+
+            SecondaryFeatureCard(
+                modifier = Modifier.fillMaxWidth(),
+                title = "Lịch Âm / Dương",
+                description = "Xem nhanh lịch âm lịch và dương lịch",
+                onClick = onOpenCalendar
+            )
         }
     }
 }

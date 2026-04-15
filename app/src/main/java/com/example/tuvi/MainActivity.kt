@@ -34,7 +34,9 @@ import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
 import com.example.tuvi.ui.browser.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
+import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
+import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
@@ -85,8 +87,18 @@ fun TuViApp() {
                     val url = Uri.encode("https://www.google.com")
                     navController.navigate("browser?url=$url&title=Trình+Duyệt")
                 },
+                onOpenCalendar = { navController.navigate("lich") },
                 onOpenSettings = { navController.navigate("settings") }
             )
+        }
+        composable("calendar_chooser") {
+            CalendarChooserScreen(
+                onBack = { navController.popBackStack() },
+                onOpenCalendar = { navController.navigate("lich") },
+            )
+        }
+        composable("lich") {
+            LichScreen(onBack = { navController.popBackStack() })
         }
         composable("settings") {
             SettingsScreen(onBack = { navController.popBackStack() })
