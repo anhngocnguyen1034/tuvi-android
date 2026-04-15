@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -291,6 +290,9 @@ fun TuViChartScreen(
     val graphicsLayer = rememberGraphicsLayer()
     var showSaveDialog by remember { mutableStateOf(false) }
     var showUnsaveDialog by remember { mutableStateOf(false) }
+    var showDownloadConfirmDialog by remember { mutableStateOf(false) }
+    var showDownloadDialog by remember { mutableStateOf(false) }
+    var downloadSuccess by remember { mutableStateOf(false) }
     val inLibrary = savedChartId != null
 
     Box() {
@@ -337,6 +339,67 @@ fun TuViChartScreen(
                     }
                 )
             }
+            if (showDownloadDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDownloadDialog = false },
+                    containerColor = ChartNavy,
+                    titleContentColor = if (downloadSuccess) ChartGold else ChartRed,
+                    textContentColor = ChartIvoryDim,
+                    title = {
+                        Text(
+                            if (downloadSuccess) "Tải ảnh thành công" else "Tải ảnh thất bại",
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    text = {
+                        Text(
+                            if (downloadSuccess) {
+                                "Ảnh lá số đã được lưu vào thư viện (Pictures/TuVi)."
+                            } else {
+                                "Không thể lưu ảnh vào thư viện. Vui lòng thử lại."
+                            }
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showDownloadDialog = false }) {
+                            Text("Đóng", color = ChartGold)
+                        }
+                    }
+                )
+            }
+            if (showDownloadConfirmDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDownloadConfirmDialog = false },
+                    containerColor = ChartNavy,
+                    titleContentColor = ChartGold,
+                    textContentColor = ChartIvoryDim,
+                    title = { Text("Tải ảnh lá số?", fontWeight = FontWeight.Bold) },
+                    text = { Text("Bạn có muốn tải ảnh lá số xuống thư viện không?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showDownloadConfirmDialog = false
+                                scope.launch {
+                                    val ok = saveBitmapToGallery(
+                                        context = context,
+                                        bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap(),
+                                        name = "chart"
+                                    )
+                                    downloadSuccess = ok
+                                    showDownloadDialog = true
+                                }
+                            }
+                        ) {
+                            Text("Tải xuống", color = ChartGold, fontWeight = FontWeight.SemiBold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDownloadConfirmDialog = false }) {
+                            Text("Huỷ", color = ChartIvory)
+                        }
+                    }
+                )
+            }
             val chartScroll = rememberScrollState()
             Column(
                 modifier = Modifier
@@ -350,7 +413,8 @@ fun TuViChartScreen(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .padding(start = 4.dp, end = 8.dp, top = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -358,6 +422,38 @@ fun TuViChartScreen(
                             contentDescription = stringResource(R.string.settings_back),
                             tint = ChartGold
                         )
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = {
+                                showDownloadConfirmDialog = true
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_download),
+                                contentDescription = "Tải ảnh lá số",
+                                tint = ChartGold
+                            )
+                        }
+                        if (onSave != null) {
+                            IconButton(
+                                onClick = {
+                                    if (inLibrary && savedChartId != null && onRemoveSave != null) {
+                                        showUnsaveDialog = true
+                                    } else {
+                                        showSaveDialog = true
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (inLibrary) R.drawable.ic_saved else R.drawable.ic_save
+                                    ),
+                                    contentDescription = if (inLibrary) "Huỷ lưu lá số" else "Lưu lá số",
+                                    tint = ChartGold
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -463,26 +559,27 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
 }
 
 /**
- * Trả về (midX, midY) theo đơn vị ô (0–4): toạ độ trung điểm cạnh chung của hai ô lưới 4×4.
- * - Hai ô cùng hàng, kề cột → cạnh dọc chung (đường thẳng đứng giữa hai ô).
- * - Hai ô cùng cột, kề hàng → cạnh ngang chung (đường ngang giữa hai ô).
+ * Trả về (midX, midY, alignBottom) theo đơn vị ô (0–4).
+ * - Hai ô cùng hàng, kề cột (cạnh dọc) → alignBottom=true: chip căn đáy vào cạnh dưới của hàng.
+ * - Hai ô cùng cột, kề hàng (cạnh ngang) → alignBottom=false: chip căn giữa cạnh ngang.
  */
 private fun computeTuanTrietGridAnchor(
     r1: Int, c1: Int, r2: Int, c2: Int
-): Pair<Float, Float> {
+): Triple<Float, Float, Boolean> {
     return when {
         r1 == r2 && abs(c1 - c2) == 1 ->
-            (min(c1, c2) + 1).toFloat() to (r1 + 0.5f)
+            // Cạnh dọc: đặt chip ở cuối hàng (phía dưới), tránh che nội dung giữa cung
+            Triple((min(c1, c2) + 1).toFloat(), (r1 + 1).toFloat(), true)
 
         c1 == c2 && abs(r1 - r2) == 1 ->
-            (c1 + 0.5f) to (min(r1, r2) + 1).toFloat()
+            Triple((c1 + 0.5f), (min(r1, r2) + 1).toFloat(), false)
 
         else -> {
             val cx1 = c1 + 0.5f
             val cy1 = r1 + 0.5f
             val cx2 = c2 + 0.5f
             val cy2 = r2 + 0.5f
-            ((cx1 + cx2) / 2f) to ((cy1 + cy2) / 2f)
+            Triple((cx1 + cx2) / 2f, (cy1 + cy2) / 2f, false)
         }
     }
 }
@@ -549,10 +646,12 @@ private fun DrawTuanTriet(
             val r2 = pos2.first
             val c2 = pos2.second
 
-            val (midX, midY) = computeTuanTrietGridAnchor(r1, c1, r2, c2)
+            val (midX, midY, alignBottom) = computeTuanTrietGridAnchor(r1, c1, r2, c2)
             val labelText = labels.distinct().joinToString("/")
 
-            // Căn giữa chip tại điểm (midX/4 * W, midY/4 * H) — cùng hệ với offset/size ô cung
+            // Căn chip tại (midX/4*W, midY/4*H).
+            // alignBottom=true (cạnh dọc / 2 cung nằm ngang): đáy chip khớp với cyPx, tránh che nội dung.
+            // alignBottom=false (cạnh ngang / 2 cung trên dưới): chip căn giữa theo chiều dọc.
             Layout(
                 modifier = Modifier.fillMaxSize(),
                 content = { TuanTrietChip(labelText) }
@@ -570,7 +669,8 @@ private fun DrawTuanTriet(
                 val cyPx = midY / 4f * h
                 layout(constraints.maxWidth, constraints.maxHeight) {
                     val left = cxPx - placeable.width / 2f
-                    val top = cyPx - placeable.height / 2f
+                    val top = if (alignBottom) cyPx - placeable.height.toFloat()
+                              else cyPx - placeable.height / 2f
                     placeable.placeRelative(
                         x = (left + 0.5f).toInt(),
                         y = (top + 0.5f).toInt()
@@ -581,7 +681,7 @@ private fun DrawTuanTriet(
     }
 }
 
-// ─── Thiên Bàn trung tâm ─────────────────────────────────────────────────────
+
 @Composable
 private fun ThienBanCenterContent(tb: ThienBanInfo) {
     Column(
@@ -592,7 +692,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
             .padding(2.dp)
     ) {
         Text(
-            "✦ LÁ SỐ TỬ VI ✦",
+            "LÁ SỐ TỬ VI",
             fontWeight = FontWeight.Bold,
             fontSize = 8.sp,
             color = ChartGold,
@@ -601,13 +701,12 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         )
         Spacer(Modifier.height(2.dp))
 
-        CenterLine("", tb.ten, valueColor = ChartGold, valueBold = true)
-        CenterLine("", tb.gioiTinh)
-        CenterLine("Dương", tb.ngayDuong)
-        CenterLine("Âm", tb.ngayAm)
-        tb.ngayAmLichTen?.let { CenterLine("", it, fontSize = 7.sp) }
+        CenterLine("Họ và tên", tb.ten, valueColor = ChartGold, valueBold = true)
+        CenterLine("Giới tính", tb.gioiTinh)
+        CenterLine("Ngày sinh(Dương)", tb.ngayDuong)
+        CenterLine("Ngày sinh(Âm)", tb.ngayAm)
         tb.gioSinh?.let { CenterLine("Giờ", it) }
-        tb.namXem?.let { CenterLine("Năm xem", it.toString()) }
+        tb.namXem?.let { CenterLine("Năm xem:", it.toString()) }
 
         if (tb.canNam != null || tb.chiNam != null)
             CenterLine("Năm", "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim())
@@ -616,13 +715,12 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         if (tb.canNgay != null || tb.chiNgay != null)
             CenterLine("Ngày", "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim())
 
-        tb.amDuongNamSinh?.let { CenterLine("Âm/Dương", it) }
         tb.amDuongMenh?.let { CenterLine("", it, fontSize = 7.sp) }
         tb.menh?.let { CenterLine("Mệnh", it, valueColor = ChartGold) }
         tb.banMenh?.let { CenterLine("Bản Mệnh", it) }
         tb.cuc?.let { CenterLine("Cục", it) }
-        tb.menhChu?.let { CenterLine("M.Chủ", it) }
-        tb.thanChu?.let { CenterLine("Th.Chủ", it) }
+        tb.menhChu?.let { CenterLine("Mệnh chủ", it) }
+        tb.thanChu?.let { CenterLine("Thân chủ", it) }
         tb.sinhKhac?.let { CenterLine("Sinh/Khắc", it) }
     }
 }
