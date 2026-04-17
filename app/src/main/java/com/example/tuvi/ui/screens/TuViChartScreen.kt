@@ -147,7 +147,8 @@ private fun isPhuTinhLeftColumn(sao: SaoInfo): Boolean {
 
 // Tên 12 vị trí Vòng Tràng Sinh – dùng để lọc sao hiển thị ở footer cung
 private val vongTrangSinhNames = setOf(
-    "Trường Sinh", "Mộc Dục", "Quan Đới", "Lâm Quan", "Đế Vượng",
+    "Trường Sinh", "Tràng Sinh",
+    "Mộc Dục", "Quan Đới", "Lâm Quan", "Đế Vượng",
     "Suy", "Bệnh", "Tử", "Mộ", "Tuyệt", "Thai", "Dưỡng"
 )
 
@@ -490,6 +491,32 @@ fun TuViChartScreen(
     }
 }
 
+// ─── Bảng tra Thiên Can / Địa Chi (dùng để fallback khi thienCan == null) ────
+private val thienCanNameToIndex = mapOf(
+    "Giáp" to 1, "Ất" to 2, "Bính" to 3, "Đinh" to 4, "Mậu" to 5,
+    "Kỷ" to 6, "Canh" to 7, "Tân" to 8, "Nhâm" to 9, "Quý" to 10
+)
+private val indexToThienCanName = mapOf(
+    1 to "Giáp", 2 to "Ất", 3 to "Bính", 4 to "Đinh", 5 to "Mậu",
+    6 to "Kỷ", 7 to "Canh", 8 to "Tân", 9 to "Nhâm", 10 to "Quý"
+)
+private val diaChiNameToIndex = mapOf(
+    "Tý" to 1, "Sửu" to 2, "Dần" to 3, "Mão" to 4, "Thìn" to 5, "Tỵ" to 6,
+    "Ngọ" to 7, "Mùi" to 8, "Thân" to 9, "Dậu" to 10, "Tuất" to 11, "Hợi" to 12
+)
+
+/** Tính Thiên Can của cung theo công thức từ backend (dùng khi thienCan == null). */
+private fun computeThienCanCung(cungTen: String, canNamStr: String): String? {
+    val cungSo = diaChiNameToIndex.entries.firstOrNull { cungTen.contains(it.key) }?.value ?: return null
+    val canNam = thienCanNameToIndex[canNamStr] ?: return null
+    var canThangGieng = (canNam * 2 + 1) % 10
+    if (canThangGieng == 0) canThangGieng = 10
+    var r = Math.floorMod(cungSo - 3, 12) + canThangGieng
+    r %= 10
+    if (r == 0) r = 10
+    return indexToThienCanName[r]
+}
+
 // ─── Lưới 4×4 cung ───────────────────────────────────────────────────────────
 @Composable
 fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
@@ -499,6 +526,13 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
         4 to (1 to 0), 5 to (0 to 0), 6 to (0 to 1), 7 to (0 to 2),
         8 to (0 to 3), 9 to (1 to 3), 10 to (2 to 3), 11 to (3 to 3)
     )
+
+    // Fallback: tính thienCan cho các cung bị thiếu (lá số cũ từ local DB)
+    val canNam = data.thienBan.canNam.orEmpty()
+    val enrichedDiaBan = data.diaBan.map { cung ->
+        if (cung.thienCan != null) cung
+        else cung.copy(thienCan = computeThienCanCung(cung.cungTen, canNam))
+    }
 
     BoxWithConstraints(
         modifier = modifier
@@ -518,7 +552,7 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
         val cellH = maxHeight / 4
 
         // 12 cung xung quanh
-        data.diaBan.forEachIndexed { index, cung ->
+        enrichedDiaBan.forEachIndexed { index, cung ->
             val (row, col) = gridMapping[index] ?: (0 to 0)
             Box(
                 modifier = Modifier
@@ -553,7 +587,7 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .zIndex(1f)
         ) {
-            DrawTuanTriet(data.diaBan, gridMapping)
+            DrawTuanTriet(enrichedDiaBan, gridMapping)
         }
     }
 }
@@ -746,7 +780,7 @@ private fun CenterLine(
     )
 }
 
-/** Map code ngắn từ API → nhãn đầy đủ. */
+/** Map code ngắn từ API đầy đủ thông tin  */
 private val dacTinhFullLabel = mapOf(
     "M" to "Miếu",
     "V" to "Vượng",
@@ -804,7 +838,9 @@ fun PalaceView(cung: CungInfo) {
     // nên loại khỏi danh sách sao (chính tinh/phụ tinh) để không bị lặp.
     val saoKhongTrangSinh = cung.sao.filter { sao ->
         val baseName = normalizeSpaces(sao.ten.replace('\u00A0', ' '))
-        !vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
+        val isVongTrangSinhByField = (sao.vongTrangSinh ?: 0) != 0
+        val isVongTrangSinhByName = vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
+        !isVongTrangSinhByField && !isVongTrangSinhByName
     }
 
     val chinhTinhNames = listOf(
@@ -837,8 +873,23 @@ fun PalaceView(cung: CungInfo) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Căn trái (Để trống cho Cung Tên chiếm ưu thế hoặc sau này thêm info)
-            Spacer(modifier = Modifier.weight(1f))
+            // Thiên Can + Địa Chi (góc trên-trái): viết tắt can để luôn vừa ô hẹp
+            // Ví dụ: "Bính Tý" → "B.Tý", nếu không có can thì chỉ hiện địa chi
+            val canChiLabel = when {
+                !cung.thienCan.isNullOrBlank() && cung.cungTen.isNotBlank() ->
+                    "${cung.thienCan.trim().first()}.${cung.cungTen}"
+                !cung.thienCan.isNullOrBlank() -> cung.thienCan.trim()
+                else -> cung.cungTen
+            }
+            Text(
+                text = canChiLabel,
+                fontSize = 6.sp,
+                color = ChartIvoryDim,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Start
+            )
             // Cung chức (Giữa) - Mệnh, Phụ Mẫu, Phúc Đức...
             Box(
                 modifier = Modifier.weight(1.5f),
@@ -868,9 +919,12 @@ fun PalaceView(cung: CungInfo) {
         }
 
         // ── Hàng 2: Chính Tinh (căn giữa, in đậm, to hơn) ──
+        // heightIn(min) giữ chỗ cố định cho khu vực chính tinh dù cung không có sao nào,
+        // tránh phụ tinh tràn lên chiếm chỗ trên.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(min = 22.dp)
                 .padding(top = 1.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -927,15 +981,16 @@ fun PalaceView(cung: CungInfo) {
             // Tr.Sinh: <vị trí>
             val trangSinhViTri = cung.sao.firstOrNull { sao ->
                 val baseName = normalizeSpaces(sao.ten.replace('\u00A0', ' '))
-                vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
+                (sao.vongTrangSinh ?: 0) != 0 ||
+                    vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
             }?.ten
             val thangCung = cung.thang ?: thangTuChiCung(cung.cungTen)
             // Chỉ hiển thị đúng tên vị trí vòng Tràng Sinh (Đế vượng, Lâm quan, ...)
             Text(
                 text = trangSinhViTri ?: "",
                 fontSize = 6.sp,
-                color = Color.DarkGray,
-                maxLines = 1,
+                lineHeight = 7.sp,
+                color = ChartIvoryDim,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -943,7 +998,7 @@ fun PalaceView(cung: CungInfo) {
             Text(
                 text = thangCung?.let { "Tháng $it" } ?: "Tháng",
                 fontSize = 6.sp,
-                color = Color.DarkGray,
+                color = ChartIvoryDim,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End

@@ -86,6 +86,7 @@ data class CungDto(
     @SerialName("cung_ten") val cungTen: String,
     @SerialName("cung_chu") val cungChu: String,
     @SerialName("hanh_cung") val hanhCung: String,
+    @SerialName("thien_can") val thienCan: String? = null,
     @SerialName("dai_han") val daiHan: Int? = null,
     val thang: Int? = null,
     val sao: List<SaoDto>,

@@ -46,6 +46,7 @@ fun CungDto.toDomain(): CungInfo = CungInfo(
     cungTen  = cungTen,
     cungChu  = cungChu,
     hanhCung = hanhCung,
+    thienCan = thienCan,
     daiHan   = daiHan,
     thang    = thang,
     sao      = sao.map { it.toDomain() },

@@ -1,0 +1,24 @@
+---
+description: Auto-create GitHub issue and run bugfix workflow
+alwaysApply: true
+---
+
+# GitHub Issue + Bugfix Workflow
+
+When asked to fix a bug, follow this flow in Claude CLI:
+
+1. Reproduce and collect evidence first (logs, stack trace, failing command).
+2. If issue is not linked yet, create one with `gh issue create`:
+   - Title: short and specific.
+   - Body: steps to reproduce, expected vs actual, environment, logs.
+   - Add labels: `bug`, plus scope label if available.
+3. Before code changes, post a brief implementation plan in the issue comment.
+4. Implement minimal, safe fix; avoid unrelated refactors.
+5. Run verification (build/tests/lint) for touched area.
+6. If fixed, comment root cause + fix summary + verification output.
+7. Commit with reference to issue number (example: `fix: handle null response (#123)`).
+
+Safety requirements:
+- Never use destructive git commands unless explicitly requested.
+- Do not push force to main/master.
+- If reproduction is unclear, ask for missing details before creating a broad fix.

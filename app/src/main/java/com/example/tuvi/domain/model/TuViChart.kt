@@ -62,6 +62,7 @@ data class CungInfo(
     val cungTen: String,
     val cungChu: String,
     val hanhCung: String,
+    val thienCan: String? = null,
     val daiHan: Int? = null,
     val thang: Int? = null,
     val sao: List<SaoInfo>,
