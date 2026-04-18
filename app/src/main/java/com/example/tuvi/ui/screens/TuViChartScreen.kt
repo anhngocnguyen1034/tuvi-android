@@ -77,7 +77,7 @@ import com.example.tuvi.ui.theme.HanhMoc
 import com.example.tuvi.ui.theme.HanhTho
 import com.example.tuvi.ui.theme.HanhThuy
 
-// ─── Ánh xạ tên sao → Ngũ Hành ───────────────────────────────────────────────
+// 0-Canh, 1-Tân, 2-Nhâm, 3-Quý, 4-Giáp, 5-Ất, 6-Bính, 7-Đinh, 8-Mậu, 9-Kỷ
 private val thuySet = setOf(
     // Chính tinh
     "Thái Âm", "Thiên Đồng", "Phá Quân", "Cự Môn", "Tham Lang",
