@@ -1,6 +1,7 @@
 package com.example.tuvi.ui.screens
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,11 +57,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tuvi.R
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.ui.theme.TuViGold
@@ -103,7 +106,11 @@ fun SavedChartsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = TuViGold)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Quay lại",
+                            tint = TuViGold
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = TuViNavy)
@@ -121,11 +128,21 @@ fun SavedChartsScreen(
                 value = searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },
                 placeholder = { Text("Tìm kiếm theo tên...", color = TuViIvoryDim) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = TuViGold) },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        tint = TuViGold
+                    )
+                },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xoá", tint = TuViIvoryDim)
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "Xoá",
+                                tint = TuViIvoryDim
+                            )
                         }
                     }
                 },
@@ -374,12 +391,17 @@ private fun GroupBadge(nhom: String) {
 private fun EmptyState(hasSearch: Boolean) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("☰", fontSize = 48.sp)
+
+            Image(
+                painterResource(R.drawable.empty),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
+            )
             Spacer(Modifier.height(12.dp))
             Text(
                 text = if (hasSearch) "Không tìm thấy lá số phù hợp" else "Chưa có lá số nào được lưu",
                 color = TuViIvoryDim,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             )
             if (!hasSearch) {
                 Spacer(Modifier.height(6.dp))

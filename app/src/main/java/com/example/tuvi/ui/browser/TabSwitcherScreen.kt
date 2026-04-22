@@ -132,7 +132,7 @@ fun TabSwitcherOverlay(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = if (showIncognitoList) "\uD83D\uDD75\uFE0F" else "🌐",
+                                text = if (showIncognitoList) "Ẩn" else "Web",
                                 fontSize = 48.sp
                             )
                             Spacer(Modifier.height(12.dp))
@@ -282,7 +282,7 @@ private fun TabCard(
                     // Fallback: emoji + domain khi chưa có thumbnail hoặc tab ẩn danh
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = if (isIncognito) "\uD83D\uDD75\uFE0F" else tab.url.toFavicon(),
+                            text = if (isIncognito) "Ẩn" else tab.url.toFavicon(),
                             fontSize = 32.sp
                         )
                         Spacer(Modifier.height(6.dp))
@@ -350,18 +350,18 @@ private fun TabCard(
     }
 }
 
-/** Lấy emoji favicon đại diện từ domain */
+/** Lấy ký tự đại diện từ domain */
 private fun String.toFavicon(): String {
     val domain = toDomain().lowercase()
     return when {
-        domain.contains("google")    -> "🔍"
-        domain.contains("youtube")   -> "▶"
-        domain.contains("facebook")  -> "📘"
-        domain.contains("wikipedia") -> "📖"
-        domain.contains("github")    -> "🐙"
-        domain.contains("reddit")    -> "🔴"
-        domain.contains("twitter") || domain.contains("x.com") -> "𝕏"
-        else -> "🌐"
+        domain.contains("google")    -> "G"
+        domain.contains("youtube")   -> "YT"
+        domain.contains("facebook")  -> "FB"
+        domain.contains("wikipedia") -> "W"
+        domain.contains("github")    -> "GH"
+        domain.contains("reddit")    -> "R"
+        domain.contains("twitter") || domain.contains("x.com") -> "X"
+        else -> "Web"
     }
 }
 

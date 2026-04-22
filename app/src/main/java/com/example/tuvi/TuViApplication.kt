@@ -17,14 +17,15 @@ class TuViApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(this)
-        runBlocking(Dispatchers.IO) {
+        val savedDark = runBlocking(Dispatchers.IO) {
             val (dark, localeTag) = userPreferencesRepository.initialSnapshot()
             AppCompatDelegate.setDefaultNightMode(
                 if (dark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(localeTag))
+            dark
         }
-        TuViComposeColors.initIfNeeded(this)
+        TuViComposeColors.initIfNeeded(this, forceNight = savedDark)
         AppContainer.init(this)
     }
 }

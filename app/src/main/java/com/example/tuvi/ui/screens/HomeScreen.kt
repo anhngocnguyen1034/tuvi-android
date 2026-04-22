@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -102,19 +103,6 @@ fun HomeScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        IconButton(
-            onClick = onOpenSettings,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 8.dp, end = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_settings),
-                contentDescription = stringResource(R.string.content_desc_settings),
-                tint = TuViGold
-            )
-        }
-
         // Ánh sáng nền phía sau Bát Quái
         Box(
             modifier = Modifier
@@ -175,7 +163,7 @@ fun HomeScreen(
             ) {
                 Box(Modifier.weight(1f).height(1.dp).background(TuViGoldDark.copy(alpha = 0.5f)))
                 Text(
-                    "  ✦  ",
+                    "  —  ",
                     color = TuViGold.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
@@ -188,7 +176,7 @@ fun HomeScreen(
 
             // ── Card chính: Lá số Tử Vi ──
             MainFeatureCard(
-                emoji = "☯",
+                icon = "TV",
                 title = "Lá Số Tử Vi",
                 description = "Xem lá số cá nhân theo ngày sinh",
                 onClick = onOpenTuVi
@@ -224,12 +212,26 @@ fun HomeScreen(
                 onClick = onOpenCalendar
             )
         }
+
+        // Phải đặt SAU Column để nằm trên cùng z-order, tránh bị Column(verticalScroll) chặn touch
+        IconButton(
+            onClick = onOpenSettings,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 8.dp, end = 8.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_settings),
+                contentDescription = stringResource(R.string.content_desc_settings),
+                tint = TuViGold
+            )
+        }
     }
 }
 
 @Composable
 private fun MainFeatureCard(
-    emoji: String,
+    icon: String,
     title: String,
     description: String,
     onClick: () -> Unit
@@ -237,24 +239,56 @@ private fun MainFeatureCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(elevation = 12.dp, shape = RoundedCornerShape(20.dp))
-            .clip(RoundedCornerShape(20.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(HomeCardGradientStart, HomeCardGradientMid, HomeCardGradientEnd)
-                )
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(20.dp),
+                spotColor = TuViGold.copy(alpha = 0.4f),
+                ambientColor = TuViGold.copy(alpha = 0.15f)
             )
+            .clip(RoundedCornerShape(20.dp))
             .border(
                 width = 1.5.dp,
                 brush = Brush.linearGradient(
-                    listOf(TuViGold, TuViGoldDark, TuViGold.copy(alpha = 0.4f))
+                    listOf(
+                        TuViGold.copy(alpha = 0.8f),
+                        TuViGoldDark.copy(alpha = 0.3f),
+                        TuViGold.copy(alpha = 0.6f)
+                    )
                 ),
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable { onClick() }
-            .padding(24.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Blurred background layer — frosted glass
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            HomeCardGradientStart.copy(alpha = 0.85f),
+                            HomeCardGradientMid.copy(alpha = 0.75f),
+                            HomeCardGradientEnd.copy(alpha = 0.85f)
+                        )
+                    )
+                )
+                .blur(radiusX = 48.dp, radiusY = 48.dp)
+        )
+        // Glass sheen overlay
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.10f),
+                            Color.White.copy(alpha = 0.02f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+        Row(modifier = Modifier.padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
             // Biểu tượng
             Box(
                 modifier = Modifier
@@ -268,7 +302,7 @@ private fun MainFeatureCard(
                     .border(1.dp, TuViGold.copy(alpha = 0.6f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(emoji, fontSize = 30.sp)
+                Text(icon, fontSize = 30.sp)
             }
 
             Spacer(Modifier.width(20.dp))
@@ -315,24 +349,50 @@ private fun SecondaryFeatureCard(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    val borderColor = if (enabled) TuViGoldDark else TuViDivider.copy(alpha = 0.4f)
-    val bgBrush = if (enabled)
-        Brush.verticalGradient(listOf(TuViNavyLight, TuViNavyCard))
+    val borderColor = if (enabled)
+        Brush.linearGradient(listOf(TuViGold.copy(alpha = 0.6f), TuViGoldDark.copy(alpha = 0.25f), TuViGold.copy(alpha = 0.5f)))
     else
-        Brush.verticalGradient(listOf(TuViNavy.copy(alpha = 0.8f), TuViNavy))
+        Brush.linearGradient(listOf(TuViDivider.copy(alpha = 0.3f), TuViDivider.copy(alpha = 0.15f)))
+    val bgStart = if (enabled) TuViNavyLight.copy(alpha = 0.82f) else TuViNavy.copy(alpha = 0.7f)
+    val bgEnd = if (enabled) TuViNavyCard.copy(alpha = 0.75f) else TuViNavy.copy(alpha = 0.65f)
     val textColor = if (enabled) TuViIvory else TuViIvoryDim.copy(alpha = 0.45f)
     val subColor = if (enabled) TuViGold.copy(alpha = 0.8f) else TuViIvoryDim.copy(alpha = 0.3f)
 
     Box(
         modifier = modifier
-            .shadow(elevation = if (enabled) 6.dp else 2.dp, shape = RoundedCornerShape(16.dp))
+            .shadow(
+                elevation = if (enabled) 8.dp else 2.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = if (enabled) TuViGold.copy(alpha = 0.25f) else Color.Transparent
+            )
             .clip(RoundedCornerShape(16.dp))
-            .background(bgBrush)
             .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             .then(if (enabled) Modifier.clickable { onClick() } else Modifier)
-            .padding(16.dp)
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        // Blurred frosted glass background
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Brush.verticalGradient(listOf(bgStart, bgEnd)))
+                .blur(radiusX = 40.dp, radiusY = 40.dp)
+        )
+        // Glass sheen
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = if (enabled) 0.09f else 0.04f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
             Text(
                 text = title,
                 color = textColor,

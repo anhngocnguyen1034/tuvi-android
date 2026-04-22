@@ -69,7 +69,7 @@ fun ImageActionSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "🖼  Ảnh / Tệp",
+                    text = "Ảnh / Tệp",
                     color = TuViGold,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,

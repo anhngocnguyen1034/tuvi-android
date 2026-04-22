@@ -476,7 +476,7 @@ fun TuViChartScreen(
 
                     // ── Footer ──
                     Text(
-                        "✦ Tử Vi By AnhNN ✦",
+                        "Tử Vi By AnhNN",
                         color = ChartGoldDim,
                         fontSize = 11.sp,
                         textAlign = TextAlign.Center,

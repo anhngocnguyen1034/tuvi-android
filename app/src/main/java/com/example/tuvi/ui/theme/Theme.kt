@@ -14,7 +14,8 @@ fun TuViTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    TuViComposeColors.initIfNeeded(LocalContext.current.applicationContext)
+    // Truyền Activity context (không phải applicationContext) để đọc đúng night mode
+    TuViComposeColors.initIfNeeded(LocalContext.current)
 
     val colorScheme = remember(darkTheme) {
         if (darkTheme) {

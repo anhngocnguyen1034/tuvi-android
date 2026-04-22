@@ -63,15 +63,16 @@ object TuViComposeColors {
     val IncognitoDivider: Color get() = palette!!.incognitoDivider
     val IncognitoDimDark: Color get() = palette!!.incognitoDimDark
 
-    fun initIfNeeded(context: Context) {
-        val app = context.applicationContext
-        val isNight =
-            (app.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+    fun initIfNeeded(context: Context, forceNight: Boolean? = null) {
+        // Dùng context trực tiếp (Activity context) để đọc night mode —
+        // applicationContext không cập nhật khi AppCompatDelegate.setDefaultNightMode() thay đổi
+        val isNight = forceNight ?: (
+            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
+        )
         synchronized(this) {
             if (ready && lastNightUi == isNight) return
-            val c = app
-            fun col(id: Int) = Color(c.getColor(id))
+            fun col(id: Int) = Color(context.getColor(id))
 
             palette = AppColorPalette(
                 tuViNavy = col(R.color.tuvi_navy),

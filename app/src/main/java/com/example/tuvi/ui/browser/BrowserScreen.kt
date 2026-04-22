@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -51,6 +52,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -134,27 +137,11 @@ fun BrowserScreen(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = bgColor,
-            bottomBar = {
-                BrowserBottomBar(
-                    canGoBack = activeTab?.canGoBack ?: false,
-                    canGoForward = activeTab?.canGoForward ?: false,
-                    isIncognito = isIncognito,
-                    tabCount = tabs.size,
-                    onBack = { viewModel.goBack() },
-                    onForward = { viewModel.goForward() },
-                    onNewIncognitoTab = { viewModel.addNewIncognitoTab() },
-                    onOpenTabs = { viewModel.openTabSwitcher() },
-                    onOpenHistory = { viewModel.openHistory() },
-                    onOpenBookmarks = { viewModel.openBookmarks() },
-                    onReload = { viewModel.reload() }
-                )
-            }
         ) { padding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
-                    .padding(bottom = padding.calculateBottomPadding())
             ) {
                 Column(
                     modifier = Modifier
@@ -365,6 +352,23 @@ fun BrowserScreen(
                 onDismiss = { pendingDownloadUrl = null }
             )
         }
+
+        if (!viewModel.showHistoryOverlay && !viewModel.showBookmarkOverlay && !viewModel.showTabSwitcher) {
+            BrowserBottomBar(
+                canGoBack = activeTab?.canGoBack ?: false,
+                canGoForward = activeTab?.canGoForward ?: false,
+                isIncognito = isIncognito,
+                tabCount = tabs.size,
+                onBack = { viewModel.goBack() },
+                onForward = { viewModel.goForward() },
+                onNewIncognitoTab = { viewModel.addNewIncognitoTab() },
+                onOpenTabs = { viewModel.openTabSwitcher() },
+                onOpenHistory = { viewModel.openHistory() },
+                onOpenBookmarks = { viewModel.openBookmarks() },
+                onReload = { viewModel.reload() },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
     }
 }
 
@@ -422,7 +426,7 @@ private fun MoreDropdownMenu(
         DropdownMenuItem(
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("🔄", fontSize = 15.sp)
+                    Text("↺", fontSize = 15.sp)
                     Spacer(Modifier.size(10.dp))
                     Text("Tải lại trang", color = text, fontSize = 14.sp)
                 }
@@ -445,7 +449,7 @@ private fun MoreDropdownMenu(
             DropdownMenuItem(
                 text = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("⏱", fontSize = 15.sp)
+                        Text("H", fontSize = 15.sp)
                         Spacer(Modifier.size(10.dp))
                         Text("Lịch sử duyệt web", color = text, fontSize = 14.sp)
                     }
@@ -456,7 +460,7 @@ private fun MoreDropdownMenu(
             DropdownMenuItem(
                 text = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("★", fontSize = 15.sp)
+                        Icon(Icons.Default.Star, contentDescription = null, tint = text, modifier = Modifier.size(15.dp))
                         Spacer(Modifier.size(10.dp))
                         Text("Dấu trang", color = text, fontSize = 14.sp)
                     }
@@ -543,7 +547,7 @@ private fun AddressBar(
         // Incognito indicator icon
         if (isIncognito) {
             Text(
-                text = "\uD83D\uDD75\uFE0F",
+                text = "Ẩn",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(end = 8.dp)
             )
@@ -607,19 +611,28 @@ private fun BrowserBottomBar(
     onOpenHistory: () -> Unit,
     onOpenBookmarks: () -> Unit,
     onReload: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val bg      = if (isIncognito) IncognitoBg   else TuViNavy
+    val bgBase  = if (isIncognito) IncognitoBg   else TuViNavy
+    val bgLight = if (isIncognito) IncognitoCard  else TuViNavyLight
     val divider = if (isIncognito) IncognitoDivider  else TuViDivider
     val accent  = if (isIncognito) IncognitoEmphasis else TuViGold
     val dim     = if (isIncognito) IncognitoMuted else TuViIvoryDim
     var showMenu by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
+    Box(
+        modifier = modifier
             .fillMaxWidth()
-            .background(bg)
-            .border(width = 1.dp, color = divider.copy(alpha = 0.5f))
+            .navigationBarsPadding()
+            .background(bgBase)
     ) {
+        // Top hairline border
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(divider.copy(alpha = 0.5f))
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -644,10 +657,10 @@ private fun BrowserBottomBar(
                     modifier = Modifier.size(22.dp)
                 )
             }
-            // 🕵️ Incognito — tạo tab ẩn danh mới
+            // Incognito — tạo tab ẩn danh mới
             IconButton(onClick = onNewIncognitoTab, modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "\uD83D\uDD75\uFE0F",
+                    text = "Ẩn",
                     fontSize = 18.sp,
                     modifier = Modifier.padding(2.dp)
                 )
@@ -683,7 +696,7 @@ private fun BrowserBottomBar(
                 )
             }
         }
-    }
+    }  // end outer Box
 }
 
 @Composable
@@ -695,6 +708,6 @@ private fun ErrorBanner(message: String) {
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("⚠  $message", color = TuViRed, fontSize = 12.sp, modifier = Modifier.weight(1f))
+        Text("[!] $message", color = TuViRed, fontSize = 12.sp, modifier = Modifier.weight(1f))
     }
 }

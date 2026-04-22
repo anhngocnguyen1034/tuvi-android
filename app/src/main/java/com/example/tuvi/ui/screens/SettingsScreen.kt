@@ -1,7 +1,10 @@
 package com.example.tuvi.ui.screens
 
 import android.app.Application
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,15 +24,19 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,8 +48,12 @@ import com.example.tuvi.R
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.ui.theme.TuViGold
+import com.example.tuvi.ui.theme.TuViGoldDark
+import com.example.tuvi.ui.theme.TuViGoldLight
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
+import com.example.tuvi.ui.theme.TuViNavy
+import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,10 +70,8 @@ fun SettingsScreen(
     val scroll = rememberScrollState()
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
-        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize(),
+        containerColor = TuViNavy,
         topBar = {
             TopAppBar(
                 title = {
@@ -79,7 +89,7 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = TuViNavy,
                     titleContentColor = TuViIvory,
                     navigationIconContentColor = TuViGold
                 )
@@ -102,18 +112,10 @@ fun SettingsScreen(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.8.sp
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ThemeChip(
-                    label = stringResource(R.string.settings_theme_dark),
-                    selected = state.themeDark,
-                    onClick = { viewModel.setThemeDark(true) }
-                )
-                ThemeChip(
-                    label = stringResource(R.string.settings_theme_light),
-                    selected = !state.themeDark,
-                    onClick = { viewModel.setThemeDark(false) }
-                )
-            }
+            ThemeSwitchRow(
+                isDark = state.themeDark,
+                onToggle = { viewModel.setThemeDark(it) }
+            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -149,11 +151,89 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun ThemeChip(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
+private fun ThemeSwitchRow(isDark: Boolean, onToggle: (Boolean) -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 18.dp, vertical = 14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Icon + label group
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Sun/Moon icon circle
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (isDark)
+                                Brush.radialGradient(
+                                    listOf(TuViNavy.copy(alpha = 0.8f), TuViNavyCard)
+                                )
+                            else
+                                Brush.radialGradient(
+                                    listOf(TuViGold.copy(alpha = 0.25f), TuViNavyCard)
+                                )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isDark) "Tối" else "Sáng",
+                        fontSize = 20.sp
+                    )
+                }
+                Spacer(Modifier.size(14.dp))
+                Column {
+                    Text(
+                        text = if (isDark) stringResource(R.string.settings_theme_dark)
+                               else stringResource(R.string.settings_theme_light),
+                        color = TuViIvory,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = if (isDark) "Giao diện tối" else "Giao diện sáng",
+                        color = TuViIvoryDim,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
+            Switch(
+                checked = isDark,
+                onCheckedChange = onToggle,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = TuViNavy,
+                    checkedTrackColor = TuViGold,
+                    checkedBorderColor = TuViGoldDark,
+                    uncheckedThumbColor = TuViGoldLight,
+                    uncheckedTrackColor = TuViNavyLight,
+                    uncheckedBorderColor = TuViGoldDark.copy(alpha = 0.4f)
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun ThemeChip(label: String, selected: Boolean, onClick: () -> Unit) {
     FilterChip(
         selected = selected,
         onClick = onClick,

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
@@ -189,7 +190,7 @@ private fun HistoryItem(
                 .background(TuViGoldDark.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Text("⏱", fontSize = 18.sp)
+            Icon(Icons.Default.AccessTime, contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(18.dp))
         }
 
         Spacer(Modifier.width(12.dp))
@@ -228,7 +229,7 @@ private fun HistoryItem(
 private fun HistoryEmptyState(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("⏱", fontSize = 48.sp)
+            Icon(Icons.Default.AccessTime, contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(48.dp))
             Spacer(Modifier.height(12.dp))
             Text("Chưa có lịch sử duyệt web", color = TuViIvoryDim, fontSize = 16.sp)
             Spacer(Modifier.height(4.dp))

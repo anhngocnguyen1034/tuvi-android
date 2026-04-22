@@ -324,6 +324,78 @@ private fun DayDetail(
         DetailRow("Tháng AL",  day.canChiThang)
         DetailRow("Năm AL",    day.canChiNam)
 
+        // Trực, Lục Nhâm, Giờ Hoàng Đạo
+        if (day.truc != null || day.lucNham != null || !day.gioHoangDao.isNullOrEmpty()) {
+            HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
+            day.truc?.let { truc ->
+                val trucColor = if (truc.tot) TuViGold else TuViRedLight
+                val trucLabel = if (truc.tot) "Tốt" else "Xấu"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Trực", color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Text(truc.ten, color = TuViIvory, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Box(
+                            modifier = Modifier
+                                .background(trucColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                        ) {
+                            Text(trucLabel, color = trucColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+            day.lucNham?.let { ln ->
+                val lnColor = if (ln.hoangDao) TuViGold else TuViRedLight
+                val lnLabel = if (ln.hoangDao) "Hoàng Đạo" else "Hắc Đạo"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Lục Nhâm", color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Text(ln.ten, color = lnColor, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Box(
+                            modifier = Modifier
+                                .background(lnColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                        ) {
+                            Text(lnLabel, color = lnColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+            if (!day.gioHoangDao.isNullOrEmpty()) {
+                Spacer(Modifier.height(4.dp))
+                Text("Giờ Hoàng Đạo", color = TuViIvoryDim, fontSize = 12.sp)
+                Spacer(Modifier.height(4.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    day.gioHoangDao.forEach { gio ->
+                        Box(
+                            modifier = Modifier
+                                .background(TuViGold.copy(alpha = 0.15f), RoundedCornerShape(6.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                        ) {
+                            Text(gio, color = TuViGold, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+        }
+
         // Lễ cố định
         if (!day.leDuongLich.isNullOrBlank() || !day.leAmLich.isNullOrBlank()) {
             HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
@@ -375,12 +447,14 @@ private fun DayDetail(
     }
 }
 
+private val leadingEmojiRe = Regex("^[^\\p{L}\\p{N}\\p{P}]+\\s*")
+
 @Composable
 private fun EventChip(text: String, dotColor: androidx.compose.ui.graphics.Color) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(6.dp).background(dotColor, CircleShape))
         Spacer(Modifier.width(6.dp))
-        Text(text, color = dotColor, fontSize = 13.sp)
+        Text(leadingEmojiRe.replace(text, ""), color = dotColor, fontSize = 13.sp)
     }
 }
 

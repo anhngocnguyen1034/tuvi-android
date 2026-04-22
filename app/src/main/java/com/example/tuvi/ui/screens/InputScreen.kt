@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -61,7 +63,7 @@ private fun GoldDivider() {
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = TuViDivider, thickness = 1.dp)
         Text(
-            text = "  ✦  ☽  ✦  ",
+            text = "  —  ",
             color = TuViGold.copy(alpha = 0.7f),
             fontSize = 12.sp,
             letterSpacing = 2.sp
@@ -147,6 +149,156 @@ private fun TuViDropdownBox(
             modifier = Modifier.background(TuViNavyCard)
         ) {
             content()
+        }
+    }
+}
+
+/** Dialog chọn ngày âm lịch — custom dialog có style giống TuViDatePickerDialog. */
+@Composable
+private fun LunarDatePickerDialog(
+    selectedDay: Int,
+    selectedMonth: Int,
+    selectedYear: Int,
+    minYear: Int,
+    maxYear: Int,
+    onDateSelected: (day: Int, month: Int, year: Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var pickerDay by remember { mutableIntStateOf(selectedDay) }
+    var pickerMonth by remember { mutableIntStateOf(selectedMonth) }
+    var pickerYear by remember { mutableIntStateOf(selectedYear) }
+
+    val days = remember { (1..30).toList() }
+    val months = remember { (1..12).toList() }
+    val years = remember(minYear, maxYear) { (maxYear downTo minYear).toList() }
+
+    val dayState = rememberLazyListState(initialFirstVisibleItemIndex = (selectedDay - 1).coerceAtLeast(0))
+    val monthState = rememberLazyListState(initialFirstVisibleItemIndex = (selectedMonth - 1).coerceAtLeast(0))
+    val yearState = rememberLazyListState(initialFirstVisibleItemIndex = (maxYear - selectedYear).coerceAtLeast(0))
+
+    @Composable
+    fun <T> PickerColumn(
+        items: List<T>,
+        selected: T,
+        state: LazyListState,
+        label: String,
+        display: (T) -> String,
+        onSelect: (T) -> Unit
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                label,
+                color = TuViIvoryDim,
+                fontSize = 11.sp,
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+            LazyColumn(
+                state = state,
+                modifier = Modifier
+                    .width(88.dp)
+                    .height(200.dp)
+            ) {
+                items(items, key = { it.hashCode() }) { item ->
+                    val isSelected = item == selected
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isSelected) TuViGold.copy(alpha = 0.22f) else androidx.compose.ui.graphics.Color.Transparent)
+                            .clickable { onSelect(item) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = display(item),
+                            color = if (isSelected) TuViGold else TuViIvory,
+                            fontSize = 16.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(InputDatePickerSurface)
+                .fillMaxWidth()
+        ) {
+            // Title
+            Text(
+                "CHỌN NGÀY SINH ÂM LỊCH",
+                modifier = Modifier.padding(start = 24.dp, top = 20.dp),
+                color = TuViGold,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 2.sp
+            )
+            // Headline — ngày đang chọn
+            Text(
+                text = "%02d / %02d / %d".format(pickerDay, pickerMonth, pickerYear),
+                modifier = Modifier.padding(start = 24.dp, top = 4.dp, bottom = 12.dp),
+                color = TuViGold,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+            HorizontalDivider(color = TuViGold.copy(alpha = 0.2f), thickness = 1.dp)
+            // Picker columns
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                PickerColumn(
+                    items = days,
+                    selected = pickerDay,
+                    state = dayState,
+                    label = "Ngày",
+                    display = { "%02d".format(it) },
+                    onSelect = { pickerDay = it }
+                )
+                PickerColumn(
+                    items = months,
+                    selected = pickerMonth,
+                    state = monthState,
+                    label = "Tháng",
+                    display = { "%02d".format(it) },
+                    onSelect = { pickerMonth = it }
+                )
+                PickerColumn(
+                    items = years,
+                    selected = pickerYear,
+                    state = yearState,
+                    label = "Năm",
+                    display = { it.toString() },
+                    onSelect = { pickerYear = it }
+                )
+            }
+            HorizontalDivider(color = TuViGold.copy(alpha = 0.2f), thickness = 1.dp)
+            // Buttons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text("HUỶ", color = TuViIvoryDim, fontSize = 13.sp)
+                }
+                TextButton(onClick = {
+                    onDateSelected(pickerDay, pickerMonth, pickerYear)
+                    onDismiss()
+                }) {
+                    Text("CHỌN", color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
+            }
         }
     }
 }
@@ -249,7 +401,7 @@ fun TuViDatePickerDialog(
                     onDismiss()
                 }
             ) {
-                Text("✦ CHỌN", color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(" CHỌN", color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             }
         },
         dismissButton = {
@@ -283,7 +435,7 @@ fun TuViDatePickerDialog(
             state = datePickerState,
             title = {
                 Text(
-                    "✦  CHỌN NGÀY SINH",
+                    "CHỌN NGÀY SINH",
                     modifier = Modifier.padding(start = 24.dp, top = 20.dp),
                     color = TuViGold,
                     fontSize = 14.sp,
@@ -363,9 +515,7 @@ fun InputScreen(
     var duongLich by remember { mutableStateOf(true) }
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var lunarDayExpanded by remember { mutableStateOf(false) }
-    var lunarMonthExpanded by remember { mutableStateOf(false) }
-    var lunarYearExpanded by remember { mutableStateOf(false) }
+    var showLunarDatePicker by remember { mutableStateOf(false) }
 
     val zodiacHours = listOf(
         "Tý (23h–01h)", "Sửu (01h–03h)", "Dần (03h–05h)", "Mão (05h–07h)",
@@ -379,7 +529,7 @@ fun InputScreen(
     var minExpanded by remember { mutableStateOf(false) }
     var showViewYearPicker by remember { mutableStateOf(false) }
 
-    // Dialog chọn ngày (dương lịch)
+    // Dialog chọn ngày dương lịch
     if (showDatePicker && duongLich) {
         TuViDatePickerDialog(
             initialYear = year,
@@ -387,6 +537,18 @@ fun InputScreen(
             initialDay = day,
             onDateSelected = { y, m, d -> year = y; month = m; day = d },
             onDismiss = { showDatePicker = false }
+        )
+    }
+    // Dialog chọn ngày âm lịch
+    if (showLunarDatePicker && !duongLich) {
+        LunarDatePickerDialog(
+            selectedDay = day,
+            selectedMonth = month,
+            selectedYear = year,
+            minYear = minBirthYear,
+            maxYear = maxBirthYear,
+            onDateSelected = { d, m, y -> day = d; month = m; year = y },
+            onDismiss = { showLunarDatePicker = false }
         )
     }
     if (showViewYearPicker) {
@@ -526,78 +688,24 @@ fun InputScreen(
                         )
                     }
                 } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    Button(
+                        onClick = { showLunarDatePicker = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            TuViGold.copy(alpha = 0.7f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Box(modifier = Modifier.weight(1f)) {
-                            TuViDropdownBox(
-                                label = "Ngày",
-                                value = "%02d".format(day),
-                                expanded = lunarDayExpanded,
-                                onExpandedChange = { lunarDayExpanded = it }
-                            ) {
-                                (1..31).forEach { d ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                "%02d".format(d),
-                                                color = if (d == day) TuViGold else TuViIvory
-                                            )
-                                        },
-                                        onClick = { day = d; lunarDayExpanded = false }
-                                    )
-                                }
-                            }
-                        }
-                        Box(modifier = Modifier.weight(1f)) {
-                            TuViDropdownBox(
-                                label = "Tháng",
-                                value = "%02d".format(month),
-                                expanded = lunarMonthExpanded,
-                                onExpandedChange = { lunarMonthExpanded = it }
-                            ) {
-                                (1..12).forEach { m ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                "Tháng %02d".format(m),
-                                                color = if (m == month) TuViGold else TuViIvory
-                                            )
-                                        },
-                                        onClick = { month = m; lunarMonthExpanded = false }
-                                    )
-                                }
-                            }
-                        }
-                        Box(modifier = Modifier.weight(1f)) {
-                            TuViDropdownBox(
-                                label = "Năm",
-                                value = year.toString(),
-                                expanded = lunarYearExpanded,
-                                onExpandedChange = { lunarYearExpanded = it }
-                            ) {
-                                (minBirthYear..maxBirthYear).reversed().forEach { y ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                y.toString(),
-                                                color = if (y == year) TuViGold else TuViIvory
-                                            )
-                                        },
-                                        onClick = { year = y; lunarYearExpanded = false }
-                                    )
-                                }
-                            }
-                        }
+                        Text(
+                            text = "  %02d  /  %02d  /  %d".format(day, month, year),
+                            color = TuViIvory,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            letterSpacing = 1.sp
+                        )
                     }
-                    Text(
-                        text = "Nhập ngày / tháng / năm theo âm lịch (server quy đổi sang dương lịch)",
-                        color = TuViIvoryDim.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
                 }
             }
 
@@ -771,7 +879,7 @@ fun InputScreen(
                     .height(54.dp)
             ) {
                 Text(
-                    text = "✦  XEM LÁ SỐ TỬ VI  ✦",
+                    text = "XEM LÁ SỐ TỬ VI",
                     color = TuViNavy,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -797,17 +905,17 @@ fun InputScreen(
 // Mỗi quẻ có 3 vạch: vạch liên (dương ─) hoặc vạch đứt (âm - -)
 // true = vạch liên (dương), false = vạch đứt (âm)
 private val baguaTrigramLines = listOf(
-    listOf(true, true, true),  // ☰ Càn   (Trời)
-    listOf(true, true, false),  // ☱ Đoài  (Đầm)
-    listOf(true, false, true),  // ☲ Ly    (Lửa)
-    listOf(true, false, false),  // ☳ Chấn  (Sấm)
-    listOf(false, true, true),  // ☴ Tốn   (Gió)
-    listOf(false, true, false),  // ☵ Khảm  (Nước)
-    listOf(false, false, true),  // ☶ Cấn   (Núi)
-    listOf(false, false, false)   // ☷ Khôn  (Đất)
+    listOf(true, true, true),   // Càn  (Trời)
+    listOf(true, true, false),  // Đoài (Đầm)
+    listOf(true, false, true),  // Ly   (Lửa)
+    listOf(true, false, false), // Chấn (Sấm)
+    listOf(false, true, true),  // Tốn  (Gió)
+    listOf(false, true, false), // Khảm (Nước)
+    listOf(false, false, true), // Cấn  (Núi)
+    listOf(false, false, false) // Khôn (Đất)
 )
 
-private val baguaNames = listOf("☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷")
+private val baguaNames = listOf("Càn", "Đoài", "Ly", "Chấn", "Tốn", "Khảm", "Cấn", "Khôn")
 
 @Composable
 fun BaguaDecoration(modifier: Modifier = Modifier) {

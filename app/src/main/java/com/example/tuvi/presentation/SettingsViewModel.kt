@@ -1,6 +1,7 @@
 package com.example.tuvi.presentation
 
 import android.app.Application
+import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.AndroidViewModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 @Immutable
 data class SettingsUiState(
     val themeDark: Boolean,
-    val localeTag: String
+    val localeTag: String,
 )
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -40,6 +41,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             AppCompatDelegate.setDefaultNightMode(
                 if (dark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
+            restartApp()
         }
     }
 
@@ -48,5 +50,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repo.setLocaleTag(tag)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
         }
+    }
+
+    private fun restartApp() {
+        val app = getApplication<Application>()
+        val intent = app.packageManager
+            .getLaunchIntentForPackage(app.packageName)
+            ?.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK) }
+        if (intent != null) app.startActivity(intent)
     }
 }

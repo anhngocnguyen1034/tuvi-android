@@ -31,7 +31,7 @@ class SuKienReceiver : BroadcastReceiver() {
 
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("📅 $tieuDe")
+            .setContentTitle(tieuDe)
             .setContentText(ghiChu.ifBlank { "Hôm nay có sự kiện trong lịch của bạn" })
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(ghiChu.ifBlank { "Hôm nay có sự kiện trong lịch của bạn" }))

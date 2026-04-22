@@ -304,7 +304,7 @@ private fun BookmarkEmptyState(modifier: Modifier) {
             Spacer(Modifier.height(12.dp))
             Text("Chưa có dấu trang nào", color = TuViIvoryDim, fontSize = 16.sp)
             Spacer(Modifier.height(4.dp))
-            Text("Nhấn ☆ trên thanh địa chỉ để lưu trang",
+            Text("Nhấn * trên thanh địa chỉ để lưu trang",
                 color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
         }
     }
@@ -313,14 +313,14 @@ private fun BookmarkEmptyState(modifier: Modifier) {
 private fun String.toFaviconEmoji(): String {
     val domain = toDomainDisplay().lowercase()
     return when {
-        domain.contains("google")    -> "🔍"
-        domain.contains("youtube")   -> "▶"
-        domain.contains("facebook")  -> "📘"
-        domain.contains("wikipedia") -> "📖"
-        domain.contains("github")    -> "🐙"
-        domain.contains("reddit")    -> "🔴"
-        domain.contains("twitter") || domain.contains("x.com") -> "𝕏"
-        else -> "★"
+        domain.contains("google")    -> "G"
+        domain.contains("youtube")   -> "YT"
+        domain.contains("facebook")  -> "FB"
+        domain.contains("wikipedia") -> "W"
+        domain.contains("github")    -> "GH"
+        domain.contains("reddit")    -> "R"
+        domain.contains("twitter") || domain.contains("x.com") -> "X"
+        else -> "Web"
     }
 }
 
