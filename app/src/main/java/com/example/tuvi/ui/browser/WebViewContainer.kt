@@ -156,7 +156,7 @@ fun TabWebViewHolder(
             ) {
                 if (request?.isForMainFrame == true) {
                     srl.isRefreshing = false
-                    onError(error?.description?.toString() ?: "Lỗi không xác định")
+                    onError(error?.description?.toString() ?: context.getString(com.example.tuvi.R.string.browser_error_unknown))
                 }
             }
         }
