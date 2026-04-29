@@ -14,12 +14,12 @@ import com.example.tuvi.R
 class SuKienReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val tieuDe = intent.getStringExtra(EXTRA_TIEU_DE) ?: "Sự kiện"
+        val tieuDe = intent.getStringExtra(EXTRA_TIEU_DE) ?: context.getString(R.string.notif_event_default_title)
         val ghiChu = intent.getStringExtra(EXTRA_GHI_CHU) ?: ""
         val id     = intent.getLongExtra(EXTRA_ID, 0L).toInt()
 
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        ensureChannel(nm)
+        ensureChannel(context, nm)
 
         val tap = PendingIntent.getActivity(
             context, id,
@@ -32,9 +32,9 @@ class SuKienReceiver : BroadcastReceiver() {
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(tieuDe)
-            .setContentText(ghiChu.ifBlank { "Hôm nay có sự kiện trong lịch của bạn" })
+            .setContentText(ghiChu.ifBlank { context.getString(R.string.notif_event_default_text) })
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(ghiChu.ifBlank { "Hôm nay có sự kiện trong lịch của bạn" }))
+                .bigText(ghiChu.ifBlank { context.getString(R.string.notif_event_default_text) }))
             .setContentIntent(tap)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -43,15 +43,15 @@ class SuKienReceiver : BroadcastReceiver() {
         nm.notify(id, notif)
     }
 
-    private fun ensureChannel(nm: NotificationManager) {
+    private fun ensureChannel(context: Context, nm: NotificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (nm.getNotificationChannel(CHANNEL_ID) == null) {
                 nm.createNotificationChannel(
                     NotificationChannel(
                         CHANNEL_ID,
-                        "Sự kiện lịch",
+                        context.getString(R.string.notif_channel_name),
                         NotificationManager.IMPORTANCE_HIGH,
-                    ).apply { description = "Nhắc nhở sự kiện trong lịch âm dương" }
+                    ).apply { description = context.getString(R.string.notif_channel_desc) }
                 )
             }
         }
