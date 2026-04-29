@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,19 +38,25 @@ import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViRed
-
-private val DEFAULT_GROUPS = listOf("Gia đình", "Bạn bè", "Đồng nghiệp", "Khác")
 
 @Composable
 fun SaveChartDialog(
     onDismiss: () -> Unit,
     onConfirm: (nhom: String) -> Unit
 ) {
-    var selectedGroup by remember { mutableStateOf("Gia đình") }
+    val defaultGroups = listOf(
+        stringResource(R.string.save_chart_group_family),
+        stringResource(R.string.save_chart_group_friends),
+        stringResource(R.string.save_chart_group_colleagues),
+        stringResource(R.string.save_chart_group_other)
+    )
+    val otherGroup = stringResource(R.string.save_chart_group_other)
+    var selectedGroup by remember { mutableStateOf(defaultGroups.first()) }
     var customGroup by remember { mutableStateOf("") }
     val isCustom = selectedGroup == "__custom__"
 
@@ -63,20 +70,20 @@ fun SaveChartDialog(
                 .padding(20.dp)
         ) {
             Text(
-                "Lưu lá số",
+                stringResource(R.string.save_chart_dialog_title),
                 color = TuViGold,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "Chọn nhóm để phân loại",
+                stringResource(R.string.save_chart_dialog_subtitle),
                 color = TuViIvoryDim,
                 fontSize = 13.sp
             )
             Spacer(Modifier.height(16.dp))
 
-            DEFAULT_GROUPS.forEach { group ->
+            defaultGroups.forEach { group ->
                 GroupOption(
                     label = group,
                     selected = selectedGroup == group,
@@ -86,7 +93,7 @@ fun SaveChartDialog(
             }
 
             GroupOption(
-                label = "Tuỳ chỉnh...",
+                label = stringResource(R.string.save_chart_group_custom),
                 selected = isCustom,
                 onClick = { selectedGroup = "__custom__" }
             )
@@ -96,7 +103,7 @@ fun SaveChartDialog(
                 OutlinedTextField(
                     value = customGroup,
                     onValueChange = { customGroup = it },
-                    placeholder = { Text("Nhập tên nhóm...", color = TuViIvoryDim) },
+                    placeholder = { Text(stringResource(R.string.save_chart_custom_hint), color = TuViIvoryDim) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -119,16 +126,16 @@ fun SaveChartDialog(
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text("Huỷ", color = TuViIvoryDim)
+                    Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim)
                 }
                 TextButton(
                     onClick = {
-                        val finalGroup = if (isCustom) customGroup.trim().ifBlank { "Khác" }
+                        val finalGroup = if (isCustom) customGroup.trim().ifBlank { otherGroup }
                         else selectedGroup
                         onConfirm(finalGroup)
                     }
                 ) {
-                    Text("Lưu", color = TuViGold, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.btn_save), color = TuViGold, fontWeight = FontWeight.Bold)
                 }
             }
         }
