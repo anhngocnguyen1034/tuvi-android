@@ -12,7 +12,7 @@ import java.util.UUID
 data class TabState(
     val id: String = UUID.randomUUID().toString(),
     val url: String = "https://www.google.com",
-    val title: String = "Tab mới",
+    val title: String = "",
     val progress: Int = 0,
     val isLoading: Boolean = false,
     val canGoBack: Boolean = false,
