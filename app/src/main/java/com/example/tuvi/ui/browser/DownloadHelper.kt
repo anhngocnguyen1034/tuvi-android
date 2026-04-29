@@ -26,7 +26,7 @@ fun enqueueDownload(
 
         val request = DownloadManager.Request(Uri.parse(url)).apply {
             setTitle(fileName)
-            setDescription("Đang tải xuống…")
+            setDescription(context.getString(com.example.tuvi.R.string.browser_download_desc))
             addRequestHeader("User-Agent", userAgent)
             setNotificationVisibility(
                 DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
