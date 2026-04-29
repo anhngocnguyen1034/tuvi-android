@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.*
 import java.util.Calendar
 
@@ -93,7 +95,7 @@ fun ThemSuKienSheet(
         ) {
             // ── Tiêu đề sheet ──────────────────────────────────────────────
             Text(
-                "Thêm sự kiện  $ngay/$thang/$nam ($thuText)",
+                stringResource(R.string.add_event_sheet_title, ngay, thang, nam, thuText),
                 color = TuViGold,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -103,7 +105,7 @@ fun ThemSuKienSheet(
             OutlinedTextField(
                 value = tieuDe,
                 onValueChange = { tieuDe = it },
-                label = { Text("Tiêu đề *", color = TuViIvoryDim) },
+                label = { Text(stringResource(R.string.add_event_label_title), color = TuViIvoryDim) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = outlinedTextFieldColors(),
@@ -113,7 +115,7 @@ fun ThemSuKienSheet(
             OutlinedTextField(
                 value = ghiChu,
                 onValueChange = { ghiChu = it },
-                label = { Text("Ghi chú", color = TuViIvoryDim) },
+                label = { Text(stringResource(R.string.add_event_label_note), color = TuViIvoryDim) },
                 maxLines = 3,
                 modifier = Modifier.fillMaxWidth(),
                 colors = outlinedTextFieldColors(),
@@ -140,13 +142,13 @@ fun ThemSuKienSheet(
                     )
                     Column {
                         Text(
-                            "Nhắc nhở",
+                            stringResource(R.string.add_event_reminder),
                             color = if (nhacNho) TuViIvory else TuViIvoryDim,
                             fontSize = 14.sp,
                         )
                         if (nhacNho && !notifGranted) {
                             Text(
-                                "Quyền thông báo bị từ chối – sự kiện vẫn được lưu",
+                                stringResource(R.string.add_event_notif_denied),
                                 color = TuViRedLight,
                                 fontSize = 11.sp,
                             )
@@ -185,7 +187,7 @@ fun ThemSuKienSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("Giờ nhắc", color = TuViIvory, fontSize = 14.sp)
+                    Text(stringResource(R.string.add_event_alarm_time), color = TuViIvory, fontSize = 14.sp)
                     Text(
                         "%02d:%02d".format(alarmHour, alarmMinute),
                         color = TuViGold,
@@ -217,7 +219,7 @@ fun ThemSuKienSheet(
                     disabledContentColor = TuViIvoryDim,
                 ),
             ) {
-                Text("Lưu sự kiện", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.add_event_btn_save), fontWeight = FontWeight.Bold)
             }
         }
     }
