@@ -1,125 +1,153 @@
 package com.example.tuvi.ui.theme
 
-import android.content.Context
-import android.content.res.Configuration
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import com.example.tuvi.R
 
 /**
- * Toàn bộ màu Compose đọc từ [colors.xml].
- * [Color] là inline class — không dùng [lateinit] trực tiếp; lưu trong [AppColorPalette].
+ * Hai palette dark/light hardcode trong Kotlin.
+ * [current] là Compose MutableState — khi [setDark] thay đổi palette,
+ * mọi Composable đang đọc màu từ đây sẽ tự recompose mà không cần restart app.
  */
 object TuViComposeColors {
 
-    @Volatile
-    var ready: Boolean = false
-        private set
+    private val darkPalette = AppColorPalette(
+        tuViNavy             = Color(0xFF0D1B3E),
+        tuViNavyLight        = Color(0xFF162450),
+        tuViNavyCard         = Color(0xFF1C2D5E),
+        tuViGold             = Color(0xFFD4A843),
+        tuViGoldLight        = Color(0xFFF5CB6A),
+        tuViGoldDark         = Color(0xFFAA8020),
+        tuViRed              = Color(0xFFC0392B),
+        tuViRedLight         = Color(0xFFE57369),
+        tuViIvory            = Color(0xFFF5EED8),
+        tuViIvoryDim         = Color(0xFFC5BAA0),
+        tuViDivider          = Color(0xFF2E4080),
+        inputBgGradientBottom    = Color(0xFF071330),
+        inputDatePickerSurface   = Color(0xFF12082A),
+        inputChartRed            = Color(0xFF8B0000),
+        homeBgGradientTop        = Color(0xFF060E24),
+        homeBgGradientBottom     = Color(0xFF0A1535),
+        homeCardGradientStart    = Color(0xFF1E2D5E),
+        homeCardGradientMid      = Color(0xFF0F1B3E),
+        homeCardGradientEnd      = Color(0xFF1A2650),
+        chartDeepBg          = Color(0xFF0F0510),
+        chartNavy            = Color(0xFF12082A),
+        chartCardBg          = Color(0xFF1C0D30),
+        chartGold            = Color(0xFFD4AF37),
+        chartGoldDim         = Color(0xFF8B7020),
+        chartIvory           = Color(0xFFF5E6C8),
+        chartIvoryDim        = Color(0xFFBBA080),
+        chartRed             = Color(0xFF8B0000),
+        chartBorderGold      = Color(0xFF5C3D0A),
+        chartLabelWeekOther  = Color(0xFF2E1B6B),
+        hanhThuy             = Color(0xFF4A90D9),
+        hanhHoa              = Color(0xFFE84040),
+        hanhKim              = Color(0xFFE8D5A3),
+        hanhMoc              = Color(0xFF4CAF50),
+        hanhTho              = Color(0xFFD4A017),
+        incognitoBg          = Color(0xFF0D0D0D),
+        incognitoCard        = Color(0xFF1C1C1C),
+        incognitoEmphasis    = Color(0xFFE0E0E0),
+        incognitoMuted       = Color(0xFF9E9E9E),
+        incognitoDivider     = Color(0xFF2C2C2C),
+        incognitoDimDark     = Color(0xFF757575),
+    )
 
-    private var palette: AppColorPalette? = null
-    private var lastNightUi: Boolean? = null
+    private val lightPalette = AppColorPalette(
+        tuViNavy             = Color(0xFFF2EFE8),
+        tuViNavyLight        = Color(0xFFE8E4DA),
+        tuViNavyCard         = Color(0xFFFFFFFF),
+        tuViGold             = Color(0xFFB8860B),
+        tuViGoldLight        = Color(0xFFD4A843),
+        tuViGoldDark         = Color(0xFF8B6914),
+        tuViRed              = Color(0xFFC0392B),
+        tuViRedLight         = Color(0xFFE57369),
+        tuViIvory            = Color(0xFF1C2238),
+        tuViIvoryDim         = Color(0xFF4A5168),
+        tuViDivider          = Color(0xFFC8C2B8),
+        inputBgGradientBottom    = Color(0xFFE5E0D6),
+        inputDatePickerSurface   = Color(0xFFFFFFFF),
+        inputChartRed            = Color(0xFF8B0000),
+        homeBgGradientTop        = Color(0xFFF8F4EC),
+        homeBgGradientBottom     = Color(0xFFE8E2D6),
+        homeCardGradientStart    = Color(0xFFFFFFFF),
+        homeCardGradientMid      = Color(0xFFF0EBE3),
+        homeCardGradientEnd      = Color(0xFFE4DDD2),
+        chartDeepBg          = Color(0xFFF0ECF5),
+        chartNavy            = Color(0xFFF5F1FA),
+        chartCardBg          = Color(0xFFFFFFFF),
+        chartGold            = Color(0xFFB8860B),
+        chartGoldDim         = Color(0xFF8B6914),
+        chartIvory           = Color(0xFF1E1A24),
+        chartIvoryDim        = Color(0xFF5A5660),
+        chartRed             = Color(0xFF8B0000),
+        chartBorderGold      = Color(0xFFD4C4A8),
+        chartLabelWeekOther  = Color(0xFFE0D8F0),
+        hanhThuy             = Color(0xFF2E6BB5),
+        hanhHoa              = Color(0xFFD32F2F),
+        hanhKim              = Color(0xFFB8956A),
+        hanhMoc              = Color(0xFF2E7D32),
+        hanhTho              = Color(0xFFB28704),
+        incognitoBg          = Color(0xFFF2F2F2),
+        incognitoCard        = Color(0xFFFFFFFF),
+        incognitoEmphasis    = Color(0xFF212121),
+        incognitoMuted       = Color(0xFF616161),
+        incognitoDivider     = Color(0xFFE0E0E0),
+        incognitoDimDark     = Color(0xFF9E9E9E),
+    )
 
-    val TuViNavy: Color get() = palette!!.tuViNavy
-    val TuViNavyLight: Color get() = palette!!.tuViNavyLight
-    val TuViNavyCard: Color get() = palette!!.tuViNavyCard
-    val TuViGold: Color get() = palette!!.tuViGold
-    val TuViGoldLight: Color get() = palette!!.tuViGoldLight
-    val TuViGoldDark: Color get() = palette!!.tuViGoldDark
-    val TuViRed: Color get() = palette!!.tuViRed
-    val TuViRedLight: Color get() = palette!!.tuViRedLight
-    val TuViIvory: Color get() = palette!!.tuViIvory
-    val TuViIvoryDim: Color get() = palette!!.tuViIvoryDim
-    val TuViDivider: Color get() = palette!!.tuViDivider
+    private var current by mutableStateOf(darkPalette)
 
-    val InputBgGradientBottom: Color get() = palette!!.inputBgGradientBottom
-    val InputDatePickerSurface: Color get() = palette!!.inputDatePickerSurface
-    val InputChartRed: Color get() = palette!!.inputChartRed
-    val HomeBgGradientTop: Color get() = palette!!.homeBgGradientTop
-    val HomeBgGradientBottom: Color get() = palette!!.homeBgGradientBottom
-    val HomeCardGradientStart: Color get() = palette!!.homeCardGradientStart
-    val HomeCardGradientMid: Color get() = palette!!.homeCardGradientMid
-    val HomeCardGradientEnd: Color get() = palette!!.homeCardGradientEnd
-
-    val ChartDeepBg: Color get() = palette!!.chartDeepBg
-    val ChartNavy: Color get() = palette!!.chartNavy
-    val ChartCardBg: Color get() = palette!!.chartCardBg
-    val ChartGold: Color get() = palette!!.chartGold
-    val ChartGoldDim: Color get() = palette!!.chartGoldDim
-    val ChartIvory: Color get() = palette!!.chartIvory
-    val ChartIvoryDim: Color get() = palette!!.chartIvoryDim
-    val ChartRed: Color get() = palette!!.chartRed
-    val ChartBorderGold: Color get() = palette!!.chartBorderGold
-    val ChartLabelWeekOther: Color get() = palette!!.chartLabelWeekOther
-
-    val HanhThuy: Color get() = palette!!.hanhThuy
-    val HanhHoa: Color get() = palette!!.hanhHoa
-    val HanhKim: Color get() = palette!!.hanhKim
-    val HanhMoc: Color get() = palette!!.hanhMoc
-    val HanhTho: Color get() = palette!!.hanhTho
-
-    val IncognitoBg: Color get() = palette!!.incognitoBg
-    val IncognitoCard: Color get() = palette!!.incognitoCard
-    val IncognitoEmphasis: Color get() = palette!!.incognitoEmphasis
-    val IncognitoMuted: Color get() = palette!!.incognitoMuted
-    val IncognitoDivider: Color get() = palette!!.incognitoDivider
-    val IncognitoDimDark: Color get() = palette!!.incognitoDimDark
-
-    fun initIfNeeded(context: Context, forceNight: Boolean? = null) {
-        // Dùng context trực tiếp (Activity context) để đọc night mode —
-        // applicationContext không cập nhật khi AppCompatDelegate.setDefaultNightMode() thay đổi
-        val isNight = forceNight ?: (
-            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
-        )
-        synchronized(this) {
-            if (ready && lastNightUi == isNight) return
-            fun col(id: Int) = Color(context.getColor(id))
-
-            palette = AppColorPalette(
-                tuViNavy = col(R.color.tuvi_navy),
-                tuViNavyLight = col(R.color.tuvi_navy_light),
-                tuViNavyCard = col(R.color.tuvi_navy_card),
-                tuViGold = col(R.color.tuvi_gold),
-                tuViGoldLight = col(R.color.tuvi_gold_light),
-                tuViGoldDark = col(R.color.tuvi_gold_dark),
-                tuViRed = col(R.color.tuvi_red),
-                tuViRedLight = col(R.color.tuvi_red_light),
-                tuViIvory = col(R.color.tuvi_ivory),
-                tuViIvoryDim = col(R.color.tuvi_ivory_dim),
-                tuViDivider = col(R.color.tuvi_divider),
-                inputBgGradientBottom = col(R.color.input_bg_gradient_bottom),
-                inputDatePickerSurface = col(R.color.input_date_picker_surface),
-                inputChartRed = col(R.color.input_chart_red),
-                homeBgGradientTop = col(R.color.home_bg_gradient_top),
-                homeBgGradientBottom = col(R.color.home_bg_gradient_bottom),
-                homeCardGradientStart = col(R.color.home_card_gradient_start),
-                homeCardGradientMid = col(R.color.home_card_gradient_mid),
-                homeCardGradientEnd = col(R.color.home_card_gradient_end),
-                chartDeepBg = col(R.color.chart_deep_bg),
-                chartNavy = col(R.color.chart_navy),
-                chartCardBg = col(R.color.chart_card_bg),
-                chartGold = col(R.color.chart_gold),
-                chartGoldDim = col(R.color.chart_gold_dim),
-                chartIvory = col(R.color.chart_ivory),
-                chartIvoryDim = col(R.color.chart_ivory_dim),
-                chartRed = col(R.color.chart_red),
-                chartBorderGold = col(R.color.chart_border_gold),
-                chartLabelWeekOther = col(R.color.chart_label_week_other),
-                hanhThuy = col(R.color.hanh_thuy),
-                hanhHoa = col(R.color.hanh_hoa),
-                hanhKim = col(R.color.hanh_kim),
-                hanhMoc = col(R.color.hanh_moc),
-                hanhTho = col(R.color.hanh_tho),
-                incognitoBg = col(R.color.incognito_bg),
-                incognitoCard = col(R.color.incognito_card),
-                incognitoEmphasis = col(R.color.incognito_emphasis),
-                incognitoMuted = col(R.color.incognito_muted),
-                incognitoDivider = col(R.color.incognito_divider),
-                incognitoDimDark = col(R.color.incognito_dim_dark),
-            )
-            lastNightUi = isNight
-            ready = true
-        }
+    fun setDark(dark: Boolean) {
+        current = if (dark) darkPalette else lightPalette
     }
+
+    val TuViNavy: Color get() = current.tuViNavy
+    val TuViNavyLight: Color get() = current.tuViNavyLight
+    val TuViNavyCard: Color get() = current.tuViNavyCard
+    val TuViGold: Color get() = current.tuViGold
+    val TuViGoldLight: Color get() = current.tuViGoldLight
+    val TuViGoldDark: Color get() = current.tuViGoldDark
+    val TuViRed: Color get() = current.tuViRed
+    val TuViRedLight: Color get() = current.tuViRedLight
+    val TuViIvory: Color get() = current.tuViIvory
+    val TuViIvoryDim: Color get() = current.tuViIvoryDim
+    val TuViDivider: Color get() = current.tuViDivider
+
+    val InputBgGradientBottom: Color get() = current.inputBgGradientBottom
+    val InputDatePickerSurface: Color get() = current.inputDatePickerSurface
+    val InputChartRed: Color get() = current.inputChartRed
+    val HomeBgGradientTop: Color get() = current.homeBgGradientTop
+    val HomeBgGradientBottom: Color get() = current.homeBgGradientBottom
+    val HomeCardGradientStart: Color get() = current.homeCardGradientStart
+    val HomeCardGradientMid: Color get() = current.homeCardGradientMid
+    val HomeCardGradientEnd: Color get() = current.homeCardGradientEnd
+
+    val ChartDeepBg: Color get() = current.chartDeepBg
+    val ChartNavy: Color get() = current.chartNavy
+    val ChartCardBg: Color get() = current.chartCardBg
+    val ChartGold: Color get() = current.chartGold
+    val ChartGoldDim: Color get() = current.chartGoldDim
+    val ChartIvory: Color get() = current.chartIvory
+    val ChartIvoryDim: Color get() = current.chartIvoryDim
+    val ChartRed: Color get() = current.chartRed
+    val ChartBorderGold: Color get() = current.chartBorderGold
+    val ChartLabelWeekOther: Color get() = current.chartLabelWeekOther
+
+    val HanhThuy: Color get() = current.hanhThuy
+    val HanhHoa: Color get() = current.hanhHoa
+    val HanhKim: Color get() = current.hanhKim
+    val HanhMoc: Color get() = current.hanhMoc
+    val HanhTho: Color get() = current.hanhTho
+
+    val IncognitoBg: Color get() = current.incognitoBg
+    val IncognitoCard: Color get() = current.incognitoCard
+    val IncognitoEmphasis: Color get() = current.incognitoEmphasis
+    val IncognitoMuted: Color get() = current.incognitoMuted
+    val IncognitoDivider: Color get() = current.incognitoDivider
+    val IncognitoDimDark: Color get() = current.incognitoDimDark
 }
 
 private data class AppColorPalette(
