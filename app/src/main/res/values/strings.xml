@@ -1,13 +1,253 @@
 <resources>
+    <!-- App -->
     <string name="app_name">TuVi</string>
-    <string name="settings_title">Cài đặt</string>
-    <string name="settings_back">Quay lại</string>
-    <string name="settings_theme">Giao diện</string>
-    <string name="settings_theme_dark">Tối</string>
-    <string name="settings_theme_light">Sáng</string>
-    <string name="settings_language">Ngôn ngữ</string>
-    <string name="settings_lang_vi">Tiếng Việt</string>
+
+    <!-- Common buttons -->
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_select">Select</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_no">No</string>
+    <string name="btn_clear">Clear</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_theme">Appearance</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_lang_vi">Vietnamese</string>
     <string name="settings_lang_en">English</string>
-    <string name="content_desc_settings">Mở cài đặt</string>
-    <string name="settings_footer_hint">Đổi ngôn ngữ áp dụng cho nhãn hệ thống và màn Cài đặt; các màn khác có thể vẫn hiển thị tiếng Việt cho đến khi được chuyển hết sang tài nguyên chuỗi.</string>
+    <string name="settings_dark_mode_desc">Dark appearance</string>
+    <string name="settings_light_mode_desc">Light appearance</string>
+    <string name="content_desc_settings">Open settings</string>
+    <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
+
+    <!-- HomeScreen -->
+    <string name="home_app_title">TỬ VI</string>
+    <string name="home_app_subtitle">BY ANHNN</string>
+    <string name="home_tuvi_title">Tử Vi Chart</string>
+    <string name="home_tuvi_desc">View your personal chart by birth date</string>
+    <string name="home_saved_title">Saved\nCharts</string>
+    <string name="home_saved_desc">View &amp; manage</string>
+    <string name="home_browser_title">Web\nBrowser</string>
+    <string name="home_browser_desc">Browse web &amp; documents</string>
+    <string name="home_calendar_title">Lunar / Solar Calendar</string>
+    <string name="home_calendar_desc">Quick view lunar and solar calendar</string>
+    <string name="home_btn_view_now">View now</string>
+
+    <!-- InputScreen -->
+    <string name="input_screen_title">TỬ VI BY ANHNN</string>
+    <string name="input_lunar_picker_title">SELECT LUNAR BIRTH DATE</string>
+    <string name="input_picker_day">Day</string>
+    <string name="input_picker_month">Month</string>
+    <string name="input_picker_year">Year</string>
+    <string name="input_view_year_dialog_title">Select view year</string>
+    <string name="input_solar_picker_title">SELECT BIRTH DATE</string>
+    <string name="input_label_name">FULL NAME</string>
+    <string name="input_hint_name">Enter full name…</string>
+    <string name="input_label_birthday">DATE OF BIRTH</string>
+    <string name="input_solar_calendar">Solar calendar</string>
+    <string name="input_lunar_calendar">Lunar calendar</string>
+    <string name="input_label_birth_time">BIRTH TIME</string>
+    <string name="input_hour_label">Hour</string>
+    <string name="input_minute_label">Minute</string>
+    <string name="input_earthly_branch_hour">Earthly Branch Hour</string>
+    <string name="input_label_gender">GENDER</string>
+    <string name="input_gender_male">Male</string>
+    <string name="input_gender_female">Female</string>
+    <string name="input_label_view_year">VIEW YEAR</string>
+    <string name="input_hint_view_year">Chart view year</string>
+    <string name="input_view_year_range_hint">Select year from %1$d to %2$d (default: current year)</string>
+    <string name="input_btn_view_chart">VIEW TỬ VI CHART</string>
+    <string name="input_footer_disclaimer">Results based on traditional Tử Vi Đẩu Số</string>
+
+    <!-- TuViChartScreen -->
+    <string name="chart_cd_download">Download chart image</string>
+    <string name="chart_cd_unsave">Unsave chart</string>
+    <string name="chart_cd_save">Save chart</string>
+    <string name="chart_dialog_unsave_title">Unsave chart?</string>
+    <string name="chart_dialog_unsave_message">The chart will be removed from your saved list. Are you sure?</string>
+    <string name="chart_btn_unsave">Unsave</string>
+    <string name="chart_download_success_title">Image saved</string>
+    <string name="chart_download_fail_title">Image save failed</string>
+    <string name="chart_download_success_message">Chart image saved to gallery (Pictures/TuVi).</string>
+    <string name="chart_download_fail_message">Could not save image to gallery. Please try again.</string>
+    <string name="chart_dialog_download_title">Download chart image?</string>
+    <string name="chart_dialog_download_message">Do you want to download the chart image to gallery?</string>
+    <string name="chart_btn_download">Download</string>
+    <string name="chart_footer">Tử Vi By AnhNN</string>
+    <string name="chart_center_title">TỬ VI CHART</string>
+    <string name="chart_label_name">Full name</string>
+    <string name="chart_label_gender">Gender</string>
+    <string name="chart_label_solar_birthday">Birthday (Solar)</string>
+    <string name="chart_label_lunar_birthday">Birthday (Lunar)</string>
+    <string name="chart_label_hour">Hour</string>
+    <string name="chart_label_view_year">View year:</string>
+    <string name="chart_label_year">Year</string>
+    <string name="chart_label_month">Month</string>
+    <string name="chart_label_day">Day</string>
+    <string name="chart_label_menh">Menh</string>
+    <string name="chart_label_ban_menh">Ban Menh</string>
+    <string name="chart_label_cuc">Cuc</string>
+    <string name="chart_label_menh_chu">Menh Chu</string>
+    <string name="chart_label_than_chu">Than Chu</string>
+    <string name="chart_label_sinh_khac">Sinh/Khac</string>
+    <string name="chart_month_n">Month %1$d</string>
+    <string name="chart_month">Month</string>
+
+    <!-- SavedChartsScreen -->
+    <string name="saved_screen_title">Saved Charts</string>
+    <string name="saved_search_placeholder">Search by name…</string>
+    <string name="saved_cd_clear_search">Clear</string>
+    <string name="saved_chart_count">%1$d charts</string>
+    <string name="saved_empty_search_message">No matching charts found</string>
+    <string name="saved_empty_state_message">No saved charts yet</string>
+    <string name="saved_empty_state_hint">View a chart and tap "Save chart" to add it here</string>
+    <string name="saved_delete_dialog_title">Delete chart</string>
+    <string name="saved_delete_dialog_message">Delete %1$s\'s chart?</string>
+    <string name="saved_cd_delete">Delete</string>
+
+    <!-- SaveChartDialog -->
+    <string name="save_chart_dialog_title">Save chart</string>
+    <string name="save_chart_dialog_subtitle">Select a group to categorize</string>
+    <string name="save_chart_group_custom">Custom…</string>
+    <string name="save_chart_custom_hint">Enter group name…</string>
+
+    <!-- LichScreen (Lunar-Solar Calendar) -->
+    <string name="calendar_screen_title">LUNAR-SOLAR CALENDAR</string>
+    <string name="calendar_month_year">Month %1$d, Year %2$d</string>
+    <string name="calendar_your_events">Your events</string>
+    <string name="calendar_cd_add_event">Add event</string>
+    <string name="calendar_label_day">Day</string>
+    <string name="calendar_label_lunar_month">Lunar Month</string>
+    <string name="calendar_label_lunar_year">Lunar Year</string>
+
+    <!-- ThemSuKienSheet (Add Event Sheet) -->
+    <string name="add_event_sheet_title">Add event %1$d/%2$d/%3$d (%4$s)</string>
+    <string name="add_event_label_title">Title *</string>
+    <string name="add_event_label_note">Note</string>
+    <string name="add_event_reminder">Reminder</string>
+    <string name="add_event_notif_denied">Notification permission denied – event will still be saved</string>
+    <string name="add_event_alarm_time">Alarm time</string>
+    <string name="add_event_btn_save">Save event</string>
+    <string name="add_event_remind_at">Remind at %1$s:%2$s</string>
+
+    <!-- HistoryScreen -->
+    <string name="history_clear_all_title">Clear all history?</string>
+    <string name="history_clear_all_message">This action cannot be undone.</string>
+    <string name="history_btn_clear_all">Clear all</string>
+    <string name="history_screen_title">Browsing history</string>
+    <string name="history_cd_clear_all">Clear all</string>
+    <string name="history_empty_title">No browsing history yet</string>
+    <string name="history_empty_hint">Long-press an item to delete</string>
+
+    <!-- CalendarChooserScreen -->
+    <string name="calendar_chooser_title">LUNAR / SOLAR CALENDAR</string>
+    <string name="calendar_chooser_message">The lunar-solar calendar is integrated, tap below to open:</string>
+    <string name="calendar_chooser_btn">Open Lunar / Solar Calendar</string>
+
+    <!-- BrowserScreen -->
+    <string name="browser_cd_home">Back to home</string>
+    <string name="browser_bookmark_added">Added to Bookmarks</string>
+    <string name="browser_bookmark_removed">Removed from Bookmarks</string>
+    <string name="browser_cd_bookmark">Bookmark</string>
+    <string name="browser_cd_back">Back</string>
+    <string name="browser_cd_forward">Forward</string>
+    <string name="browser_incognito_icon">Incognito</string>
+    <string name="browser_downloading">Downloading: %1$s</string>
+    <string name="browser_download_error">Cannot download this file</string>
+    <string name="browser_search_placeholder">Search or enter address…</string>
+    <string name="browser_cd_more">More</string>
+    <string name="browser_menu_reload">Reload page</string>
+    <string name="browser_menu_tab_manager">Manage tabs</string>
+    <string name="browser_menu_history">Browsing history</string>
+    <string name="browser_menu_bookmarks">Bookmarks</string>
+
+    <!-- BookmarkScreen -->
+    <string name="bookmark_screen_title">Bookmarks</string>
+    <string name="bookmark_edit_title">Edit title</string>
+    <string name="bookmark_empty_title">No bookmarks yet</string>
+    <string name="bookmark_empty_hint">Tap ★ in the address bar to save a page</string>
+
+    <!-- TabSwitcherScreen -->
+    <string name="tab_switcher_title_incognito">Incognito mode</string>
+    <string name="tab_switcher_title_open">Open tabs</string>
+    <string name="tab_switcher_close_all">Close all</string>
+    <string name="tab_switcher_incognito_icon">Incognito</string>
+    <string name="tab_switcher_web_icon">Web</string>
+    <string name="tab_switcher_empty_incognito">No incognito tabs</string>
+    <string name="tab_switcher_empty">No open tabs</string>
+    <string name="tab_switcher_new_incognito">New incognito tab</string>
+    <string name="tab_switcher_new_tab">New tab</string>
+    <string name="tab_cd_close">Close tab</string>
+
+    <!-- ImageActionSheet -->
+    <string name="image_sheet_title">Image / File</string>
+    <string name="image_sheet_btn_download">Download</string>
+
+    <!-- SavedChartsScreen additional -->
+    <string name="saved_group_all">All</string>
+
+    <!-- SaveChartDialog groups -->
+    <string name="save_chart_group_family">Family</string>
+    <string name="save_chart_group_friends">Friends</string>
+    <string name="save_chart_group_colleagues">Colleagues</string>
+    <string name="save_chart_group_other">Other</string>
+
+    <!-- LichScreen additional -->
+    <string name="calendar_label_truc">Truc</string>
+    <string name="calendar_truc_good">Good</string>
+    <string name="calendar_truc_bad">Bad</string>
+    <string name="calendar_hoang_dao">Hoang Dao</string>
+    <string name="calendar_hac_dao">Hac Dao</string>
+    <string name="calendar_luc_nham_label">Luc Nham</string>
+    <string name="calendar_hoang_dao_hours_label">Hoang Dao Hours</string>
+    <string name="calendar_day_sun">Sun</string>
+    <string name="calendar_day_mon">Mon</string>
+    <string name="calendar_day_tue">Tue</string>
+    <string name="calendar_day_wed">Wed</string>
+    <string name="calendar_day_thu">Thu</string>
+    <string name="calendar_day_fri">Fri</string>
+    <string name="calendar_day_sat">Sat</string>
+
+    <!-- SettingsScreen icon labels -->
+    <string name="settings_dark_icon">Dark</string>
+    <string name="settings_light_icon">Light</string>
+
+    <!-- InputScreen additional -->
+    <string name="input_hour_item">%1$s h</string>
+    <string name="input_minute_item">%1$s min</string>
+
+    <!-- InputScreen zodiac hours -->
+    <string name="input_zodiac_ty">Ty (23h–01h)</string>
+    <string name="input_zodiac_suu">Suu (01h–03h)</string>
+    <string name="input_zodiac_dan">Dan (03h–05h)</string>
+    <string name="input_zodiac_mao">Mao (05h–07h)</string>
+    <string name="input_zodiac_thin">Thin (07h–09h)</string>
+    <string name="input_zodiac_ty2">Ty (09h–11h)</string>
+    <string name="input_zodiac_ngo">Ngo (11h–13h)</string>
+    <string name="input_zodiac_mui">Mui (13h–15h)</string>
+    <string name="input_zodiac_than">Than (15h–17h)</string>
+    <string name="input_zodiac_dau">Dau (17h–19h)</string>
+    <string name="input_zodiac_tuat">Tuat (19h–21h)</string>
+    <string name="input_zodiac_hoi">Hoi (21h–23h)</string>
+
+    <!-- LichScreen lunar label -->
+    <string name="calendar_lunar_prefix">Lunar: %1$s</string>
+    <string name="calendar_intercalary">(intercalary)</string>
+
+    <!-- Notification -->
+    <string name="notif_event_default_title">Event</string>
+    <string name="notif_event_default_text">You have an event in your calendar today</string>
+    <string name="notif_channel_name">Calendar events</string>
+    <string name="notif_channel_desc">Reminders for events in the lunar/solar calendar</string>
+
+    <!-- Browser misc -->
+    <string name="browser_download_desc">Downloading…</string>
+    <string name="browser_tab_new_title">New tab</string>
+    <string name="browser_error_unknown">Unknown error</string>
+    <string name="browser_default_title">Browser</string>
 </resources>
