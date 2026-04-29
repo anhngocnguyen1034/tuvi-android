@@ -61,11 +61,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.IncognitoBg
 import com.example.tuvi.ui.theme.IncognitoCard
 import com.example.tuvi.ui.theme.IncognitoDivider
@@ -100,6 +102,8 @@ fun BrowserScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope             = rememberCoroutineScope()
     val density           = LocalDensity.current
+    val bookmarkAdded     = stringResource(R.string.browser_bookmark_added)
+    val bookmarkRemoved   = stringResource(R.string.browser_bookmark_removed)
     val keyboardOpen      = WindowInsets.ime.getBottom(density) > 0
 
     // ── Download / long-press media ───────────────────────────────────────────
@@ -159,7 +163,7 @@ fun BrowserScreen(
                                 IconButton(onClick = onBack) {
                                     Icon(
                                         Icons.Default.Home,
-                                        contentDescription = "Về màn hình chính",
+                                        contentDescription = stringResource(R.string.browser_cd_home),
                                         tint = accentColor
                                     )
                                 }
@@ -180,13 +184,13 @@ fun BrowserScreen(
                                         val added = viewModel.toggleBookmark()
                                         scope.launch {
                                             snackbarHostState.showSnackbar(
-                                                if (added) "Đã thêm vào Dấu trang" else "Đã xoá khỏi Dấu trang"
+                                                if (added) bookmarkAdded else bookmarkRemoved
                                             )
                                         }
                                     }) {
                                         Icon(
                                             Icons.Default.Star,
-                                            contentDescription = "Dấu trang",
+                                            contentDescription = stringResource(R.string.browser_cd_bookmark),
                                             tint = if (isBookmarked) TuViGold else TuViIvoryDim.copy(alpha = 0.4f)
                                         )
                                     }
@@ -203,12 +207,12 @@ fun BrowserScreen(
                             IconButton(onClick = onBack) {
                                 Icon(
                                     Icons.Default.Home,
-                                    contentDescription = "Về màn hình chính",
+                                    contentDescription = stringResource(R.string.browser_cd_home),
                                     tint = accentColor
                                 )
                             }
                             Text(
-                                text = activeTab?.title?.ifBlank { config.title } ?: config.title,
+                                text = activeTab?.title?.ifBlank { config.title.ifBlank { stringResource(R.string.browser_default_title) } } ?: config.title.ifBlank { stringResource(R.string.browser_default_title) },
                                 color = if (isIncognito) IncognitoEmphasis else TuViIvory,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -221,13 +225,13 @@ fun BrowserScreen(
                                     val added = viewModel.toggleBookmark()
                                     scope.launch {
                                         snackbarHostState.showSnackbar(
-                                            if (added) "Đã thêm vào Dấu trang" else "Đã xoá khỏi Dấu trang"
+                                            if (added) bookmarkAdded else bookmarkRemoved
                                         )
                                     }
                                 }) {
                                     Icon(
                                         Icons.Default.Star,
-                                        contentDescription = "Dấu trang",
+                                        contentDescription = stringResource(R.string.browser_cd_bookmark),
                                         tint = if (isBookmarked) TuViGold else TuViIvoryDim.copy(alpha = 0.4f)
                                     )
                                 }
@@ -344,8 +348,8 @@ fun BrowserScreen(
                     )
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            if (fileName != null) "Đang tải: $fileName"
-                            else "Không thể tải file này"
+                            if (fileName != null) context.getString(R.string.browser_downloading, fileName)
+                            else context.getString(R.string.browser_download_error)
                         )
                     }
                 },
@@ -428,7 +432,7 @@ private fun MoreDropdownMenu(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("↺", fontSize = 15.sp)
                     Spacer(Modifier.size(10.dp))
-                    Text("Tải lại trang", color = text, fontSize = 14.sp)
+                    Text(stringResource(R.string.browser_menu_reload), color = text, fontSize = 14.sp)
                 }
             },
             onClick = onReload,
@@ -439,7 +443,7 @@ private fun MoreDropdownMenu(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("⬜", fontSize = 15.sp)
                     Spacer(Modifier.size(10.dp))
-                    Text("Quản lý tab", color = text, fontSize = 14.sp)
+                    Text(stringResource(R.string.browser_menu_tab_manager), color = text, fontSize = 14.sp)
                 }
             },
             onClick = onOpenTabs,
@@ -451,7 +455,7 @@ private fun MoreDropdownMenu(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("H", fontSize = 15.sp)
                         Spacer(Modifier.size(10.dp))
-                        Text("Lịch sử duyệt web", color = text, fontSize = 14.sp)
+                        Text(stringResource(R.string.browser_menu_history), color = text, fontSize = 14.sp)
                     }
                 },
                 onClick = onOpenHistory,
@@ -462,7 +466,7 @@ private fun MoreDropdownMenu(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Star, contentDescription = null, tint = text, modifier = Modifier.size(15.dp))
                         Spacer(Modifier.size(10.dp))
-                        Text("Dấu trang", color = text, fontSize = 14.sp)
+                        Text(stringResource(R.string.browser_menu_bookmarks), color = text, fontSize = 14.sp)
                     }
                 },
                 onClick = onOpenBookmarks,
@@ -547,7 +551,7 @@ private fun AddressBar(
         // Incognito indicator icon
         if (isIncognito) {
             Text(
-                text = "Ẩn",
+                text = stringResource(R.string.browser_incognito_icon),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(end = 8.dp)
             )
@@ -564,7 +568,7 @@ private fun AddressBar(
                 // Unfocused: căn giữa giống Chrome
                 textAlign = if (isFocused) TextAlign.Start else TextAlign.Center
             ),
-            placeholder = { Text("Tìm kiếm hoặc nhập địa chỉ...", color = hintCol, fontSize = 13.sp,
+            placeholder = { Text(stringResource(R.string.browser_search_placeholder), color = hintCol, fontSize = 13.sp,
                 modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
@@ -643,7 +647,7 @@ private fun BrowserBottomBar(
             IconButton(onClick = onBack, enabled = canGoBack, modifier = Modifier.weight(1f)) {
                 Icon(
                     Icons.Default.ArrowBack,
-                    contentDescription = "Lùi",
+                    contentDescription = stringResource(R.string.browser_cd_back),
                     tint = if (canGoBack) accent else dim.copy(alpha = 0.3f),
                     modifier = Modifier.size(22.dp)
                 )
@@ -652,7 +656,7 @@ private fun BrowserBottomBar(
             IconButton(onClick = onForward, enabled = canGoForward, modifier = Modifier.weight(1f)) {
                 Icon(
                     Icons.Default.ArrowForward,
-                    contentDescription = "Tiến",
+                    contentDescription = stringResource(R.string.browser_cd_forward),
                     tint = if (canGoForward) accent else dim.copy(alpha = 0.3f),
                     modifier = Modifier.size(22.dp)
                 )
@@ -660,7 +664,7 @@ private fun BrowserBottomBar(
             // Incognito — tạo tab ẩn danh mới
             IconButton(onClick = onNewIncognitoTab, modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Ẩn",
+                    text = stringResource(R.string.browser_incognito_icon),
                     fontSize = 18.sp,
                     modifier = Modifier.padding(2.dp)
                 )
@@ -680,7 +684,7 @@ private fun BrowserBottomBar(
                 ) {
                     Icon(
                         Icons.Default.MoreVert,
-                        contentDescription = "Thêm",
+                        contentDescription = stringResource(R.string.browser_cd_more),
                         tint = accent,
                         modifier = Modifier.size(22.dp)
                     )
