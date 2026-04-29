@@ -9,7 +9,7 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class BrowserConfig(
     val initialUrl: String,
-    val title: String = "Trình duyệt",
+    val title: String = "",
     val showAddressBar: Boolean = true,
     val allowUserNavigation: Boolean = true,
     val javaScriptEnabled: Boolean = true,
