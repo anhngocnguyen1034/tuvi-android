@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,11 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tuvi.presentation.SavedChartsViewModel
+import com.example.tuvi.presentation.SettingsUiState
+import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
@@ -46,29 +48,38 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val app = application as TuViApplication
         setContent {
-            TuViTheme {
-                TuViApp()
+            val settingsVm: SettingsViewModel = viewModel(
+                factory = AndroidViewModelFactory.getInstance(application)
+            )
+            val settingsState by settingsVm.uiState.collectAsStateWithLifecycle(
+                initialValue = SettingsUiState(
+                    themeDark = app.initialDark,
+                    localeTag = com.example.tuvi.data.preferences.UserPreferencesRepository.LOCALE_VI
+                )
+            )
+            TuViTheme(darkTheme = settingsState.themeDark) {
+                TuViApp(isDark = settingsState.themeDark)
             }
         }
     }
 }
 
 @Composable
-fun TuViApp() {
+fun TuViApp(isDark: Boolean = true) {
     val navController = rememberNavController()
     val viewModel: TuViViewModel = viewModel(factory = TuViViewModel.Factory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lastInput by viewModel.lastInput.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val isDarkTheme = isSystemInDarkTheme()
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !isDarkTheme
-                isAppearanceLightNavigationBars = !isDarkTheme
+                isAppearanceLightStatusBars = !isDark
+                isAppearanceLightNavigationBars = !isDark
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.example.tuvi.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -10,12 +9,11 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun TuViTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    // Truyền Activity context (không phải applicationContext) để đọc đúng night mode
-    TuViComposeColors.initIfNeeded(LocalContext.current)
+    TuViComposeColors.initIfNeeded(LocalContext.current, forceNight = darkTheme)
 
     val colorScheme = remember(darkTheme) {
         if (darkTheme) {

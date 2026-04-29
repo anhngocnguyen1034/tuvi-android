@@ -14,6 +14,9 @@ class TuViApplication : Application() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
         private set
 
+    var initialDark: Boolean = true
+        private set
+
     override fun onCreate() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(this)
@@ -25,6 +28,7 @@ class TuViApplication : Application() {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(localeTag))
             dark
         }
+        initialDark = savedDark
         TuViComposeColors.initIfNeeded(this, forceNight = savedDark)
         AppContainer.init(this)
     }
