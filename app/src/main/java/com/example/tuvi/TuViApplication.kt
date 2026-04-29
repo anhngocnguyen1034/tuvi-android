@@ -29,7 +29,7 @@ class TuViApplication : Application() {
             dark
         }
         initialDark = savedDark
-        TuViComposeColors.initIfNeeded(this, forceNight = savedDark)
+        TuViComposeColors.setDark(savedDark)
         AppContainer.init(this)
     }
 }
