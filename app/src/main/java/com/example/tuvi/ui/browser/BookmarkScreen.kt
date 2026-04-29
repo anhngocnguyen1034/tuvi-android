@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -64,6 +65,7 @@ import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
@@ -113,12 +115,12 @@ fun BookmarkScreen(
                         Icon(Icons.Default.Star, contentDescription = null,
                             tint = TuViGold, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Dấu trang", color = TuViGold, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.bookmark_screen_title), color = TuViGold, fontWeight = FontWeight.Bold)
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = TuViGold)
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = TuViNavy)
@@ -183,7 +185,7 @@ private fun SwipeableBookmarkItem(
                     .background(TuViRed.copy(alpha = 0.85f)),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Icon(Icons.Default.Delete, contentDescription = "Xoá",
+                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.btn_delete),
                     tint = Color.White, modifier = Modifier.padding(end = 24.dp))
             }
         }
@@ -264,7 +266,7 @@ private fun EditTitleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Chỉnh sửa tiêu đề", color = TuViGold, fontWeight = FontWeight.Bold) },
+        title = { Text(stringResource(R.string.bookmark_edit_title), color = TuViGold, fontWeight = FontWeight.Bold) },
         text = {
             OutlinedTextField(
                 value = text,
@@ -285,11 +287,11 @@ private fun EditTitleDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(text) }) {
-                Text("Lưu", color = TuViGold, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_save), color = TuViGold, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Huỷ", color = TuViIvoryDim) }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim) }
         },
         containerColor = TuViNavyCard
     )
@@ -302,9 +304,9 @@ private fun BookmarkEmptyState(modifier: Modifier) {
             Icon(Icons.Default.Star, contentDescription = null,
                 tint = TuViGoldDark, modifier = Modifier.size(52.dp))
             Spacer(Modifier.height(12.dp))
-            Text("Chưa có dấu trang nào", color = TuViIvoryDim, fontSize = 16.sp)
+            Text(stringResource(R.string.bookmark_empty_title), color = TuViIvoryDim, fontSize = 16.sp)
             Spacer(Modifier.height(4.dp))
-            Text("Nhấn * trên thanh địa chỉ để lưu trang",
+            Text(stringResource(R.string.bookmark_empty_hint),
                 color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
         }
     }
