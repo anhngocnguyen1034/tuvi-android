@@ -25,8 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tuvi.R
 import com.example.tuvi.data.local.SuKienEntity
 import com.example.tuvi.data.remote.dto.NgayInfoDto
 import com.example.tuvi.data.remote.dto.ThangLichDto
@@ -36,7 +38,6 @@ import com.example.tuvi.presentation.SuKienViewModel
 import com.example.tuvi.ui.theme.*
 import java.util.Calendar
 
-private val DAYS_OF_WEEK = listOf("CN", "T2", "T3", "T4", "T5", "T6", "T7")
 
 @Composable
 fun LichScreen(
@@ -79,10 +80,10 @@ fun LichScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Quay lại", tint = TuViGold)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.settings_back), tint = TuViGold)
             }
             Text(
-                "LỊCH ÂM DƯƠNG",
+                stringResource(R.string.calendar_screen_title),
                 color = TuViGold,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -107,7 +108,7 @@ fun LichScreen(
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    "Tháng $currentMonth năm $currentYear",
+                    stringResource(R.string.calendar_month_year, currentMonth, currentYear),
                     color = TuViIvory, fontWeight = FontWeight.SemiBold, fontSize = 16.sp,
                 )
                 if (uiState is LichUiState.Success) {
@@ -183,9 +184,18 @@ private fun CalendarGrid(
             && data.nam == today.get(Calendar.YEAR)
     val todayNum = today.get(Calendar.DAY_OF_MONTH)
 
+    val daysOfWeek = listOf(
+        stringResource(R.string.calendar_day_sun),
+        stringResource(R.string.calendar_day_mon),
+        stringResource(R.string.calendar_day_tue),
+        stringResource(R.string.calendar_day_wed),
+        stringResource(R.string.calendar_day_thu),
+        stringResource(R.string.calendar_day_fri),
+        stringResource(R.string.calendar_day_sat),
+    )
     // Day-of-week header
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-        DAYS_OF_WEEK.forEachIndexed { i, label ->
+        daysOfWeek.forEachIndexed { i, label ->
             Text(
                 label,
                 modifier = Modifier.weight(1f),
@@ -305,7 +315,8 @@ private fun DayDetail(
                     color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 15.sp,
                 )
                 Text(
-                    "Âm: ${day.amLichText}${if (day.thangNhuan) " (nhuận)" else ""}",
+                    stringResource(R.string.calendar_lunar_prefix, day.amLichText) +
+                        if (day.thangNhuan) " ${stringResource(R.string.calendar_intercalary)}" else "",
                     color = TuViIvory, fontSize = 13.sp,
                 )
             }
@@ -315,27 +326,27 @@ private fun DayDetail(
                     .size(36.dp)
                     .background(TuViGold, CircleShape),
             ) {
-                Icon(Icons.Default.Add, "Thêm sự kiện", tint = TuViNavy)
+                Icon(Icons.Default.Add, stringResource(R.string.calendar_cd_add_event), tint = TuViNavy)
             }
         }
 
         HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
-        DetailRow("Ngày",      day.canChiNgay)
-        DetailRow("Tháng AL",  day.canChiThang)
-        DetailRow("Năm AL",    day.canChiNam)
+        DetailRow(stringResource(R.string.calendar_label_day),          day.canChiNgay)
+        DetailRow(stringResource(R.string.calendar_label_lunar_month),  day.canChiThang)
+        DetailRow(stringResource(R.string.calendar_label_lunar_year),   day.canChiNam)
 
         // Trực, Lục Nhâm, Giờ Hoàng Đạo
         if (day.truc != null || day.lucNham != null || !day.gioHoangDao.isNullOrEmpty()) {
             HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
             day.truc?.let { truc ->
                 val trucColor = if (truc.tot) TuViGold else TuViRedLight
-                val trucLabel = if (truc.tot) "Tốt" else "Xấu"
+                val trucLabel = if (truc.tot) stringResource(R.string.calendar_truc_good) else stringResource(R.string.calendar_truc_bad)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Trực", color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.calendar_label_truc), color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -353,13 +364,13 @@ private fun DayDetail(
             }
             day.lucNham?.let { ln ->
                 val lnColor = if (ln.hoangDao) TuViGold else TuViRedLight
-                val lnLabel = if (ln.hoangDao) "Hoàng Đạo" else "Hắc Đạo"
+                val lnLabel = if (ln.hoangDao) stringResource(R.string.calendar_hoang_dao) else stringResource(R.string.calendar_hac_dao)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Lục Nhâm", color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.calendar_luc_nham_label), color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -377,7 +388,7 @@ private fun DayDetail(
             }
             if (!day.gioHoangDao.isNullOrEmpty()) {
                 Spacer(Modifier.height(4.dp))
-                Text("Giờ Hoàng Đạo", color = TuViIvoryDim, fontSize = 12.sp)
+                Text(stringResource(R.string.calendar_hoang_dao_hours_label), color = TuViIvoryDim, fontSize = 12.sp)
                 Spacer(Modifier.height(4.dp))
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -410,7 +421,7 @@ private fun DayDetail(
         // Sự kiện cá nhân
         if (suKienList.isNotEmpty()) {
             HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
-            Text("Sự kiện của bạn", color = TuViGoldLight, fontSize = 12.sp)
+            Text(stringResource(R.string.calendar_your_events), color = TuViGoldLight, fontSize = 12.sp)
             suKienList.forEach { sk ->
                 Row(
                     modifier = Modifier
@@ -433,13 +444,17 @@ private fun DayDetail(
                         if (sk.alarmEpoch > 0) {
                             val cal = java.util.Calendar.getInstance().apply { timeInMillis = sk.alarmEpoch }
                             Text(
-                                "Nhắc lúc %02d:%02d".format(cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE)),
+                                stringResource(
+                                    R.string.add_event_remind_at,
+                                    "%02d".format(cal.get(java.util.Calendar.HOUR_OF_DAY)),
+                                    "%02d".format(cal.get(java.util.Calendar.MINUTE)),
+                                ),
                                 color = TuViGoldLight, fontSize = 11.sp,
                             )
                         }
                     }
                     IconButton(onClick = { onDelete(sk) }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Delete, "Xóa", tint = TuViRedLight, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Delete, stringResource(R.string.btn_delete), tint = TuViRedLight, modifier = Modifier.size(18.dp))
                     }
                 }
             }
