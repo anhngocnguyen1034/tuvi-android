@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -232,7 +233,7 @@ private fun LunarDatePickerDialog(
         ) {
             // Title
             Text(
-                "CHỌN NGÀY SINH ÂM LỊCH",
+                stringResource(R.string.input_lunar_picker_title),
                 modifier = Modifier.padding(start = 24.dp, top = 20.dp),
                 color = TuViGold,
                 fontSize = 14.sp,
@@ -260,7 +261,7 @@ private fun LunarDatePickerDialog(
                     items = days,
                     selected = pickerDay,
                     state = dayState,
-                    label = "Ngày",
+                    label = stringResource(R.string.input_picker_day),
                     display = { "%02d".format(it) },
                     onSelect = { pickerDay = it }
                 )
@@ -268,7 +269,7 @@ private fun LunarDatePickerDialog(
                     items = months,
                     selected = pickerMonth,
                     state = monthState,
-                    label = "Tháng",
+                    label = stringResource(R.string.input_picker_month),
                     display = { "%02d".format(it) },
                     onSelect = { pickerMonth = it }
                 )
@@ -276,7 +277,7 @@ private fun LunarDatePickerDialog(
                     items = years,
                     selected = pickerYear,
                     state = yearState,
-                    label = "Năm",
+                    label = stringResource(R.string.input_picker_year),
                     display = { it.toString() },
                     onSelect = { pickerYear = it }
                 )
@@ -290,13 +291,13 @@ private fun LunarDatePickerDialog(
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text("HUỶ", color = TuViIvoryDim, fontSize = 13.sp)
+                    Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim, fontSize = 13.sp)
                 }
                 TextButton(onClick = {
                     onDateSelected(pickerDay, pickerMonth, pickerYear)
                     onDismiss()
                 }) {
-                    Text("CHỌN", color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(stringResource(R.string.btn_select), color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
@@ -320,7 +321,7 @@ private fun ViewYearPickerDialog(
         textContentColor = TuViIvory,
         title = {
             Text(
-                "Chọn năm xem lá số",
+                stringResource(R.string.input_view_year_dialog_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 letterSpacing = 0.5.sp
@@ -359,7 +360,7 @@ private fun ViewYearPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Đóng", color = TuViIvoryDim)
+                Text(stringResource(R.string.btn_close), color = TuViIvoryDim)
             }
         }
     )
@@ -401,12 +402,12 @@ fun TuViDatePickerDialog(
                     onDismiss()
                 }
             ) {
-                Text(" CHỌN", color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(stringResource(R.string.btn_select), color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("HUỶ", color = TuViIvoryDim, fontSize = 13.sp)
+                Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim, fontSize = 13.sp)
             }
         },
         colors = DatePickerDefaults.colors(
@@ -435,7 +436,7 @@ fun TuViDatePickerDialog(
             state = datePickerState,
             title = {
                 Text(
-                    "CHỌN NGÀY SINH",
+                    stringResource(R.string.input_solar_picker_title),
                     modifier = Modifier.padding(start = 24.dp, top = 20.dp),
                     color = TuViGold,
                     fontSize = 14.sp,
@@ -518,9 +519,18 @@ fun InputScreen(
     var showLunarDatePicker by remember { mutableStateOf(false) }
 
     val zodiacHours = listOf(
-        "Tý (23h–01h)", "Sửu (01h–03h)", "Dần (03h–05h)", "Mão (05h–07h)",
-        "Thìn (07h–09h)", "Tỵ (09h–11h)", "Ngọ (11h–13h)", "Mùi (13h–15h)",
-        "Thân (15h–17h)", "Dậu (17h–19h)", "Tuất (19h–21h)", "Hợi (21h–23h)"
+        stringResource(R.string.input_zodiac_ty),
+        stringResource(R.string.input_zodiac_suu),
+        stringResource(R.string.input_zodiac_dan),
+        stringResource(R.string.input_zodiac_mao),
+        stringResource(R.string.input_zodiac_thin),
+        stringResource(R.string.input_zodiac_ty2),
+        stringResource(R.string.input_zodiac_ngo),
+        stringResource(R.string.input_zodiac_mui),
+        stringResource(R.string.input_zodiac_than),
+        stringResource(R.string.input_zodiac_dau),
+        stringResource(R.string.input_zodiac_tuat),
+        stringResource(R.string.input_zodiac_hoi),
     )
     val zodiacIndex = ((hour + 1) / 2) % 12
     val zodiacLabel = zodiacHours[zodiacIndex]
@@ -577,7 +587,7 @@ fun InputScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Quay lại",
+                    contentDescription = stringResource(R.string.settings_back),
                     tint = TuViGold
                 )
             }
@@ -599,7 +609,7 @@ fun InputScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "TỬ VI BY ANHNN",
+                    text = stringResource(R.string.input_screen_title),
                     color = TuViGold,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -611,13 +621,13 @@ fun InputScreen(
 
             // ── Họ và Tên ──
             SectionCard {
-                FieldLabel("HỌ VÀ TÊN")
+                FieldLabel(stringResource(R.string.input_label_name))
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     placeholder = {
                         Text(
-                            "Nhập họ tên đầy đủ…",
+                            stringResource(R.string.input_hint_name),
                             color = TuViIvoryDim.copy(alpha = 0.5f),
                             fontSize = 14.sp
                         )
@@ -638,7 +648,7 @@ fun InputScreen(
 
             // ── Ngày sinh (dương / âm) ──
             SectionCard {
-                FieldLabel("NGÀY SINH")
+                FieldLabel(stringResource(R.string.input_label_birthday))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -646,7 +656,7 @@ fun InputScreen(
                     FilterChip(
                         selected = duongLich,
                         onClick = { duongLich = true },
-                        label = { Text("Dương lịch", fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.input_solar_calendar), fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = TuViGold.copy(alpha = 0.35f),
                             selectedLabelColor = TuViGold,
@@ -658,7 +668,7 @@ fun InputScreen(
                     FilterChip(
                         selected = !duongLich,
                         onClick = { duongLich = false },
-                        label = { Text("Âm lịch", fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.input_lunar_calendar), fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = TuViGold.copy(alpha = 0.35f),
                             selectedLabelColor = TuViGold,
@@ -712,15 +722,15 @@ fun InputScreen(
 
             // Giờ sinh
             SectionCard {
-                FieldLabel("GIỜ SINH")
+                FieldLabel(stringResource(R.string.input_label_birth_time))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
                         TuViDropdownBox(
-                            label = "Giờ",
-                            value = "%02dh".format(hour),
+                            label = stringResource(R.string.input_hour_label),
+                            value = stringResource(R.string.input_hour_item, "%02d".format(hour)),
                             expanded = hourExpanded,
                             onExpandedChange = { hourExpanded = it }
                         ) {
@@ -728,7 +738,7 @@ fun InputScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            "%02d giờ".format(h),
+                                            stringResource(R.string.input_hour_item, "%02d".format(h)),
                                             color = if (h == hour) TuViGold else TuViIvory
                                         )
                                     },
@@ -739,8 +749,8 @@ fun InputScreen(
                     }
                     Box(modifier = Modifier.weight(1f)) {
                         TuViDropdownBox(
-                            label = "Phút",
-                            value = "%02d phút".format(minute),
+                            label = stringResource(R.string.input_minute_label),
+                            value = stringResource(R.string.input_minute_item, "%02d".format(minute)),
                             expanded = minExpanded,
                             onExpandedChange = { minExpanded = it }
                         ) {
@@ -748,7 +758,7 @@ fun InputScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            "%02d phút".format(m),
+                                            stringResource(R.string.input_minute_item, "%02d".format(m)),
                                             color = if (m == minute) TuViGold else TuViIvory
                                         )
                                     },
@@ -777,7 +787,7 @@ fun InputScreen(
                     )
                     Column {
                         Text(
-                            text = "Giờ địa chi",
+                            text = stringResource(R.string.input_earthly_branch_hour),
                             color = TuViIvoryDim,
                             fontSize = 11.sp,
                             letterSpacing = 0.5.sp
@@ -793,20 +803,20 @@ fun InputScreen(
             }
 
             SectionCard {
-                FieldLabel("GIỚI TÍNH")
+                FieldLabel(stringResource(R.string.input_label_gender))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     GenderButton(
-                        label = "Nam",
+                        label = stringResource(R.string.input_gender_male),
                         icon = R.drawable.ic_male,
                         selected = gender == 1,
                         onClick = { gender = 1 },
                         modifier = Modifier.weight(1f)
                     )
                     GenderButton(
-                        label = "Nữ",
+                        label = stringResource(R.string.input_gender_female),
                         icon = R.drawable.ic_female,
                         selected = gender == -1,
                         onClick = { gender = -1 },
@@ -817,7 +827,7 @@ fun InputScreen(
 
             // ── Năm xem ──
             SectionCard {
-                FieldLabel("NĂM XEM")
+                FieldLabel(stringResource(R.string.input_label_view_year))
                 Box(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
                         value = viewYear.toString(),
@@ -825,7 +835,7 @@ fun InputScreen(
                         readOnly = true,
                         label = {
                             Text(
-                                "Năm xem lá số",
+                                stringResource(R.string.input_hint_view_year),
                                 color = TuViIvoryDim,
                                 fontSize = 12.sp
                             )
@@ -853,7 +863,7 @@ fun InputScreen(
                     )
                 }
                 Text(
-                    text = "Chọn năm từ $minViewYear đến $maxViewYear (mặc định: năm hiện tại)",
+                    text = stringResource(R.string.input_view_year_range_hint, minViewYear, maxViewYear),
                     color = TuViIvoryDim.copy(alpha = 0.6f),
                     fontSize = 11.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -879,7 +889,7 @@ fun InputScreen(
                     .height(54.dp)
             ) {
                 Text(
-                    text = "XEM LÁ SỐ TỬ VI",
+                    text = stringResource(R.string.input_btn_view_chart),
                     color = TuViNavy,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -888,7 +898,7 @@ fun InputScreen(
             }
 
             Text(
-                text = "Kết quả dựa trên Tử Vi Đẩu Số cổ truyền",
+                text = stringResource(R.string.input_footer_disclaimer),
                 color = TuViIvoryDim.copy(alpha = 0.45f),
                 fontSize = 11.sp,
                 fontStyle = FontStyle.Italic,
