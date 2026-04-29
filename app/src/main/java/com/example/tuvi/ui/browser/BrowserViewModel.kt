@@ -148,7 +148,7 @@ class BrowserViewModel(
     // ── Tab management ────────────────────────────────────────────────────────
 
     fun addNewTab(url: String = "https://www.google.com") {
-        val newTab = TabState(url = url, title = "Tab mới", isIncognito = false)
+        val newTab = TabState(url = url, isIncognito = false)
         tabs.add(newTab)
         activeTabId = newTab.id
         showTabSwitcher = false
