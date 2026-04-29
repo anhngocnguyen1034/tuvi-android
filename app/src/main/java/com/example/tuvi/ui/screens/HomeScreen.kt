@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -140,14 +141,14 @@ fun HomeScreen(
 
             // ── Tên app ──
             Text(
-                text = "TỬ VI",
+                text = stringResource(R.string.home_app_title),
                 color = TuViGold,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 10.sp
             )
             Text(
-                text = "BY ANHNN",
+                text = stringResource(R.string.home_app_subtitle),
                 color = TuViGoldLight.copy(alpha = 0.7f),
                 fontSize = 13.sp,
                 letterSpacing = 6.sp,
@@ -172,13 +173,11 @@ fun HomeScreen(
 
             Spacer(Modifier.height(6.dp))
 
-            Spacer(Modifier.height(40.dp))
-
             // ── Card chính: Lá số Tử Vi ──
             MainFeatureCard(
-                icon = "TV",
-                title = "Lá Số Tử Vi",
-                description = "Xem lá số cá nhân theo ngày sinh",
+                icon = painterResource(R.drawable.ic_clock_light),
+                title = stringResource(R.string.home_tuvi_title),
+                description = stringResource(R.string.home_tuvi_desc),
                 onClick = onOpenTuVi
             )
 
@@ -191,14 +190,14 @@ fun HomeScreen(
             ) {
                 SecondaryFeatureCard(
                     modifier = Modifier.weight(1f),
-                    title = "Lá Số\nĐã Lưu",
-                    description = "Xem lại & quản lý",
+                    title = stringResource(R.string.home_saved_title),
+                    description = stringResource(R.string.home_saved_desc),
                     onClick = onOpenSaved
                 )
                 SecondaryFeatureCard(
                     modifier = Modifier.weight(1f),
-                    title = "Trình\nDuyệt",
-                    description = "Duyệt web & tài liệu",
+                    title = stringResource(R.string.home_browser_title),
+                    description = stringResource(R.string.home_browser_desc),
                     onClick = onOpenBrowser
                 )
             }
@@ -207,8 +206,8 @@ fun HomeScreen(
 
             SecondaryFeatureCard(
                 modifier = Modifier.fillMaxWidth(),
-                title = "Lịch Âm / Dương",
-                description = "Xem nhanh lịch âm lịch và dương lịch",
+                title = stringResource(R.string.home_calendar_title),
+                description = stringResource(R.string.home_calendar_desc),
                 onClick = onOpenCalendar
             )
         }
@@ -231,10 +230,10 @@ fun HomeScreen(
 
 @Composable
 private fun MainFeatureCard(
-    icon: String,
+    icon: Painter,
     title: String,
     description: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -302,7 +301,7 @@ private fun MainFeatureCard(
                     .border(1.dp, TuViGold.copy(alpha = 0.6f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(icon, fontSize = 30.sp)
+                Text(text = "Tử Vi",fontSize = 30.sp)
             }
 
             Spacer(Modifier.width(20.dp))
@@ -330,7 +329,7 @@ private fun MainFeatureCard(
                         .padding(horizontal = 16.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "Xem ngay",
+                        text = stringResource(R.string.home_btn_view_now),
                         color = TuViNavy,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
