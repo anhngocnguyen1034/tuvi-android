@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
@@ -42,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,6 +52,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tuvi.R
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.HistoryItemEntity
 import com.example.tuvi.di.AppContainer
@@ -106,16 +108,16 @@ fun HistoryScreen(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Xoá tất cả lịch sử?", color = TuViIvory) },
-            text = { Text("Thao tác này không thể hoàn tác.", color = TuViIvoryDim) },
+            title = { Text(stringResource(R.string.history_clear_all_title), color = TuViIvory) },
+            text = { Text(stringResource(R.string.history_clear_all_message), color = TuViIvoryDim) },
             confirmButton = {
                 TextButton(onClick = { showClearDialog = false; vm.clearAll() }) {
-                    Text("Xoá hết", color = TuViRed, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.history_btn_clear_all), color = TuViRed, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("Huỷ", color = TuViIvoryDim)
+                    Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim)
                 }
             },
             containerColor = TuViNavyCard
@@ -127,17 +129,17 @@ fun HistoryScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Lịch sử duyệt web", color = TuViGold, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.history_screen_title), color = TuViGold, fontWeight = FontWeight.Bold)
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = TuViGold)
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
                     }
                 },
                 actions = {
                     if (history.isNotEmpty()) {
                         IconButton(onClick = { showClearDialog = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Xoá tất cả", tint = TuViRed)
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.history_cd_clear_all), tint = TuViRed)
                         }
                     }
                 },
@@ -190,7 +192,7 @@ private fun HistoryItem(
                 .background(TuViGoldDark.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.AccessTime, contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(18.dp))
+            Icon(painter = painterResource(R.drawable.ic_clock_light), contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(18.dp))
         }
 
         Spacer(Modifier.width(12.dp))
@@ -229,11 +231,11 @@ private fun HistoryItem(
 private fun HistoryEmptyState(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Default.AccessTime, contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(48.dp))
+            Icon(painter= painterResource(R.drawable.ic_clock_light), contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(48.dp))
             Spacer(Modifier.height(12.dp))
-            Text("Chưa có lịch sử duyệt web", color = TuViIvoryDim, fontSize = 16.sp)
+            Text(stringResource(R.string.history_empty_title), color = TuViIvoryDim, fontSize = 16.sp)
             Spacer(Modifier.height(4.dp))
-            Text("Nhấn giữ một mục để xoá", color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
+            Text(stringResource(R.string.history_empty_hint), color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
         }
     }
 }
