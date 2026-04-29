@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -91,14 +92,15 @@ fun SavedChartsScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val selectedGroup by viewModel.selectedGroup.collectAsStateWithLifecycle()
 
-    val allGroups = listOf("Tất cả") + groups
+    val allGroupLabel = stringResource(R.string.saved_group_all)
+    val allGroups = listOf(allGroupLabel) + groups
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Lá số đã lưu",
+                        stringResource(R.string.saved_screen_title),
                         color = TuViGold,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -108,7 +110,7 @@ fun SavedChartsScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = "Quay lại",
+                            contentDescription = stringResource(R.string.settings_back),
                             tint = TuViGold
                         )
                     }
@@ -127,7 +129,7 @@ fun SavedChartsScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },
-                placeholder = { Text("Tìm kiếm theo tên...", color = TuViIvoryDim) },
+                placeholder = { Text(stringResource(R.string.saved_search_placeholder), color = TuViIvoryDim) },
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,
@@ -140,7 +142,7 @@ fun SavedChartsScreen(
                         IconButton(onClick = { viewModel.setSearchQuery("") }) {
                             Icon(
                                 Icons.Default.Clear,
-                                contentDescription = "Xoá",
+                                contentDescription = stringResource(R.string.saved_cd_clear_search),
                                 tint = TuViIvoryDim
                             )
                         }
@@ -191,7 +193,7 @@ fun SavedChartsScreen(
 
             // Count
             Text(
-                text = "${charts.size} lá số",
+                text = stringResource(R.string.saved_chart_count, charts.size),
                 color = TuViIvoryDim,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -199,7 +201,7 @@ fun SavedChartsScreen(
 
             if (charts.isEmpty()) {
                 EmptyState(
-                    hasSearch = searchQuery.isNotBlank() || selectedGroup != "Tất cả"
+                    hasSearch = searchQuery.isNotBlank() || selectedGroup != allGroupLabel
                 )
             } else {
                 LazyColumn(
@@ -239,16 +241,16 @@ private fun SwipeToDismissChartItem(
     if (showConfirm) {
         AlertDialog(
             onDismissRequest = { showConfirm = false },
-            title = { Text("Xoá lá số", color = TuViIvory) },
-            text = { Text("Xoá lá số của ${chart.ten}?", color = TuViIvoryDim) },
+            title = { Text(stringResource(R.string.saved_delete_dialog_title), color = TuViIvory) },
+            text = { Text(stringResource(R.string.saved_delete_dialog_message, chart.ten), color = TuViIvoryDim) },
             confirmButton = {
                 TextButton(onClick = { showConfirm = false; onDelete() }) {
-                    Text("Xoá", color = TuViRed, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.btn_delete), color = TuViRed, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showConfirm = false }) {
-                    Text("Huỷ", color = TuViIvoryDim)
+                    Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim)
                 }
             },
             containerColor = TuViNavyCard
@@ -268,7 +270,7 @@ private fun SwipeToDismissChartItem(
             ) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Xoá",
+                    contentDescription = stringResource(R.string.saved_cd_delete),
                     tint = Color.White,
                     modifier = Modifier.padding(end = 24.dp)
                 )
@@ -399,14 +401,14 @@ private fun EmptyState(hasSearch: Boolean) {
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = if (hasSearch) "Không tìm thấy lá số phù hợp" else "Chưa có lá số nào được lưu",
+                text = if (hasSearch) stringResource(R.string.saved_empty_search_message) else stringResource(R.string.saved_empty_state_message),
                 color = TuViIvoryDim,
                 fontSize = 16.sp,
             )
             if (!hasSearch) {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "Xem lá số và nhấn \"Lưu lá số\" để thêm vào đây",
+                    text = stringResource(R.string.saved_empty_state_hint),
                     color = TuViIvoryDim.copy(alpha = 0.6f),
                     fontSize = 13.sp
                 )
