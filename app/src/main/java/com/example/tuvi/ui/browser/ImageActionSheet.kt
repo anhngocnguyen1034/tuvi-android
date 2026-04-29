@@ -25,7 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.example.tuvi.R
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,14 +71,14 @@ fun ImageActionSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Ảnh / Tệp",
+                    text = stringResource(R.string.image_sheet_title),
                     color = TuViGold,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Default.Close, contentDescription = "Đóng", tint = TuViIvoryDim)
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.btn_close), tint = TuViIvoryDim)
                 }
             }
 
@@ -107,7 +109,7 @@ fun ImageActionSheet(
                     contentColor = TuViNavy
                 )
             ) {
-                Text("⬇  Tải xuống", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Text(stringResource(R.string.image_sheet_btn_download), fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
 
             Spacer(Modifier.height(8.dp))
