@@ -43,6 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
+import com.example.tuvi.R
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -107,7 +109,7 @@ fun TabSwitcherOverlay(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (showIncognitoList) "Chế độ ẩn danh" else "Tab đang mở",
+                        text = if (showIncognitoList) stringResource(R.string.tab_switcher_title_incognito) else stringResource(R.string.tab_switcher_title_open),
                         color = accent,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -115,11 +117,11 @@ fun TabSwitcherOverlay(
                     )
                     if (showIncognitoList && incognitoTabs.isNotEmpty()) {
                         TextButton(onClick = onCloseAllIncognito) {
-                            Text("Đóng tất cả", color = TuViRed, fontSize = 13.sp)
+                            Text(stringResource(R.string.tab_switcher_close_all), color = TuViRed, fontSize = 13.sp)
                         }
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = "Đóng", tint = TuViIvoryDim)
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.btn_close), tint = TuViIvoryDim)
                     }
                 }
 
@@ -132,13 +134,13 @@ fun TabSwitcherOverlay(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = if (showIncognitoList) "Ẩn" else "Web",
+                                text = if (showIncognitoList) stringResource(R.string.tab_switcher_incognito_icon) else stringResource(R.string.tab_switcher_web_icon),
                                 fontSize = 48.sp
                             )
                             Spacer(Modifier.height(12.dp))
                             Text(
-                                text = if (showIncognitoList) "Không có tab ẩn danh nào"
-                                       else "Không có tab nào",
+                                text = if (showIncognitoList) stringResource(R.string.tab_switcher_empty_incognito)
+                                       else stringResource(R.string.tab_switcher_empty),
                                 color = if (showIncognitoList) IncognitoDimDark else TuViIvoryDim,
                                 fontSize = 14.sp
                             )
@@ -187,14 +189,14 @@ fun TabSwitcherOverlay(
                         ) {
                             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                             Text(
-                                if (showIncognitoList) "Tab ẩn danh mới" else "Thẻ mới",
+                                if (showIncognitoList) stringResource(R.string.tab_switcher_new_incognito) else stringResource(R.string.tab_switcher_new_tab),
                                 fontWeight = FontWeight.Bold, fontSize = 14.sp
                             )
                         }
                     }
                     if (!showIncognitoList) {
                         IconButton(onClick = onOpenBookmarks) {
-                            Icon(Icons.Default.Star, contentDescription = "Dấu trang", tint = TuViGold)
+                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.bookmark_screen_title), tint = TuViGold)
                         }
                     }
                 }
@@ -282,7 +284,7 @@ private fun TabCard(
                     // Fallback: emoji + domain khi chưa có thumbnail hoặc tab ẩn danh
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = if (isIncognito) "Ẩn" else tab.url.toFavicon(),
+                            text = if (isIncognito) stringResource(R.string.tab_switcher_incognito_icon) else tab.url.toFavicon(),
                             fontSize = 32.sp
                         )
                         Spacer(Modifier.height(6.dp))
@@ -318,7 +320,7 @@ private fun TabCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = tab.title.ifBlank { tab.url.toDomain() },
+                    text = tab.title.ifBlank { tab.url.toDomain().ifBlank { stringResource(R.string.browser_tab_new_title) } },
                     color = if (isActive) {
                         if (isIncognito) IncognitoEmphasis else TuViGoldLight
                     } else {
@@ -340,7 +342,7 @@ private fun TabCard(
                 ) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Đóng tab",
+                        contentDescription = stringResource(R.string.tab_cd_close),
                         tint = TuViIvoryDim,
                         modifier = Modifier.size(12.dp)
                     )
