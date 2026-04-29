@@ -19,9 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tuvi.R
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViNavy
@@ -42,7 +44,7 @@ fun CalendarChooserScreen(
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Quay lại",
+                contentDescription = stringResource(R.string.settings_back),
                 tint = TuViGold
             )
         }
@@ -50,14 +52,14 @@ fun CalendarChooserScreen(
         Spacer(Modifier.height(24.dp))
 
         Text(
-            text = "LỊCH ÂM / DƯƠNG",
+            text = stringResource(R.string.calendar_chooser_title),
             color = TuViGold,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Lịch âm dương đã tích hợp chung, bấm bên dưới để mở:",
+            text = stringResource(R.string.calendar_chooser_message),
             color = TuViIvory,
             fontSize = 14.sp
         )
@@ -72,7 +74,7 @@ fun CalendarChooserScreen(
                 contentColor = TuViNavy
             )
         ) {
-            Text("Mở Lịch Âm / Dương", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.calendar_chooser_btn), fontWeight = FontWeight.SemiBold)
         }
     }
 }
