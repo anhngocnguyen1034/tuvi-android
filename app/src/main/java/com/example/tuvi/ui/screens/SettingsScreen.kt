@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -195,21 +196,26 @@ private fun ThemeSwitchRow(isDark: Boolean, onToggle: (Boolean) -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isDark) "Tối" else "Sáng",
+                        text = if (isDark) stringResource(R.string.settings_dark_icon) else stringResource(
+                            R.string.settings_light_icon
+                        ),
                         fontSize = 20.sp
                     )
+                    Icon(painter = painterResource(R.drawable.ic_clock_light), null)
                 }
                 Spacer(Modifier.size(14.dp))
                 Column {
                     Text(
                         text = if (isDark) stringResource(R.string.settings_theme_dark)
-                               else stringResource(R.string.settings_theme_light),
+                        else stringResource(R.string.settings_theme_light),
                         color = TuViIvory,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (isDark) "Giao diện tối" else "Giao diện sáng",
+                        text = if (isDark) stringResource(R.string.settings_dark_mode_desc) else stringResource(
+                            R.string.settings_light_mode_desc
+                        ),
                         color = TuViIvoryDim,
                         fontSize = 12.sp
                     )
