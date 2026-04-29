@@ -5,7 +5,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun TuViTheme(
@@ -13,7 +12,7 @@ fun TuViTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    TuViComposeColors.initIfNeeded(LocalContext.current, forceNight = darkTheme)
+    TuViComposeColors.setDark(darkTheme)
 
     val colorScheme = remember(darkTheme) {
         if (darkTheme) {
