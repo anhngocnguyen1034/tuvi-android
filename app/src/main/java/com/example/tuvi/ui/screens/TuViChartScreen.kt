@@ -304,10 +304,10 @@ fun TuViChartScreen(
                     containerColor = ChartNavy,
                     titleContentColor = ChartGold,
                     textContentColor = ChartIvoryDim,
-                    title = { Text("Huỷ lưu lá số?", fontWeight = FontWeight.Bold) },
+                    title = { Text(stringResource(R.string.chart_dialog_unsave_title), fontWeight = FontWeight.Bold) },
                     text = {
                         Text(
-                            "Lá số sẽ bị xóa khỏi danh sách đã lưu trên máy. Bạn có chắc không?",
+                            stringResource(R.string.chart_dialog_unsave_message),
                             fontSize = 14.sp
                         )
                     },
@@ -321,12 +321,12 @@ fun TuViChartScreen(
                                 }
                             }
                         ) {
-                            Text("Huỷ lưu", color = ChartRed, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.chart_btn_unsave), color = ChartRed, fontWeight = FontWeight.SemiBold)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showUnsaveDialog = false }) {
-                            Text("Không", color = ChartIvory)
+                            Text(stringResource(R.string.btn_cancel), color = ChartIvory)
                         }
                     }
                 )
@@ -348,22 +348,22 @@ fun TuViChartScreen(
                     textContentColor = ChartIvoryDim,
                     title = {
                         Text(
-                            if (downloadSuccess) "Tải ảnh thành công" else "Tải ảnh thất bại",
+                            if (downloadSuccess) stringResource(R.string.chart_download_success_title) else stringResource(R.string.chart_download_fail_title),
                             fontWeight = FontWeight.Bold
                         )
                     },
                     text = {
                         Text(
                             if (downloadSuccess) {
-                                "Ảnh lá số đã được lưu vào thư viện (Pictures/TuVi)."
+                                stringResource(R.string.chart_download_success_message)
                             } else {
-                                "Không thể lưu ảnh vào thư viện. Vui lòng thử lại."
+                                stringResource(R.string.chart_download_fail_message)
                             }
                         )
                     },
                     confirmButton = {
                         TextButton(onClick = { showDownloadDialog = false }) {
-                            Text("Đóng", color = ChartGold)
+                            Text(stringResource(R.string.btn_cancel), color = ChartGold)
                         }
                     }
                 )
@@ -374,8 +374,8 @@ fun TuViChartScreen(
                     containerColor = ChartNavy,
                     titleContentColor = ChartGold,
                     textContentColor = ChartIvoryDim,
-                    title = { Text("Tải ảnh lá số?", fontWeight = FontWeight.Bold) },
-                    text = { Text("Bạn có muốn tải ảnh lá số xuống thư viện không?") },
+                    title = { Text(stringResource(R.string.chart_dialog_download_title), fontWeight = FontWeight.Bold) },
+                    text = { Text(stringResource(R.string.chart_dialog_download_message)) },
                     confirmButton = {
                         TextButton(
                             onClick = {
@@ -391,12 +391,12 @@ fun TuViChartScreen(
                                 }
                             }
                         ) {
-                            Text("Tải xuống", color = ChartGold, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.chart_btn_download), color = ChartGold, fontWeight = FontWeight.SemiBold)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDownloadConfirmDialog = false }) {
-                            Text("Huỷ", color = ChartIvory)
+                            Text(stringResource(R.string.btn_cancel), color = ChartIvory)
                         }
                     }
                 )
@@ -432,7 +432,7 @@ fun TuViChartScreen(
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_download),
-                                contentDescription = "Tải ảnh lá số",
+                                contentDescription = stringResource(R.string.chart_cd_download),
                                 tint = ChartGold
                             )
                         }
@@ -450,7 +450,7 @@ fun TuViChartScreen(
                                     painter = painterResource(
                                         id = if (inLibrary) R.drawable.ic_saved else R.drawable.ic_save
                                     ),
-                                    contentDescription = if (inLibrary) "Huỷ lưu lá số" else "Lưu lá số",
+                                    contentDescription = if (inLibrary) stringResource(R.string.chart_cd_unsave) else stringResource(R.string.chart_cd_save),
                                     tint = ChartGold
                                 )
                             }
@@ -476,7 +476,7 @@ fun TuViChartScreen(
 
                     // ── Footer ──
                     Text(
-                        "Tử Vi By AnhNN",
+                        stringResource(R.string.chart_footer),
                         color = ChartGoldDim,
                         fontSize = 11.sp,
                         textAlign = TextAlign.Center,
@@ -726,7 +726,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
             .padding(2.dp)
     ) {
         Text(
-            "LÁ SỐ TỬ VI",
+            stringResource(R.string.chart_center_title),
             fontWeight = FontWeight.Bold,
             fontSize = 8.sp,
             color = ChartGold,
@@ -735,27 +735,27 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         )
         Spacer(Modifier.height(2.dp))
 
-        CenterLine("Họ và tên", tb.ten, valueColor = ChartGold, valueBold = true)
-        CenterLine("Giới tính", tb.gioiTinh)
-        CenterLine("Ngày sinh(Dương)", tb.ngayDuong)
-        CenterLine("Ngày sinh(Âm)", tb.ngayAm)
-        tb.gioSinh?.let { CenterLine("Giờ", it) }
-        tb.namXem?.let { CenterLine("Năm xem:", it.toString()) }
+        CenterLine(stringResource(R.string.chart_label_name), tb.ten, valueColor = ChartGold, valueBold = true)
+        CenterLine(stringResource(R.string.chart_label_gender), tb.gioiTinh)
+        CenterLine(stringResource(R.string.chart_label_solar_birthday), tb.ngayDuong)
+        CenterLine(stringResource(R.string.chart_label_lunar_birthday), tb.ngayAm)
+        tb.gioSinh?.let { CenterLine(stringResource(R.string.chart_label_hour), it) }
+        tb.namXem?.let { CenterLine(stringResource(R.string.chart_label_view_year), it.toString()) }
 
         if (tb.canNam != null || tb.chiNam != null)
-            CenterLine("Năm", "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim())
+            CenterLine(stringResource(R.string.chart_label_year), "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim())
         if (tb.canThang != null || tb.chiThang != null)
-            CenterLine("Tháng", "${tb.canThang ?: ""} ${tb.chiThang ?: ""}".trim())
+            CenterLine(stringResource(R.string.chart_label_month), "${tb.canThang ?: ""} ${tb.chiThang ?: ""}".trim())
         if (tb.canNgay != null || tb.chiNgay != null)
-            CenterLine("Ngày", "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim())
+            CenterLine(stringResource(R.string.chart_label_day), "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim())
 
         tb.amDuongMenh?.let { CenterLine("", it, fontSize = 7.sp) }
-        tb.menh?.let { CenterLine("Mệnh", it, valueColor = ChartGold) }
-        tb.banMenh?.let { CenterLine("Bản Mệnh", it) }
-        tb.cuc?.let { CenterLine("Cục", it) }
-        tb.menhChu?.let { CenterLine("Mệnh chủ", it) }
-        tb.thanChu?.let { CenterLine("Thân chủ", it) }
-        tb.sinhKhac?.let { CenterLine("Sinh/Khắc", it) }
+        tb.menh?.let { CenterLine(stringResource(R.string.chart_label_menh), it, valueColor = ChartGold) }
+        tb.banMenh?.let { CenterLine(stringResource(R.string.chart_label_ban_menh), it) }
+        tb.cuc?.let { CenterLine(stringResource(R.string.chart_label_cuc), it) }
+        tb.menhChu?.let { CenterLine(stringResource(R.string.chart_label_menh_chu), it) }
+        tb.thanChu?.let { CenterLine(stringResource(R.string.chart_label_than_chu), it) }
+        tb.sinhKhac?.let { CenterLine(stringResource(R.string.chart_label_sinh_khac), it) }
     }
 }
 
@@ -996,7 +996,7 @@ fun PalaceView(cung: CungInfo) {
             )
             // Tháng âm lịch theo cung
             Text(
-                text = thangCung?.let { "Tháng $it" } ?: "Tháng",
+                text = thangCung?.let { stringResource(R.string.chart_month_n, it) } ?: stringResource(R.string.chart_month),
                 fontSize = 6.sp,
                 color = ChartIvoryDim,
                 maxLines = 1,
