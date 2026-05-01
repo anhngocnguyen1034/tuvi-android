@@ -10,12 +10,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -70,7 +68,6 @@ import com.example.tuvi.ui.theme.TuViRed
 @Composable
 fun HomeScreen(
     onOpenTuVi: () -> Unit,
-    onOpenSaved: () -> Unit,
     onOpenBrowser: () -> Unit = {},
     onOpenCalendar: () -> Unit = {},
     onOpenSettings: () -> Unit = {}
@@ -173,30 +170,12 @@ fun HomeScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // ── Card phụ ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                SecondaryFeatureCard(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    title = stringResource(R.string.home_saved_title),
-                    description = stringResource(R.string.home_saved_desc),
-                    onClick = onOpenSaved
-                )
-                SecondaryFeatureCard(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    title = stringResource(R.string.home_browser_title),
-                    description = stringResource(R.string.home_browser_desc),
-                    onClick = onOpenBrowser
-                )
-            }
+            SecondaryFeatureCard(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(R.string.home_browser_title),
+                description = stringResource(R.string.home_browser_desc),
+                onClick = onOpenBrowser
+            )
 
             Spacer(Modifier.height(14.dp))
 

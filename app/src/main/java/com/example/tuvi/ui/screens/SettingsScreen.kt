@@ -54,7 +54,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -78,6 +80,7 @@ import com.example.tuvi.ui.theme.TuViNavyLight
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onOpenSaved: () -> Unit = {},
     viewModel: SettingsViewModel = viewModel(
         factory = AndroidViewModelFactory.getInstance(
             LocalContext.current.applicationContext as Application
@@ -156,6 +159,15 @@ fun SettingsScreen(
                     onClick = { viewModel.setLocaleTag(UserPreferencesRepository.LOCALE_EN) }
                 )
             }
+
+            Text(
+                text = stringResource(R.string.settings_data_section),
+                color = TuViGold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.8.sp
+            )
+            SavedChartsRow(onClick = onOpenSaved)
 
             Text(
                 text = stringResource(R.string.settings_footer_hint),
@@ -242,6 +254,72 @@ private fun ThemeSwitchRow(isDark: Boolean, onToggle: (Boolean) -> Unit) {
                 onToggle = { onToggle(!isDark) }
             )
         }
+    }
+}
+
+@Composable
+private fun SavedChartsRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.radialGradient(listOf(TuViGold.copy(alpha = 0.15f), TuViNavyCard))
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.property_1_linear),
+                    contentDescription = null,
+                    tint = TuViGold,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Spacer(Modifier.size(14.dp))
+            Column {
+                Text(
+                    text = stringResource(R.string.settings_saved_title),
+                    color = TuViIvory,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(R.string.settings_saved_desc),
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
+            }
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null,
+            tint = TuViGoldLight,
+            modifier = Modifier
+                .size(18.dp)
+                .rotate(180f)
+        )
     }
 }
 

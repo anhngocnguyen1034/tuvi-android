@@ -93,7 +93,6 @@ fun TuViApp(isDark: Boolean = true) {
         composable("home") {
             HomeScreen(
                 onOpenTuVi = { navController.navigate("input") },
-                onOpenSaved = { navController.navigate("saved_charts") },
                 onOpenBrowser = {
                     val url = Uri.encode("https://www.google.com")
                     navController.navigate("browser?url=$url&title=Trình+Duyệt")
@@ -112,7 +111,10 @@ fun TuViApp(isDark: Boolean = true) {
             LichScreen(onBack = { navController.popBackStack() })
         }
         composable("settings") {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onOpenSaved = { navController.navigate("saved_charts") }
+            )
         }
         composable("input") {
             InputScreen(

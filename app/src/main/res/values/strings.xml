@@ -23,6 +23,9 @@
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
+    <string name="settings_data_section">Data</string>
+    <string name="settings_saved_title">Saved Charts</string>
+    <string name="settings_saved_desc">View &amp; manage saved charts</string>
     <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
 
     <!-- HomeScreen -->
