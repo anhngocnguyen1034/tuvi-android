@@ -10,10 +10,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -143,21 +144,11 @@ fun HomeScreen(
             Text(
                 text = stringResource(R.string.home_app_title),
                 color = TuViGold,
-                fontSize = 36.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 10.sp
             )
-            Text(
-                text = stringResource(R.string.home_app_subtitle),
-                color = TuViGoldLight.copy(alpha = 0.7f),
-                fontSize = 13.sp,
-                letterSpacing = 6.sp,
-                fontWeight = FontWeight.Light
-            )
-
             Spacer(Modifier.height(8.dp))
 
-            // Divider trang trí
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(0.7f)
@@ -173,9 +164,8 @@ fun HomeScreen(
 
             Spacer(Modifier.height(6.dp))
 
-            // ── Card chính: Lá số Tử Vi ──
             MainFeatureCard(
-                icon = painterResource(R.drawable.ic_clock_light),
+                icon = painterResource(R.drawable.property_1_linear),
                 title = stringResource(R.string.home_tuvi_title),
                 description = stringResource(R.string.home_tuvi_desc),
                 onClick = onOpenTuVi
@@ -185,17 +175,23 @@ fun HomeScreen(
 
             // ── Card phụ ──
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 SecondaryFeatureCard(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
                     title = stringResource(R.string.home_saved_title),
                     description = stringResource(R.string.home_saved_desc),
                     onClick = onOpenSaved
                 )
                 SecondaryFeatureCard(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
                     title = stringResource(R.string.home_browser_title),
                     description = stringResource(R.string.home_browser_desc),
                     onClick = onOpenBrowser
@@ -208,7 +204,8 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(R.string.home_calendar_title),
                 description = stringResource(R.string.home_calendar_desc),
-                onClick = onOpenCalendar
+                onClick = onOpenCalendar,
+                icon  = painterResource(R.drawable.ic_calendar)
             )
         }
 
@@ -245,6 +242,15 @@ private fun MainFeatureCard(
                 ambientColor = TuViGold.copy(alpha = 0.15f)
             )
             .clip(RoundedCornerShape(20.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(
+                        HomeCardGradientStart.copy(alpha = 0.85f),
+                        HomeCardGradientMid.copy(alpha = 0.75f),
+                        HomeCardGradientEnd.copy(alpha = 0.85f)
+                    )
+                )
+            )
             .border(
                 width = 1.5.dp,
                 brush = Brush.linearGradient(
@@ -258,35 +264,6 @@ private fun MainFeatureCard(
             )
             .clickable { onClick() }
     ) {
-        // Blurred background layer — frosted glass
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(
-                    Brush.linearGradient(
-                        listOf(
-                            HomeCardGradientStart.copy(alpha = 0.85f),
-                            HomeCardGradientMid.copy(alpha = 0.75f),
-                            HomeCardGradientEnd.copy(alpha = 0.85f)
-                        )
-                    )
-                )
-                .blur(radiusX = 48.dp, radiusY = 48.dp)
-        )
-        // Glass sheen overlay
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.White.copy(alpha = 0.10f),
-                            Color.White.copy(alpha = 0.02f),
-                            Color.Transparent
-                        )
-                    )
-                )
-        )
         Row(modifier = Modifier.padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
             // Biểu tượng
             Box(
@@ -301,7 +278,12 @@ private fun MainFeatureCard(
                     .border(1.dp, TuViGold.copy(alpha = 0.6f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Tử Vi",fontSize = 30.sp)
+                Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    tint = TuViGold,
+                    modifier = Modifier.size(36.dp)
+                )
             }
 
             Spacer(Modifier.width(20.dp))
@@ -321,20 +303,6 @@ private fun MainFeatureCard(
                     fontSize = 13.sp,
                     lineHeight = 19.sp
                 )
-                Spacer(Modifier.height(12.dp))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(TuViGold)
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.home_btn_view_now),
-                        color = TuViNavy,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
         }
     }
@@ -346,7 +314,8 @@ private fun SecondaryFeatureCard(
     title: String,
     description: String,
     enabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    icon: Painter? = null,
 ) {
     val borderColor = if (enabled)
         Brush.linearGradient(listOf(TuViGold.copy(alpha = 0.6f), TuViGoldDark.copy(alpha = 0.25f), TuViGold.copy(alpha = 0.5f)))
@@ -365,33 +334,23 @@ private fun SecondaryFeatureCard(
                 spotColor = if (enabled) TuViGold.copy(alpha = 0.25f) else Color.Transparent
             )
             .clip(RoundedCornerShape(16.dp))
+            .background(Brush.verticalGradient(listOf(bgStart, bgEnd)))
             .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             .then(if (enabled) Modifier.clickable { onClick() } else Modifier)
     ) {
-        // Blurred frosted glass background
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Brush.verticalGradient(listOf(bgStart, bgEnd)))
-                .blur(radiusX = 40.dp, radiusY = 40.dp)
-        )
-        // Glass sheen
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.White.copy(alpha = if (enabled) 0.09f else 0.04f),
-                            Color.Transparent
-                        )
-                    )
-                )
-        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
+            if (icon != null) {
+                Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    tint = TuViGold,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(Modifier.height(6.dp))
+            }
             Text(
                 text = title,
                 color = textColor,

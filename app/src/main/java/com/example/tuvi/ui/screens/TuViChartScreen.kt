@@ -431,7 +431,7 @@ fun TuViChartScreen(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_download),
+                                painter = painterResource(R.drawable.gallery_import),
                                 contentDescription = stringResource(R.string.chart_cd_download),
                                 tint = ChartGold
                             )

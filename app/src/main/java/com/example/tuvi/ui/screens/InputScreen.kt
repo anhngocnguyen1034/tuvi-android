@@ -603,19 +603,10 @@ fun InputScreen(
 
             // ── Header ──
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // Hoạ tiết Bát Quái
                 BaguaDecoration(
                     modifier = Modifier.size(160.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.input_screen_title),
-                    color = TuViGold,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 4.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
                 GoldDivider()
             }
 
