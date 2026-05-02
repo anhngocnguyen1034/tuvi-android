@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -58,6 +61,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -306,8 +310,7 @@ fun BrowserScreen(
             onNewIncognitoTab = { viewModel.addNewIncognitoTab() },
             onCloseAllIncognito = { viewModel.closeAllIncognitoTabs() },
             onSwitchPanel = { viewModel.setTabSwitcherPanel(it) },
-            onDismiss = { viewModel.closeTabSwitcher() },
-            onOpenBookmarks = { viewModel.closeTabSwitcher(); viewModel.openBookmarks() }
+            onDismiss = { viewModel.closeTabSwitcher() }
         )
 
         // ── History overlay (không navigate ra ngoài, giữ WebView sống) ──
@@ -419,59 +422,43 @@ private fun MoreDropdownMenu(
     onOpenBookmarks: () -> Unit,
     onReload: () -> Unit = {}
 ) {
-    val bg   = if (isIncognito) IncognitoCard else TuViNavyCard
-    val text = if (isIncognito) IncognitoEmphasis else TuViIvory
+    val bg      = if (isIncognito) IncognitoCard  else TuViNavyCard
+    val border  = if (isIncognito) IncognitoEmphasis.copy(alpha = 0.25f) else TuViGold.copy(alpha = 0.25f)
+    val divider = if (isIncognito) IncognitoDivider else TuViDivider
+    val text    = if (isIncognito) IncognitoEmphasis else TuViIvory
+    val subText = if (isIncognito) IncognitoMuted else TuViIvoryDim
+
+    @Composable
+    fun MenuItem(label: String, onClick: () -> Unit) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = label,
+                    color = text,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.1.sp
+                )
+            },
+            onClick = onClick,
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 13.dp),
+            colors = MenuDefaults.itemColors(textColor = text)
+        
+    }
 
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
-        modifier = Modifier.background(bg)
+        modifier = Modifier
+            .background(bg)
+            .border(0.5.dp, border, RoundedCornerShape(12.dp))
+            .widthIn(min = 190.dp)
     ) {
-        DropdownMenuItem(
-            text = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("↺", fontSize = 15.sp)
-                    Spacer(Modifier.size(10.dp))
-                    Text(stringResource(R.string.browser_menu_reload), color = text, fontSize = 14.sp)
-                }
-            },
-            onClick = onReload,
-            colors = MenuDefaults.itemColors(textColor = text)
-        )
-        DropdownMenuItem(
-            text = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("⬜", fontSize = 15.sp)
-                    Spacer(Modifier.size(10.dp))
-                    Text(stringResource(R.string.browser_menu_tab_manager), color = text, fontSize = 14.sp)
-                }
-            },
-            onClick = onOpenTabs,
-            colors = MenuDefaults.itemColors(textColor = text)
-        )
         if (!isIncognito) {
-            DropdownMenuItem(
-                text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("H", fontSize = 15.sp)
-                        Spacer(Modifier.size(10.dp))
-                        Text(stringResource(R.string.browser_menu_history), color = text, fontSize = 14.sp)
-                    }
-                },
-                onClick = onOpenHistory,
-                colors = MenuDefaults.itemColors(textColor = text)
-            )
-            DropdownMenuItem(
-                text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Star, contentDescription = null, tint = text, modifier = Modifier.size(15.dp))
-                        Spacer(Modifier.size(10.dp))
-                        Text(stringResource(R.string.browser_menu_bookmarks), color = text, fontSize = 14.sp)
-                    }
-                },
-                onClick = onOpenBookmarks,
-                colors = MenuDefaults.itemColors(textColor = text)
-            )
+            HorizontalDivider(color = divider.copy(alpha = 0.5f), thickness = 0.5.dp)
+            MenuItem(stringResource(R.string.browser_menu_history), onOpenHistory)
+            HorizontalDivider(color = divider.copy(alpha = 0.5f), thickness = 0.5.dp)
+            MenuItem(stringResource(R.string.browser_menu_bookmarks), onOpenBookmarks)
         }
     }
 }
@@ -663,10 +650,11 @@ private fun BrowserBottomBar(
             }
             // Incognito — tạo tab ẩn danh mới
             IconButton(onClick = onNewIncognitoTab, modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.browser_incognito_icon),
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(2.dp)
+                Icon(
+                    painter = painterResource(R.drawable.ic_incognito),
+                    contentDescription = stringResource(R.string.browser_incognito_icon),
+                    tint = accentColor,
+                    modifier = Modifier.size(22.dp)
                 )
             }
             // ⬜ Tab count

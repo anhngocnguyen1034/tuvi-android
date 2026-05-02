@@ -31,7 +31,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.tuvi.R
 import androidx.compose.ui.graphics.Color
@@ -84,8 +84,7 @@ fun TabSwitcherOverlay(
     onNewIncognitoTab: () -> Unit,
     onCloseAllIncognito: () -> Unit,
     onSwitchPanel: (Boolean) -> Unit,
-    onDismiss: () -> Unit,
-    onOpenBookmarks: () -> Unit = {}
+    onDismiss: () -> Unit
 ) {
     val normalTabs    = tabs.filter { !it.isIncognito }
     val incognitoTabs = tabs.filter { it.isIncognito }
@@ -133,10 +132,19 @@ fun TabSwitcherOverlay(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = if (showIncognitoList) stringResource(R.string.tab_switcher_incognito_icon) else stringResource(R.string.tab_switcher_web_icon),
-                                fontSize = 48.sp
-                            )
+                            if (showIncognitoList) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_incognito),
+                                    contentDescription = null,
+                                    tint = IncognitoEmphasis,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            } else {
+                                Text(
+                                    text = stringResource(R.string.tab_switcher_web_icon),
+                                    fontSize = 48.sp
+                                )
+                            }
                             Spacer(Modifier.height(12.dp))
                             Text(
                                 text = if (showIncognitoList) stringResource(R.string.tab_switcher_empty_incognito)
@@ -192,11 +200,6 @@ fun TabSwitcherOverlay(
                                 if (showIncognitoList) stringResource(R.string.tab_switcher_new_incognito) else stringResource(R.string.tab_switcher_new_tab),
                                 fontWeight = FontWeight.Bold, fontSize = 14.sp
                             )
-                        }
-                    }
-                    if (!showIncognitoList) {
-                        IconButton(onClick = onOpenBookmarks) {
-                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.bookmark_screen_title), tint = TuViGold)
                         }
                     }
                 }
@@ -281,12 +284,20 @@ private fun TabCard(
                             .background(Color.Black.copy(alpha = 0.08f))
                     )
                 } else {
-                    // Fallback: emoji + domain khi chưa có thumbnail hoặc tab ẩn danh
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = if (isIncognito) stringResource(R.string.tab_switcher_incognito_icon) else tab.url.toFavicon(),
-                            fontSize = 32.sp
-                        )
+                        if (isIncognito) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_incognito),
+                                contentDescription = null,
+                                tint = IncognitoEmphasis,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        } else {
+                            Text(
+                                text = tab.url.toFavicon(),
+                                fontSize = 32.sp
+                            )
+                        }
                         Spacer(Modifier.height(6.dp))
                         Text(
                             text = tab.url.toDomain(),
