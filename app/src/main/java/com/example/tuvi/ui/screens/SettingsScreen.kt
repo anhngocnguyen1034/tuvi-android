@@ -205,50 +205,22 @@ private fun ThemeSwitchRow(isDark: Boolean, onToggle: (Boolean) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Icon + label group
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Sun/Moon icon
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(
-                            if (isDark)
-                                Brush.radialGradient(
-                                    listOf(TuViNavy.copy(alpha = 0.8f), TuViNavyCard)
-                                )
-                            else
-                                Brush.radialGradient(
-                                    listOf(TuViGold.copy(alpha = 0.25f), TuViNavyCard)
-                                )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (isDark) stringResource(R.string.settings_dark_icon)
-                               else stringResource(R.string.settings_light_icon),
-                        fontSize = 22.sp
-                    )
-                }
-                Spacer(Modifier.size(14.dp))
-                Column {
-                    Text(
-                        text = if (isDark) stringResource(R.string.settings_theme_dark)
-                        else stringResource(R.string.settings_theme_light),
-                        color = TuViIvory,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = if (isDark) stringResource(R.string.settings_dark_mode_desc) else stringResource(
-                            R.string.settings_light_mode_desc
-                        ),
-                        color = TuViIvoryDim,
-                        fontSize = 12.sp
-                    )
-                }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (isDark) stringResource(R.string.settings_theme_dark)
+                    else stringResource(R.string.settings_theme_light),
+                    color = TuViIvory,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = if (isDark) stringResource(R.string.settings_dark_mode_desc) else stringResource(
+                        R.string.settings_light_mode_desc
+                    ),
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
             }
-
             GenZThemeSwitch(
                 isDarkTheme = isDark,
                 onToggle = { onToggle(!isDark) }

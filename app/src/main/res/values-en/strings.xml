@@ -32,7 +32,7 @@
     <string name="home_tuvi_desc">View your personal chart by birth date</string>
     <string name="home_saved_title">Saved\nCharts</string>
     <string name="home_saved_desc">View &amp; manage</string>
-    <string name="home_browser_title">Web\nBrowser</string>
+    <string name="home_browser_title">Web Browser</string>
     <string name="home_browser_desc">Browse web &amp; documents</string>
     <string name="home_calendar_title">Lunar / Solar Calendar</string>
     <string name="home_calendar_desc">Quick view lunar and solar calendar</string>
