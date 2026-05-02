@@ -174,7 +174,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(R.string.home_browser_title),
                 description = stringResource(R.string.home_browser_desc),
-                onClick = onOpenBrowser
+                onClick = onOpenBrowser,
+                icon = painterResource(R.drawable.ic_browser),
+                iconTint = Color(0xFF2DD4BF)
             )
 
             Spacer(Modifier.height(14.dp))
@@ -295,6 +297,7 @@ private fun SecondaryFeatureCard(
     enabled: Boolean = true,
     onClick: () -> Unit,
     icon: Painter? = null,
+    iconTint: Color = TuViGold,
 ) {
     val borderColor = if (enabled)
         Brush.linearGradient(listOf(TuViGold.copy(alpha = 0.6f), TuViGoldDark.copy(alpha = 0.25f), TuViGold.copy(alpha = 0.5f)))
@@ -303,7 +306,7 @@ private fun SecondaryFeatureCard(
     val bgStart = if (enabled) TuViNavyLight.copy(alpha = 0.82f) else TuViNavy.copy(alpha = 0.7f)
     val bgEnd = if (enabled) TuViNavyCard.copy(alpha = 0.75f) else TuViNavy.copy(alpha = 0.65f)
     val textColor = if (enabled) TuViIvory else TuViIvoryDim.copy(alpha = 0.45f)
-    val subColor = if (enabled) TuViGold.copy(alpha = 0.8f) else TuViIvoryDim.copy(alpha = 0.3f)
+    val subColor = if (enabled) TuViIvoryDim else TuViIvoryDim.copy(alpha = 0.3f)
 
     Box(
         modifier = modifier
@@ -317,34 +320,44 @@ private fun SecondaryFeatureCard(
             .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             .then(if (enabled) Modifier.clickable { onClick() } else Modifier)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
-                Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    tint = TuViGold,
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(Modifier.height(6.dp))
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(iconTint.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Spacer(Modifier.width(14.dp))
             }
-            Text(
-                text = title,
-                color = textColor,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                lineHeight = 18.sp
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = description,
-                color = subColor,
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    color = textColor,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 18.sp
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = description,
+                    color = subColor,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }
