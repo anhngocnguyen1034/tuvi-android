@@ -20,6 +20,7 @@ serializationPlugin = "2.0.21"
 datastore = "1.1.1"
 appcompat = "1.7.0"
 blurview = "version-2.0.6"
+coil = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 blurview = { group = "com.github.Dimezis", name = "BlurView", version.ref = "blurview" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

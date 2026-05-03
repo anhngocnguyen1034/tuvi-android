@@ -146,6 +146,7 @@
     <string name="history_cd_clear_all">Clear all</string>
     <string name="history_empty_title">No browsing history yet</string>
     <string name="history_empty_hint">Long-press an item to delete</string>
+    <string name="history_delete_item">Delete</string>
 
     <!-- CalendarChooserScreen -->
     <string name="calendar_chooser_title">LUNAR / SOLAR CALENDAR</string>

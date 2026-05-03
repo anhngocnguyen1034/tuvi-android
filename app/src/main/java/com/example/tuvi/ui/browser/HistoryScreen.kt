@@ -1,10 +1,9 @@
 package com.example.tuvi.ui.browser
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,11 +38,12 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -53,6 +55,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.example.tuvi.R
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.HistoryItemEntity
@@ -71,6 +76,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -186,7 +192,7 @@ fun HistoryScreen(
                     HistoryItem(
                         item = item,
                         onTap = { onOpenUrl(item.url) },
-                        onLongPress = { vm.delete(item.id) }
+                        onDelete = { vm.delete(item.id) }
                     )
                 }
             }
@@ -194,24 +200,25 @@ fun HistoryScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HistoryItem(
     item: HistoryItemEntity,
     onTap: () -> Unit,
-    onLongPress: () -> Unit
+    onDelete: () -> Unit
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(TuViNavyLight)
             .border(1.dp, TuViNavyCard, RoundedCornerShape(10.dp))
-            .combinedClickable(onClick = onTap, onLongClick = onLongPress)
+            .clickable(onClick = onTap)
             .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon đồng hồ lịch sử bằng text
+        // Favicon của website
         Box(
             modifier = Modifier
                 .size(36.dp)
@@ -219,11 +226,30 @@ private fun HistoryItem(
                 .background(TuViGoldDark.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_clock_light),
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(faviconUrl(item.url))
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
-                tint = TuViGoldDark,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(22.dp),
+                contentScale = ContentScale.Fit,
+                error = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_clock_light),
+                        contentDescription = null,
+                        tint = TuViGoldDark,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
+                loading = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_clock_light),
+                        contentDescription = null,
+                        tint = TuViGoldDark,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             )
         }
 
@@ -256,6 +282,33 @@ private fun HistoryItem(
             fontSize = 11.sp,
             fontStyle = FontStyle.Italic
         )
+
+        // Menu 3 chấm
+        Box {
+            IconButton(
+                onClick = { menuExpanded = true },
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    contentDescription = null,
+                    tint = TuViIvoryDim,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.history_delete_item), color = TuViRed) },
+                    onClick = {
+                        menuExpanded = false
+                        onDelete()
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -278,6 +331,11 @@ private fun HistoryEmptyState(modifier: Modifier) {
         }
     }
 }
+
+private fun faviconUrl(url: String): String = try {
+    val host = URL(url).host
+    "https://www.google.com/s2/favicons?domain=$host&sz=64"
+} catch (_: Exception) { "" }
 
 private fun formatHistoryTime(millis: Long): String {
     val now = System.currentTimeMillis()

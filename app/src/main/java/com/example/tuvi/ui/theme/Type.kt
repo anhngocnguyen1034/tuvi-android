@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.tuvi.R
 
-val NerkoOneFamily = FontFamily(Font(R.font.NerkoOne))
+val NerkoOneFamily = FontFamily(Font(R.font.nerko_one))
 
 // Set of Material typography styles to start with
 val Typography = Typography(
