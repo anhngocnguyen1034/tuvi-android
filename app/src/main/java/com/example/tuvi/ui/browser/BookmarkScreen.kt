@@ -2,6 +2,7 @@ package com.example.tuvi.ui.browser
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,6 +62,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.data.local.BookmarkDao
 import com.example.tuvi.data.local.BookmarkItemEntity
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.ui.theme.NerkoOneFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -301,13 +304,24 @@ private fun EditTitleDialog(
 private fun BookmarkEmptyState(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Default.Star, contentDescription = null,
-                tint = TuViGoldDark, modifier = Modifier.size(52.dp))
+            Image(
+                painter = painterResource(R.drawable.empty),
+                contentDescription = null,
+                modifier = Modifier.size(160.dp)
+            )
             Spacer(Modifier.height(12.dp))
-            Text(stringResource(R.string.bookmark_empty_title), color = TuViIvoryDim, fontSize = 16.sp)
+            Text(
+                text = stringResource(R.string.bookmark_empty_title),
+                color = TuViIvoryDim,
+                fontSize = 16.sp,
+                fontFamily = NerkoOneFamily
+            )
             Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.bookmark_empty_hint),
-                color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
+            Text(
+                text = stringResource(R.string.bookmark_empty_hint),
+                color = TuViIvoryDim.copy(alpha = 0.5f),
+                fontSize = 12.sp
+            )
         }
     }
 }

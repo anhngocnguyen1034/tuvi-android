@@ -1,6 +1,7 @@
 package com.example.tuvi.ui.browser
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -56,6 +57,7 @@ import com.example.tuvi.R
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.HistoryItemEntity
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.ui.theme.NerkoOneFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -109,10 +111,19 @@ fun HistoryScreen(
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
             title = { Text(stringResource(R.string.history_clear_all_title), color = TuViIvory) },
-            text = { Text(stringResource(R.string.history_clear_all_message), color = TuViIvoryDim) },
+            text = {
+                Text(
+                    stringResource(R.string.history_clear_all_message),
+                    color = TuViIvoryDim
+                )
+            },
             confirmButton = {
                 TextButton(onClick = { showClearDialog = false; vm.clearAll() }) {
-                    Text(stringResource(R.string.history_btn_clear_all), color = TuViRed, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.history_btn_clear_all),
+                        color = TuViRed,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
@@ -129,17 +140,29 @@ fun HistoryScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.history_screen_title), color = TuViGold, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.history_screen_title),
+                        color = TuViGold,
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.settings_back),
+                            tint = TuViGold
+                        )
                     }
                 },
                 actions = {
                     if (history.isNotEmpty()) {
                         IconButton(onClick = { showClearDialog = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.history_cd_clear_all), tint = TuViRed)
+                            Icon(
+                                painter = painterResource(R.drawable.ic_trash),
+                                contentDescription = stringResource(R.string.history_cd_clear_all),
+                                tint = TuViRed
+                            )
                         }
                     }
                 },
@@ -148,10 +171,14 @@ fun HistoryScreen(
         }
     ) { padding ->
         if (history.isEmpty()) {
-            HistoryEmptyState(modifier = Modifier.fillMaxSize().padding(padding))
+            HistoryEmptyState(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding))
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -192,7 +219,12 @@ private fun HistoryItem(
                 .background(TuViGoldDark.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(painter = painterResource(R.drawable.ic_clock_light), contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(18.dp))
+            Icon(
+                painter = painterResource(R.drawable.ic_clock_light),
+                contentDescription = null,
+                tint = TuViGoldDark,
+                modifier = Modifier.size(18.dp)
+            )
         }
 
         Spacer(Modifier.width(12.dp))
@@ -231,11 +263,18 @@ private fun HistoryItem(
 private fun HistoryEmptyState(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(painter= painterResource(R.drawable.ic_clock_light), contentDescription = null, tint = TuViGoldDark, modifier = Modifier.size(48.dp))
+            Image(
+                painter = painterResource(R.drawable.empty),
+                contentDescription = null,
+                modifier = Modifier.size(160.dp)
+            )
             Spacer(Modifier.height(12.dp))
-            Text(stringResource(R.string.history_empty_title), color = TuViIvoryDim, fontSize = 16.sp)
-            Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.history_empty_hint), color = TuViIvoryDim.copy(alpha = 0.5f), fontSize = 12.sp)
+            Text(
+                stringResource(R.string.history_empty_title),
+                color = TuViIvoryDim,
+                fontSize = 16.sp,
+                fontFamily = NerkoOneFamily
+            )
         }
     }
 }

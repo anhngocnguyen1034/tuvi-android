@@ -442,7 +442,7 @@ private fun MoreDropdownMenu(
             },
             onClick = onClick,
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 13.dp),
-            colors = MenuDefaults.itemColors(textColor = text)
+            colors = MenuDefaults.itemColors(textColor = text))
         
     }
 
@@ -653,7 +653,7 @@ private fun BrowserBottomBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_incognito),
                     contentDescription = stringResource(R.string.browser_incognito_icon),
-                    tint = accentColor,
+                    tint = accent,
                     modifier = Modifier.size(22.dp)
                 )
             }

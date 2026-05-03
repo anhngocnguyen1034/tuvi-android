@@ -241,121 +241,121 @@ private fun TabCard(
     onSelect: () -> Unit,
     onClose: () -> Unit
 ) {
-    val borderColor = if (isActive) {
-        if (isIncognito) IncognitoEmphasis else TuViGold
-    } else {
-        if (isIncognito) IncognitoCard else TuViNavyCard
-    }
-    val borderWidth = if (isActive) 2.dp else 1.dp
-    val bgColor     = if (isIncognito) IncognitoCard else TuViNavyLight
-    val gradFrom    = if (isIncognito) IncognitoCard else TuViNavyCard
-    val gradTo      = if (isIncognito) IncognitoBg   else TuViNavy
+    val accent      = if (isIncognito) IncognitoEmphasis else TuViGold
+    val headerBg    = if (isIncognito) IncognitoCard     else TuViNavyCard
+    val contentBg   = if (isIncognito) IncognitoBg       else TuViNavy
+    val borderColor = if (isActive) accent else Color.Transparent
+    val titleColor  = if (isIncognito) IncognitoEmphasis else TuViIvory
 
     Box(
         modifier = Modifier
-            .aspectRatio(0.75f)
-            .shadow(if (isActive) 8.dp else 3.dp, RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
-            .background(bgColor)
-            .border(borderWidth, borderColor, RoundedCornerShape(12.dp))
+            .aspectRatio(0.65f)
+            .shadow(if (isActive) 10.dp else 4.dp, RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(14.dp))
+            .border(2.dp, borderColor, RoundedCornerShape(14.dp))
             .clickable { onSelect() }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // ── Thumbnail area ──
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(Brush.verticalGradient(listOf(gradFrom, gradTo))),
-                contentAlignment = Alignment.Center
-            ) {
-                if (thumbnail != null && !isIncognito) {
-                    // Hiển thị screenshot thực của trang (theo doc tab.md)
-                    Image(
-                        bitmap = thumbnail,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    // Lớp phủ mờ nhẹ để title bar phía dưới dễ đọc hơn
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.08f))
-                    )
-                } else {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        if (isIncognito) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_incognito),
-                                contentDescription = null,
-                                tint = IncognitoEmphasis,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        } else {
-                            Text(
-                                text = tab.url.toFavicon(),
-                                fontSize = 32.sp
-                            )
-                        }
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            text = tab.url.toDomain(),
-                            color = if (isIncognito) IncognitoMuted else TuViIvoryDim,
-                            fontSize = 10.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
-                    }
-                }
-                if (tab.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(
-                                (if (isIncognito) IncognitoEmphasis else TuViGold).copy(alpha = 0.6f)
-                            )
-                    )
-                }
-            }
 
-            // ── Tab title bar ──
+            // ── Header (Chrome-style): favicon + title + close ──
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(if (isIncognito) IncognitoCard else TuViNavyCard)
-                    .padding(start = 8.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+                    .background(headerBg)
+                    .padding(start = 10.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Favicon / incognito icon
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .background(accent.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isIncognito) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_incognito),
+                            contentDescription = null,
+                            tint = accent,
+                            modifier = Modifier.size(10.dp)
+                        )
+                    } else {
+                        Text(
+                            text = tab.url.toFaviconChar(),
+                            fontSize = 8.sp,
+                            color = accent,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                Spacer(Modifier.size(6.dp))
                 Text(
                     text = tab.title.ifBlank { tab.url.toDomain().ifBlank { stringResource(R.string.browser_tab_new_title) } },
-                    color = if (isActive) {
-                        if (isIncognito) IncognitoEmphasis else TuViGoldLight
-                    } else {
-                        if (isIncognito) IncognitoMuted else TuViIvory
-                    },
+                    color = titleColor,
                     fontSize = 11.sp,
                     fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
+                // Close button
                 Box(
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(24.dp)
                         .clip(CircleShape)
-                        .background(if (isIncognito) IncognitoBg else TuViNavyLight)
                         .clickable { onClose() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(R.string.tab_cd_close),
-                        tint = TuViIvoryDim,
-                        modifier = Modifier.size(12.dp)
+                        tint = if (isIncognito) IncognitoMuted else TuViIvoryDim,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+
+            // ── Thumbnail ──
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(contentBg),
+                contentAlignment = Alignment.Center
+            ) {
+                if (thumbnail != null && !isIncognito) {
+                    Image(
+                        bitmap = thumbnail,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else if (isIncognito) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_incognito),
+                        contentDescription = null,
+                        tint = IncognitoEmphasis.copy(alpha = 0.35f),
+                        modifier = Modifier.size(48.dp)
+                    )
+                } else {
+                    Text(
+                        text = tab.url.toDomain().ifBlank { "New tab" },
+                        color = TuViIvoryDim.copy(alpha = 0.4f),
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
+                // Loading bar ở dưới cùng thumbnail
+                if (tab.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .background(accent.copy(alpha = 0.7f))
                     )
                 }
             }
@@ -363,18 +363,17 @@ private fun TabCard(
     }
 }
 
-/** Lấy ký tự đại diện từ domain */
-private fun String.toFavicon(): String {
+private fun String.toFaviconChar(): String {
     val domain = toDomain().lowercase()
     return when {
         domain.contains("google")    -> "G"
-        domain.contains("youtube")   -> "YT"
-        domain.contains("facebook")  -> "FB"
+        domain.contains("youtube")   -> "Y"
+        domain.contains("facebook")  -> "F"
         domain.contains("wikipedia") -> "W"
-        domain.contains("github")    -> "GH"
+        domain.contains("github")    -> "G"
         domain.contains("reddit")    -> "R"
         domain.contains("twitter") || domain.contains("x.com") -> "X"
-        else -> "Web"
+        else -> domain.firstOrNull()?.uppercaseChar()?.toString() ?: "W"
     }
 }
 
