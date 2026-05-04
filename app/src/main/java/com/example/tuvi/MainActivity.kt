@@ -34,7 +34,7 @@ import com.example.tuvi.ui.browser.BookmarkScreen
 import androidx.compose.runtime.LaunchedEffect
 import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
-import com.example.tuvi.ui.browser.BrowserViewModel
+import com.example.tuvi.presentation.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen

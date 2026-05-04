@@ -71,6 +71,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tuvi.presentation.BrowserViewModel
+import com.example.tuvi.presentation.TabState
 import com.example.tuvi.R
 import com.example.tuvi.ui.theme.IncognitoBg
 import com.example.tuvi.ui.theme.IncognitoCard

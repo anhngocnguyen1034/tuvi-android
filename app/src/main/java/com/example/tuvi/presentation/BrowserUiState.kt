@@ -1,4 +1,4 @@
-package com.example.tuvi.ui.browser
+package com.example.tuvi.presentation
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

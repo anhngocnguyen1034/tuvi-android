@@ -1,4 +1,4 @@
-package com.example.tuvi.ui.browser
+package com.example.tuvi.presentation
 
 import android.webkit.CookieManager
 import androidx.compose.runtime.derivedStateOf
