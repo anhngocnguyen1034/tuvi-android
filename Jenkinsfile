@@ -61,22 +61,26 @@ pipeline {
 
     post {
         success {
-            sh '''
-                jq -n \
-                    --arg title "✅ Build HOÀN TẤT - ${BRANCH_NAME}" \
-                    --arg desc "Build: #${BUILD_NUMBER} thành công!\nKiểm tra kênh Success để lấy QR." \
-                    '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 3066993}]}' \
-                | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
-            '''
+           node {
+                           sh '''
+                               jq -n \
+                                   --arg title "✅ Build HOÀN TẤT - ${BRANCH_NAME}" \
+                                   --arg desc "Build: #${BUILD_NUMBER} thành công!\nKiểm tra kênh Success để lấy QR." \
+                                   '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 3066993}]}' \
+                               | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
+                           '''
+                       }
         }
         failure {
-            sh '''
-                jq -n \
-                    --arg title "❌ Build THẤT BẠI - ${BRANCH_NAME}" \
-                    --arg desc "Build: #${BUILD_NUMBER} đã gặp lỗi.\nLog: ${BUILD_URL}console" \
-                    '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 15158332}]}' \
-                | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
-            '''
+            node {
+                            sh '''
+                                jq -n \
+                                    --arg title "❌ Build THẤT BẠI - ${BRANCH_NAME}" \
+                                    --arg desc "Build: #${BUILD_NUMBER} đã gặp lỗi.\nLog: ${BUILD_URL}console" \
+                                    '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 15158332}]}' \
+                                | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
+                            '''
+                        }
         }
     }
 }
