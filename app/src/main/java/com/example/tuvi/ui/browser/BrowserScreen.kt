@@ -72,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.presentation.BrowserViewModel
+import com.example.tuvi.presentation.LongPressTarget
 import com.example.tuvi.presentation.TabState
 import com.example.tuvi.R
 import com.example.tuvi.ui.theme.IncognitoBg
@@ -114,6 +115,7 @@ fun BrowserScreen(
 
     // ── Download / long-press media ───────────────────────────────────────────
     var pendingDownloadUrl by remember { mutableStateOf<String?>(null) }
+    var longPressTarget by remember { mutableStateOf<LongPressTarget?>(null) }
 
     // ── Màu động theo chế độ ──────────────────────────────────────────────────
     val bgColor       = if (isIncognito) IncognitoBg    else TuViNavy
@@ -283,6 +285,7 @@ fun BrowserScreen(
                                 onProgressChanged = { viewModel.onProgressChanged(tab.id, it) },
                                 onError = { viewModel.onReceivedError(tab.id, it) },
                                 onLongPressMedia = { url -> pendingDownloadUrl = url },
+                                onLongPress = { target -> longPressTarget = target },
                                 onNavigationStateSync = { canBack, canFwd ->
                                     viewModel.syncTabNavState(tab.id, canBack, canFwd)
                                 },
@@ -341,7 +344,7 @@ fun BrowserScreen(
             }
         }
 
-        // ── Image / file long-press bottom sheet ──
+        // ── Web-triggered download sheet ──
         pendingDownloadUrl?.let { url ->
             ImageActionSheet(
                 imageUrl = url,
@@ -359,6 +362,31 @@ fun BrowserScreen(
                     }
                 },
                 onDismiss = { pendingDownloadUrl = null }
+            )
+        }
+
+        // ── Long-press context menu (link / image) ──
+        longPressTarget?.let { target ->
+            LongPressMenu(
+                target = target,
+                onOpenInCurrentTab = { url -> viewModel.navigateTo(url) },
+                onOpenInNewTab = { url ->
+                    viewModel.addNewTab(url)
+                },
+                onDownload = { url ->
+                    val fileName = enqueueDownload(
+                        context = context,
+                        url = url,
+                        mimeType = guessMimeFromUrl(url)
+                    )
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            if (fileName != null) context.getString(R.string.browser_downloading, fileName)
+                            else context.getString(R.string.browser_download_error)
+                        )
+                    }
+                },
+                onDismiss = { longPressTarget = null }
             )
         }
 
@@ -524,8 +552,6 @@ private fun AddressBar(
     val textCol  = if (isIncognito) IncognitoEmphasis else TuViIvory
     val hintCol  = if (isIncognito) IncognitoMuted  else TuViIvoryDim
 
-    // Mỗi khi URL tab đổi (tải trang, Back/Forward, chọn từ lịch sử…) → đồng bộ thanh tìm.
-    // Phải cập nhật cả khi đang focus: lúc focus field đang hiện editText, không phải displayUrl(url).
     androidx.compose.runtime.LaunchedEffect(url) {
         editText = displayUrl(url)
     }
@@ -659,7 +685,7 @@ private fun BrowserBottomBar(
                     modifier = Modifier.size(22.dp)
                 )
             }
-            // ⬜ Tab count
+            // Tab count
             TabCountButton(
                 count = tabCount,
                 isIncognito = isIncognito,

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.view.MotionEvent
 import android.webkit.DownloadListener
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.tuvi.presentation.BrowserCommand
+import com.example.tuvi.presentation.LongPressTarget
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
@@ -98,6 +100,7 @@ fun TabWebViewHolder(
     onProgressChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onLongPressMedia: (url: String) -> Unit = {},
+    onLongPress: (LongPressTarget) -> Unit = {},
     onNavigationStateSync: (canGoBack: Boolean, canGoForward: Boolean) -> Unit = { _, _ -> },
     onCaptureThumbnail: (ImageBitmap) -> Unit = {},
 ) {
@@ -191,16 +194,28 @@ fun TabWebViewHolder(
             onLongPressMedia(url)
         })
 
+        var lastTouchX = 0f
+        var lastTouchY = 0f
+        wv.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                lastTouchX = event.rawX
+                lastTouchY = event.rawY
+            }
+            false
+        }
+
         wv.setOnLongClickListener {
             val result = wv.hitTestResult
-            val mediaUrl = when (result.type) {
-                WebView.HitTestResult.IMAGE_TYPE,
-                WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE -> result.extra
-                WebView.HitTestResult.SRC_ANCHOR_TYPE -> result.extra
-                else -> null
-            }
-            if (!mediaUrl.isNullOrBlank()) {
-                onLongPressMedia(mediaUrl)
+            val url = result.extra
+            if (!url.isNullOrBlank()) {
+                when (result.type) {
+                    WebView.HitTestResult.SRC_ANCHOR_TYPE ->
+                        onLongPress(LongPressTarget.Link(url, lastTouchX, lastTouchY))
+                    WebView.HitTestResult.IMAGE_TYPE,
+                    WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE ->
+                        onLongPress(LongPressTarget.Image(url, lastTouchX, lastTouchY))
+                    else -> return@setOnLongClickListener false
+                }
                 true
             } else {
                 false

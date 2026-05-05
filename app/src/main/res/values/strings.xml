@@ -249,6 +249,11 @@
     <string name="notif_channel_name">Calendar events</string>
     <string name="notif_channel_desc">Reminders for events in the lunar/solar calendar</string>
 
+    <!-- Browser long-press context menu -->
+    <string name="browser_ctx_open_link">Mở link này</string>
+    <string name="browser_ctx_open_new_tab">Mở trong tab mới</string>
+    <string name="browser_ctx_download_image">Tải ảnh xuống</string>
+
     <!-- Browser misc -->
     <string name="browser_download_desc">Downloading…</string>
     <string name="browser_tab_new_title">New tab</string>

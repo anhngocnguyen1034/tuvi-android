@@ -15,6 +15,12 @@ data class BrowserUiState(
 )
 
 @Stable
+sealed class LongPressTarget(open val url: String, open val x: Float, open val y: Float) {
+    @Immutable data class Link(override val url: String, override val x: Float, override val y: Float) : LongPressTarget(url, x, y)
+    @Immutable data class Image(override val url: String, override val x: Float, override val y: Float) : LongPressTarget(url, x, y)
+}
+
+@Stable
 sealed interface BrowserCommand {
     @Immutable data class LoadUrl(val url: String) : BrowserCommand
     /**
