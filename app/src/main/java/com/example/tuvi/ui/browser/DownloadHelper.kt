@@ -7,12 +7,6 @@ import android.os.Environment
 import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 
-/**
- * Wrapper tiện lợi cho Android DownloadManager.
- * Hỗ trợ tải file thông thường (từ setDownloadListener) và tải ảnh (từ long-press).
- *
- * @return tên file đã được lên lịch tải (để hiển thị toast), hoặc null nếu thất bại.
- */
 fun enqueueDownload(
     context: Context,
     url: String,
@@ -21,8 +15,7 @@ fun enqueueDownload(
     mimeType: String = ""
 ): String? {
     return try {
-        val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
-            .ifBlank { "download_${System.currentTimeMillis()}" }
+        val fileName = resolveFileName(url, contentDisposition, mimeType)
 
         val request = DownloadManager.Request(Uri.parse(url)).apply {
             setTitle(fileName)
@@ -32,7 +25,6 @@ fun enqueueDownload(
                 DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             )
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-            // Cho phép tải qua cả WiFi và Mobile data
             setAllowedNetworkTypes(
                 DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
             )
@@ -46,8 +38,29 @@ fun enqueueDownload(
     }
 }
 
-/** Lấy MIME type từ đuôi file URL (dùng khi tải ảnh qua long-press) */
+private fun resolveFileName(url: String, contentDisposition: String, mimeType: String): String {
+    // 1. Extract filename from URL path (most reliable for direct image URLs)
+    val pathSegment = try {
+        Uri.parse(url).lastPathSegment?.takeIf { '.' in it && !it.startsWith('.') }
+    } catch (_: Exception) { null }
+    if (pathSegment != null) return pathSegment
+
+    // 2. URLUtil with actual (non-wildcard) MIME type
+    val concreteMime = mimeType.takeIf { it.isNotBlank() && '*' !in it } ?: ""
+    val guessed = URLUtil.guessFileName(url, contentDisposition, concreteMime)
+    if (!guessed.endsWith(".bin") && guessed.isNotBlank()) return guessed
+
+    // 3. Derive extension from MIME type, default to jpg for images
+    val ext = when {
+        concreteMime.isNotBlank() ->
+            MimeTypeMap.getSingleton().getExtensionFromMimeType(concreteMime) ?: "jpg"
+        mimeType.startsWith("image/") -> "jpg"
+        else -> "bin"
+    }
+    return "download_${System.currentTimeMillis()}.$ext"
+}
+
 fun guessMimeFromUrl(url: String): String {
     val ext = MimeTypeMap.getFileExtensionFromUrl(url)
-    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "image/*"
+    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: ""
 }
