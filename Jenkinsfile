@@ -5,7 +5,7 @@ pipeline {
         JAVA_HOME               = '/opt/homebrew/opt/openjdk@21'
         ANDROID_HOME            = '/Users/nguyenquocchinh/Library/Android/sdk'
         PATH                    = "/opt/homebrew/bin:${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
-        
+
         // Cấu hình các kênh Discord
         WEBHOOK_GITHUB          = 'https://discord.com/api/webhooks/1485532290795835403/Spxq-09qW7l4-NSbgS965FECBOK-SpzIUuWeAbS4kvxwet13B0HY7p7CLeo7lGCiFRi9'
         WEBHOOK_JENKINS         = 'https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS'
@@ -27,7 +27,7 @@ pipeline {
                     COMMIT_HASH=$(git log -1 --pretty=format:"%h")
                     COMMIT_MSG=$(git log -1 --pretty=format:"%s")
                     AUTHOR=$(git log -1 --pretty=format:"%an")
-                    
+
                     jq -n \
                         --arg username "GitHub - $AUTHOR" \
                         --arg title "📌 New Push to $BRANCH" \
@@ -61,22 +61,26 @@ pipeline {
 
     post {
         success {
-            sh '''
-                jq -n \
-                    --arg title "✅ Build HOÀN TẤT - ${BRANCH_NAME}" \
-                    --arg desc "Build: #${BUILD_NUMBER} thành công!\nKiểm tra kênh Success để lấy QR." \
-                    '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 3066993}]}' \
-                | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
-            '''
+            node('') {
+                sh '''
+                    jq -n \
+                        --arg title "✅ Build HOÀN TẤT - ${BRANCH_NAME}" \
+                        --arg desc "Build: #${BUILD_NUMBER} thành công!\nKiểm tra kênh Success để lấy QR." \
+                        '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 3066993}]}' \
+                    | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
+                '''
+            }
         }
         failure {
-            sh '''
-                jq -n \
-                    --arg title "❌ Build THẤT BẠI - ${BRANCH_NAME}" \
-                    --arg desc "Build: #${BUILD_NUMBER} đã gặp lỗi.\nLog: ${BUILD_URL}console" \
-                    '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 15158332}]}' \
-                | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
-            '''
+            node('') {
+                sh '''
+                    jq -n \
+                        --arg title "❌ Build THẤT BẠI - ${BRANCH_NAME}" \
+                        --arg desc "Build: #${BUILD_NUMBER} đã gặp lỗi.\nLog: ${BUILD_URL}console" \
+                        '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 15158332}]}' \
+                    | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
+                '''
+            }
         }
     }
 }
