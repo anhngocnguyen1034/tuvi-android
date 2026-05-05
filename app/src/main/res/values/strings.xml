@@ -27,6 +27,11 @@
     <string name="settings_saved_title">Saved Charts</string>
     <string name="settings_saved_desc">View &amp; manage saved charts</string>
     <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
+    <string name="settings_notification_section">Thông báo</string>
+    <string name="settings_notif_holiday_title">Ngày lễ</string>
+    <string name="settings_notif_holiday_desc">Nhắc nhở các ngày lễ trong năm</string>
+    <string name="settings_notif_lunar_title">Rằm &amp; Mùng 1</string>
+    <string name="settings_notif_lunar_desc">Nhắc nhở ngày rằm và mùng 1 âm lịch</string>
 
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>

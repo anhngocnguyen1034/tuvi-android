@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 data class SettingsUiState(
     val themeDark: Boolean,
     val localeTag: String,
+    val notifHoliday: Boolean = true,
+    val notifLunar: Boolean = true,
 )
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -26,8 +28,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     val uiState: StateFlow<SettingsUiState> = combine(
         repo.themeDarkFlow,
-        repo.localeTagFlow
-    ) { dark, loc -> SettingsUiState(themeDark = dark, localeTag = loc) }
+        repo.localeTagFlow,
+        repo.notifHolidayFlow,
+        repo.notifLunarFlow,
+    ) { dark, loc, holiday, lunar ->
+        SettingsUiState(themeDark = dark, localeTag = loc, notifHoliday = holiday, notifLunar = lunar)
+    }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
@@ -45,5 +51,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repo.setLocaleTag(tag)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
         }
+    }
+
+    fun setNotifHoliday(enabled: Boolean) {
+        viewModelScope.launch { repo.setNotifHoliday(enabled) }
+    }
+
+    fun setNotifLunar(enabled: Boolean) {
+        viewModelScope.launch { repo.setNotifLunar(enabled) }
     }
 }

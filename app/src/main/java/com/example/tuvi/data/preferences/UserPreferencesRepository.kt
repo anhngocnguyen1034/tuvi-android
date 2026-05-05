@@ -20,6 +20,8 @@ class UserPreferencesRepository(context: Context) {
     companion object {
         private val KEY_THEME_DARK = booleanPreferencesKey("theme_dark")
         private val KEY_LOCALE = stringPreferencesKey("app_locale")
+        private val KEY_NOTIF_HOLIDAY = booleanPreferencesKey("notif_holiday")
+        private val KEY_NOTIF_LUNAR = booleanPreferencesKey("notif_lunar")
 
         const val LOCALE_VI = "vi"
         const val LOCALE_EN = "en"
@@ -29,6 +31,14 @@ class UserPreferencesRepository(context: Context) {
 
     val localeTagFlow: Flow<String> = dataStore.data.map { prefs ->
         prefs[KEY_LOCALE] ?: LOCALE_VI
+    }
+
+    val notifHolidayFlow: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[KEY_NOTIF_HOLIDAY] ?: true
+    }
+
+    val notifLunarFlow: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[KEY_NOTIF_LUNAR] ?: true
     }
 
     suspend fun initialSnapshot(): Pair<Boolean, String> {
@@ -45,5 +55,13 @@ class UserPreferencesRepository(context: Context) {
 
     suspend fun setLocaleTag(tag: String) {
         dataStore.edit { it[KEY_LOCALE] = tag }
+    }
+
+    suspend fun setNotifHoliday(enabled: Boolean) {
+        dataStore.edit { it[KEY_NOTIF_HOLIDAY] = enabled }
+    }
+
+    suspend fun setNotifLunar(enabled: Boolean) {
+        dataStore.edit { it[KEY_NOTIF_LUNAR] = enabled }
     }
 }

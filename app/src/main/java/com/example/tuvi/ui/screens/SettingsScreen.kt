@@ -33,6 +33,8 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -159,6 +161,26 @@ fun SettingsScreen(
                     onClick = { viewModel.setLocaleTag(UserPreferencesRepository.LOCALE_EN) }
                 )
             }
+
+            Text(
+                text = stringResource(R.string.settings_notification_section),
+                color = TuViGold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.8.sp
+            )
+            NotificationToggleRow(
+                title = stringResource(R.string.settings_notif_holiday_title),
+                desc = stringResource(R.string.settings_notif_holiday_desc),
+                checked = state.notifHoliday,
+                onCheckedChange = { viewModel.setNotifHoliday(it) }
+            )
+            NotificationToggleRow(
+                title = stringResource(R.string.settings_notif_lunar_title),
+                desc = stringResource(R.string.settings_notif_lunar_desc),
+                checked = state.notifLunar,
+                onCheckedChange = { viewModel.setNotifLunar(it) }
+            )
 
             Text(
                 text = stringResource(R.string.settings_data_section),
@@ -292,6 +314,64 @@ private fun SavedChartsRow(onClick: () -> Unit) {
                 .size(18.dp)
                 .rotate(180f)
         )
+    }
+}
+
+@Composable
+private fun NotificationToggleRow(
+    title: String,
+    desc: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 18.dp, vertical = 14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    color = TuViIvory,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = desc,
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
+            }
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = TuViNavy,
+                    checkedTrackColor = TuViGold,
+                    uncheckedThumbColor = TuViIvoryDim,
+                    uncheckedTrackColor = TuViNavyLight,
+                    uncheckedBorderColor = TuViGold.copy(alpha = 0.3f)
+                )
+            )
+        }
     }
 }
 

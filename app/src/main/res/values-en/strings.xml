@@ -24,6 +24,11 @@
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
     <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
+    <string name="settings_notification_section">Notifications</string>
+    <string name="settings_notif_holiday_title">Public Holidays</string>
+    <string name="settings_notif_holiday_desc">Remind me about public holidays</string>
+    <string name="settings_notif_lunar_title">Full Moon &amp; New Month</string>
+    <string name="settings_notif_lunar_desc">Remind me on the 15th and 1st of the lunar month</string>
 
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>
