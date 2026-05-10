@@ -87,6 +87,7 @@ fun LichScreen(
                 color = TuViGold,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
+                fontFamily = LoraFontFamily,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
             )
@@ -110,6 +111,7 @@ fun LichScreen(
                 Text(
                     stringResource(R.string.calendar_month_year, currentMonth, currentYear),
                     color = TuViIvory, fontWeight = FontWeight.SemiBold, fontSize = 16.sp,
+                    fontFamily = LoraFontFamily,
                 )
                 if (uiState is LichUiState.Success) {
                     val data = (uiState as LichUiState.Success).data

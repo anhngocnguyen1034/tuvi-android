@@ -61,7 +61,9 @@ import java.io.FileOutputStream
 import java.text.Normalizer
 import com.example.tuvi.R
 import com.example.tuvi.ui.screens.SaveChartDialog
+import com.example.tuvi.ui.theme.BeVietnamProFamily
 import com.example.tuvi.ui.theme.ChartBorderGold
+import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.ChartCardBg
 import com.example.tuvi.ui.theme.ChartDeepBg
 import com.example.tuvi.ui.theme.ChartGold
@@ -728,6 +730,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         Text(
             stringResource(R.string.chart_center_title),
             fontWeight = FontWeight.Bold,
+            fontFamily = LoraFontFamily,
             fontSize = 8.sp,
             color = ChartGold,
             letterSpacing = 1.sp,
@@ -900,6 +903,7 @@ fun PalaceView(cung: CungInfo) {
                     fontSize = 6.5.sp,
                     lineHeight = 7.5.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = LoraFontFamily,
                     color = ChartGold,
                     maxLines = 2,
                     overflow = TextOverflow.Clip,
@@ -933,6 +937,7 @@ fun PalaceView(cung: CungInfo) {
                     text = saoLabel(sao, chinhTinh = true),
                     fontSize = 7.5.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = BeVietnamProFamily,
                     color = getSaoColor(sao, hasTuLinh),
                     lineHeight = 9.sp,
                     textAlign = TextAlign.Center
@@ -1053,6 +1058,7 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
     Text(
         text = saoLabel(sao),
         fontSize = 5.5.sp,
+        fontFamily = BeVietnamProFamily,
         lineHeight = 7.sp,
         color = getSaoColor(sao, hasTuLinh).copy(alpha = 0.9f),
         maxLines = 1,

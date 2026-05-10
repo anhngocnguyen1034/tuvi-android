@@ -62,7 +62,7 @@ import com.example.tuvi.R
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.HistoryItemEntity
 import com.example.tuvi.di.AppContainer
-import com.example.tuvi.ui.theme.NerkoOneFamily
+import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -326,7 +326,7 @@ private fun HistoryEmptyState(modifier: Modifier) {
                 stringResource(R.string.history_empty_title),
                 color = TuViIvoryDim,
                 fontSize = 16.sp,
-                fontFamily = NerkoOneFamily
+                fontFamily = LoraFontFamily
             )
         }
     }

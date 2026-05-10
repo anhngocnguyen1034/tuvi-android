@@ -67,7 +67,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.presentation.SavedChartsViewModel
-import com.example.tuvi.ui.theme.NerkoOneFamily
+import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -405,7 +405,7 @@ private fun EmptyState(hasSearch: Boolean) {
                 text = if (hasSearch) stringResource(R.string.saved_empty_search_message) else stringResource(R.string.saved_empty_state_message),
                 color = TuViIvoryDim,
                 fontSize = 16.sp,
-                fontFamily = NerkoOneFamily
+                fontFamily = LoraFontFamily
             )
             if (!hasSearch) {
                 Spacer(Modifier.height(6.dp))

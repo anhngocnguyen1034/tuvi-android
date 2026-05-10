@@ -50,7 +50,7 @@ fun TuViTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = TuViTypography,
         content = content
     )
 }

@@ -63,6 +63,7 @@ import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.R
+import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViRed
 
 @Composable
@@ -143,6 +144,7 @@ fun HomeScreen(
                 color = TuViGold,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
+                fontFamily = LoraFontFamily,
             )
             Spacer(Modifier.height(8.dp))
 
@@ -275,6 +277,7 @@ private fun MainFeatureCard(
                     color = TuViGold,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = LoraFontFamily,
                     letterSpacing = 1.sp
                 )
                 Spacer(Modifier.height(6.dp))

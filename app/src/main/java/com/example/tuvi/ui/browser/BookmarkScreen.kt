@@ -62,7 +62,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.data.local.BookmarkDao
 import com.example.tuvi.data.local.BookmarkItemEntity
 import com.example.tuvi.di.AppContainer
-import com.example.tuvi.ui.theme.NerkoOneFamily
+import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight
@@ -314,7 +314,7 @@ private fun BookmarkEmptyState(modifier: Modifier) {
                 text = stringResource(R.string.bookmark_empty_title),
                 color = TuViIvoryDim,
                 fontSize = 16.sp,
-                fontFamily = NerkoOneFamily
+                fontFamily = LoraFontFamily
             )
             Spacer(Modifier.height(4.dp))
             Text(
