@@ -1,11 +1,17 @@
 package com.example.tuvi
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.anhnn.language.LanguageDataSource
+import com.anhnn.language.LanguageManager
+import com.anhnn.language.LanguageScreen
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +51,12 @@ import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
 
 class MainActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        val code = runBlocking { LanguageDataSource(newBase).languageCode.first() }
+        super.attachBaseContext(LanguageManager.setLanguage(newBase, code))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -113,7 +125,15 @@ fun TuViApp(isDark: Boolean = true) {
         composable("settings") {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onOpenSaved = { navController.navigate("saved_charts") }
+                onOpenSaved = { navController.navigate("saved_charts") },
+                onOpenLanguage = { navController.navigate("language") }
+            )
+        }
+        composable("language") {
+            val context = LocalContext.current
+            LanguageScreen(
+                onBack = { navController.popBackStack() },
+                onLanguageSaved = { (context as? Activity)?.recreate() }
             )
         }
         composable("input") {

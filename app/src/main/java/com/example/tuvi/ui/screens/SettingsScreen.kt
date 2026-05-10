@@ -27,9 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -67,7 +66,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
-import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -83,6 +81,7 @@ import com.example.tuvi.ui.theme.TuViNavyLight
 fun SettingsScreen(
     onBack: () -> Unit,
     onOpenSaved: () -> Unit = {},
+    onOpenLanguage: () -> Unit = {},
     viewModel: SettingsViewModel = viewModel(
         factory = AndroidViewModelFactory.getInstance(
             LocalContext.current.applicationContext as Application
@@ -149,18 +148,7 @@ fun SettingsScreen(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.8.sp
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ThemeChip(
-                    label = stringResource(R.string.settings_lang_vi),
-                    selected = state.localeTag == UserPreferencesRepository.LOCALE_VI,
-                    onClick = { viewModel.setLocaleTag(UserPreferencesRepository.LOCALE_VI) }
-                )
-                ThemeChip(
-                    label = stringResource(R.string.settings_lang_en),
-                    selected = state.localeTag == UserPreferencesRepository.LOCALE_EN,
-                    onClick = { viewModel.setLocaleTag(UserPreferencesRepository.LOCALE_EN) }
-                )
-            }
+            LanguageRow(onClick = onOpenLanguage)
 
             Text(
                 text = stringResource(R.string.settings_notification_section),
@@ -376,18 +364,69 @@ private fun NotificationToggleRow(
 }
 
 @Composable
-private fun ThemeChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label, fontSize = 13.sp) },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = TuViGold.copy(alpha = 0.35f),
-            selectedLabelColor = TuViGold,
-            labelColor = TuViIvoryDim,
-            containerColor = TuViNavyLight
+private fun LanguageRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.radialGradient(listOf(TuViGold.copy(alpha = 0.15f), TuViNavyCard))
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Language,
+                    contentDescription = null,
+                    tint = TuViGold,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Spacer(Modifier.size(14.dp))
+            Column {
+                Text(
+                    text = stringResource(R.string.settings_language),
+                    color = TuViIvory,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(R.string.settings_language_desc),
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
+            }
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null,
+            tint = TuViGoldLight,
+            modifier = Modifier
+                .size(18.dp)
+                .rotate(180f)
         )
-    )
+    }
 }
 
 @Composable

@@ -87,6 +87,9 @@ dependencies {
     implementation(libs.blurview)
     implementation(libs.coil.compose)
 
+    // Language picker
+    implementation("com.github.anhngocnguyen1034:anhnn-language:1.0.0")
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

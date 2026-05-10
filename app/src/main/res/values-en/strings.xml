@@ -20,6 +20,7 @@
     <string name="settings_language">Language</string>
     <string name="settings_lang_vi">Vietnamese</string>
     <string name="settings_lang_en">English</string>
+    <string name="settings_language_desc">Select display language</string>
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
