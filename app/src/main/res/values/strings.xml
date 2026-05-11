@@ -33,6 +33,9 @@
     <string name="settings_notif_holiday_desc">Nhắc nhở các ngày lễ trong năm</string>
     <string name="settings_notif_lunar_title">Rằm &amp; Mùng 1</string>
     <string name="settings_notif_lunar_desc">Nhắc nhở ngày rằm và mùng 1 âm lịch</string>
+    <string name="settings_about_section">Về ứng dụng</string>
+    <string name="settings_privacy_title">Chính sách quyền riêng tư</string>
+    <string name="settings_privacy_desc">Cách chúng tôi xử lý dữ liệu của bạn</string>
 
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>

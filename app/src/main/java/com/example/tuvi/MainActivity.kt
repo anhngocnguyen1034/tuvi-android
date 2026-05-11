@@ -46,6 +46,7 @@ import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
+import com.example.tuvi.ui.screens.PrivacyPolicyScreen
 import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
@@ -126,7 +127,8 @@ fun TuViApp(isDark: Boolean = true) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
                 onOpenSaved = { navController.navigate("saved_charts") },
-                onOpenLanguage = { navController.navigate("language") }
+                onOpenLanguage = { navController.navigate("language") },
+                onOpenPrivacy = { navController.navigate("privacy_policy") }
             )
         }
         composable("language") {
@@ -135,6 +137,9 @@ fun TuViApp(isDark: Boolean = true) {
                 onBack = { navController.popBackStack() },
                 onLanguageSaved = { (context as? Activity)?.recreate() }
             )
+        }
+        composable("privacy_policy") {
+            PrivacyPolicyScreen(onBack = { navController.popBackStack() })
         }
         composable("input") {
             InputScreen(

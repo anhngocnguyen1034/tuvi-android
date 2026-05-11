@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -82,6 +81,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenSaved: () -> Unit = {},
     onOpenLanguage: () -> Unit = {},
+    onOpenPrivacy: () -> Unit = {},
     viewModel: SettingsViewModel = viewModel(
         factory = AndroidViewModelFactory.getInstance(
             LocalContext.current.applicationContext as Application
@@ -178,6 +178,15 @@ fun SettingsScreen(
                 letterSpacing = 0.8.sp
             )
             SavedChartsRow(onClick = onOpenSaved)
+
+            Text(
+                text = stringResource(R.string.settings_about_section),
+                color = TuViGold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.8.sp
+            )
+            PrivacyPolicyRow(onClick = onOpenPrivacy)
 
             Text(
                 text = stringResource(R.string.settings_footer_hint),
@@ -397,7 +406,7 @@ private fun LanguageRow(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Language,
+                    painter = painterResource(R.drawable.ic_change_language),
                     contentDescription = null,
                     tint = TuViGold,
                     modifier = Modifier.size(22.dp)
@@ -413,6 +422,72 @@ private fun LanguageRow(onClick: () -> Unit) {
                 )
                 Text(
                     text = stringResource(R.string.settings_language_desc),
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
+            }
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null,
+            tint = TuViGoldLight,
+            modifier = Modifier
+                .size(18.dp)
+                .rotate(180f)
+        )
+    }
+}
+
+@Composable
+private fun PrivacyPolicyRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.radialGradient(listOf(TuViGold.copy(alpha = 0.15f), TuViNavyCard))
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_privacy_policy),
+                    contentDescription = null,
+                    tint = TuViGold,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Spacer(Modifier.size(14.dp))
+            Column {
+                Text(
+                    text = stringResource(R.string.settings_privacy_title),
+                    color = TuViIvory,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(R.string.settings_privacy_desc),
                     color = TuViIvoryDim,
                     fontSize = 12.sp
                 )
