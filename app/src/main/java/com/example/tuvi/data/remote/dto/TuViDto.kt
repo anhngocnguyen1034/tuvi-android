@@ -52,6 +52,14 @@ data class TuViResponse(
     @SerialName("dia_ban") val dia_ban: List<CungDto> = emptyList()
 )
 
+/** Response from POST /api/interpret (chart + optional Gemini text). */
+@Serializable
+data class InterpretResponse(
+    val status: String? = null,
+    @SerialName("data_la_so") val data_la_so: TuViResponse? = null,
+    @SerialName("ai_reading") val ai_reading: String? = null,
+)
+
 @Serializable
 data class ThienBanDto(
     val ten: String,

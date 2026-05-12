@@ -44,13 +44,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.Layout
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.withStyle
 import com.example.tuvi.domain.model.CungInfo
 import com.example.tuvi.domain.model.SaoInfo
@@ -78,6 +79,7 @@ import com.example.tuvi.ui.theme.HanhKim
 import com.example.tuvi.ui.theme.HanhMoc
 import com.example.tuvi.ui.theme.HanhTho
 import com.example.tuvi.ui.theme.HanhThuy
+import com.example.tuvi.ui.theme.TuViTheme
 
 // 0-Canh, 1-Tân, 2-Nhâm, 3-Quý, 4-Giáp, 5-Ất, 6-Bính, 7-Đinh, 8-Mậu, 9-Kỷ
 private val thuySet = setOf(
@@ -286,7 +288,9 @@ fun TuViChartScreen(
     onBack: () -> Unit,
     savedChartId: Long? = null,
     onSave: ((String, (Boolean) -> Unit) -> Unit)? = null,
-    onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null
+    onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null,
+    /** Set when opened via `/api/interpret`; plain chart flow leaves this null. */
+    aiReading: String? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -473,6 +477,16 @@ fun TuViChartScreen(
                             drawContent()
                         }
                     )
+
+                    if (aiReading != null) {
+                        Spacer(Modifier.height(20.dp))
+                        val bodyText = if (aiReading.isNotBlank()) {
+                            aiReading
+                        } else {
+                            stringResource(R.string.chart_ai_reading_empty)
+                        }
+                        AiReadingSection(bodyText = bodyText)
+                    }
 
                     Spacer(Modifier.height(16.dp))
 
@@ -1064,4 +1078,60 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
         maxLines = 1,
         overflow = TextOverflow.Clip
     )
+}
+
+@Composable
+private fun AiReadingSection(
+    bodyText: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(ChartCardBg.copy(alpha = 0.85f))
+            .border(1.dp, ChartGoldDim.copy(alpha = 0.45f), RoundedCornerShape(14.dp))
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.chart_ai_reading_title),
+            color = ChartGold,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+            fontFamily = LoraFontFamily,
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = bodyText,
+            color = ChartIvory,
+            fontSize = 14.sp,
+            lineHeight = 22.sp,
+            fontFamily = BeVietnamProFamily,
+        )
+    }
+}
+
+@Preview(name = "AI reading light", showBackground = true)
+@Composable
+private fun AiReadingSectionPreviewLight() {
+    TuViTheme(darkTheme = false) {
+        Box(Modifier.background(ChartNavy).padding(8.dp)) {
+            AiReadingSection(
+                bodyText = "Mẫu luận giải: cung Mệnh tương đối vượng, nên chú ý đại vận hiện tại.",
+            )
+        }
+    }
+}
+
+@Preview(name = "AI reading dark", showBackground = true)
+@Composable
+private fun AiReadingSectionPreviewDark() {
+    TuViTheme(darkTheme = true) {
+        Box(Modifier.background(ChartNavy).padding(8.dp)) {
+            AiReadingSection(
+                bodyText = "Dark theme preview: luận giải mẫu cho kiểm tra độ tương phản.",
+            )
+        }
+    }
 }

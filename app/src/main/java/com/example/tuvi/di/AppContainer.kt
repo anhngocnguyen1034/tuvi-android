@@ -11,6 +11,7 @@ import com.example.tuvi.domain.usecase.GetAllSavedChartsUseCase
 import com.example.tuvi.domain.usecase.GetChartsByGroupUseCase
 import com.example.tuvi.domain.usecase.GetSavedChartByIdUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
+import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
 import com.example.tuvi.domain.usecase.SearchSavedChartsUseCase
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -19,11 +20,12 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.100:8000"
-//    private const val BASE_URL = "http://192.168.0.102:8000"
+//    private const val BASE_URL = "http://192.168.1.17:8000"
+    private const val BASE_URL = "http://192.168.0.101:8000"
 
     lateinit var app: android.app.Application
         private set
@@ -33,7 +35,11 @@ object AppContainer {
         coerceInputValues = true
     }
 
+    /** Default OkHttp read timeout is 10s; `/api/interpret` (Gemini) often needs much longer. */
     private val okHttpClient = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(180, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
@@ -51,6 +57,7 @@ object AppContainer {
     private val repository by lazy { TuViRepositoryImpl(apiService) }
 
     val getTuViChartUseCase by lazy { GetTuViChartUseCase(repository) }
+    val getTuViInterpretUseCase by lazy { GetTuViInterpretUseCase(repository) }
 
     private lateinit var database: TuViDatabase
 

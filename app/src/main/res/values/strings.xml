@@ -36,6 +36,12 @@
     <string name="settings_about_section">Về ứng dụng</string>
     <string name="settings_privacy_title">Chính sách quyền riêng tư</string>
     <string name="settings_privacy_desc">Cách chúng tôi xử lý dữ liệu của bạn</string>
+    <string name="settings_rate_title">Đánh giá ứng dụng</string>
+    <string name="settings_rate_desc">Ủng hộ chúng tôi trên Play Store</string>
+    <string name="settings_feedback_title">Góp ý &amp; Phản hồi</string>
+    <string name="settings_feedback_desc">Gửi ý kiến để chúng tôi cải thiện</string>
+    <string name="feedback_screen_title">Góp ý</string>
+    <string name="feedback_subject">Góp ý ứng dụng Tử Vi</string>
 
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>
@@ -74,6 +80,7 @@
     <string name="input_hint_view_year">Chart view year</string>
     <string name="input_view_year_range_hint">Select year from %1$d to %2$d (default: current year)</string>
     <string name="input_btn_view_chart">VIEW TỬ VI CHART</string>
+    <string name="input_btn_chart_with_ai">Lá số &amp; luận giải AI</string>
     <string name="input_footer_disclaimer">Results based on traditional Tử Vi Đẩu Số</string>
 
     <!-- TuViChartScreen -->
@@ -90,6 +97,9 @@
     <string name="chart_dialog_download_title">Download chart image?</string>
     <string name="chart_dialog_download_message">Do you want to download the chart image to gallery?</string>
     <string name="chart_btn_download">Download</string>
+    <string name="chart_loading_ai">AI đang phân tích lá số…</string>
+    <string name="chart_ai_reading_title">Luận giải AI</string>
+    <string name="chart_ai_reading_empty">Máy chủ không trả về nội dung luận giải.</string>
     <string name="chart_footer">Tử Vi By AnhNN</string>
     <string name="chart_center_title">TỬ VI CHART</string>
     <string name="chart_label_name">Full name</string>
@@ -266,6 +276,8 @@
     <!-- Browser misc -->
     <string name="browser_download_desc">Downloading…</string>
     <string name="browser_tab_new_title">New tab</string>
+    <string name="error_unknown">Đã xảy ra lỗi không xác định.</string>
+    <string name="error_ai_interpret_503">Dịch vụ luận giải AI chưa sẵn sàng (HTTP 503). Vui lòng cấu hình API Gemini trên máy chủ hoặc thử lại sau.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 </resources>

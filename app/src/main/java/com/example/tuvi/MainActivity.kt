@@ -13,16 +13,26 @@ import com.anhnn.language.LanguageScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,10 +56,14 @@ import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
+import com.anhnn.feedback.FeedbackScreen
+import com.anhnn.rate.RateDialog
+import com.anhnn.rate.requestInAppReview
 import com.example.tuvi.ui.screens.PrivacyPolicyScreen
 import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 
 class MainActivity : ComponentActivity() {
 
@@ -86,6 +100,7 @@ fun TuViApp(isDark: Boolean = true) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lastInput by viewModel.lastInput.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var showRateDialog by remember { mutableStateOf(false) }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -128,7 +143,22 @@ fun TuViApp(isDark: Boolean = true) {
                 onBack = { navController.popBackStack() },
                 onOpenSaved = { navController.navigate("saved_charts") },
                 onOpenLanguage = { navController.navigate("language") },
-                onOpenPrivacy = { navController.navigate("privacy_policy") }
+                onOpenPrivacy = { navController.navigate("privacy_policy") },
+                onOpenFeedback = { navController.navigate("feedback") },
+                onRateApp = {
+                    requestInAppReview(
+                        activity = context as Activity,
+                        onFallback = { showRateDialog = true }
+                    )
+                }
+            )
+        }
+        composable("feedback") {
+            FeedbackScreen(
+                email = "nguyenanhcry@gmail.com",
+                subject = context.getString(R.string.feedback_subject),
+                title = context.getString(R.string.feedback_screen_title),
+                onBack = { navController.popBackStack() }
             )
         }
         composable("language") {
@@ -143,8 +173,19 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("input") {
             InputScreen(
-                onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
-                    viewModel.getTuVi(name, day, month, year, viewYear, hour, minute, gender, duongLich)
+                onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich, withAiInterpretation ->
+                    viewModel.getTuVi(
+                        name,
+                        day,
+                        month,
+                        year,
+                        viewYear,
+                        hour,
+                        minute,
+                        gender,
+                        duongLich,
+                        withAiInterpretation = withAiInterpretation
+                    )
                     navController.navigate("chart")
                 },
                 onBack = { navController.popBackStack() }
@@ -155,13 +196,24 @@ fun TuViApp(isDark: Boolean = true) {
             when (val state = uiState) {
                 is TuViUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator()
+                            if (state.requestingAiReading) {
+                                Spacer(Modifier.height(16.dp))
+                                Text(
+                                    text = stringResource(R.string.chart_loading_ai),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
+                                )
+                            }
+                        }
                     }
                 }
 
                 is TuViUiState.Success -> {
                     TuViChartScreen(
                         data = state.data,
+                        aiReading = state.aiReading,
                         savedChartId = savedChartIdVm,
                         onBack = {
                             viewModel.resetState()
@@ -277,6 +329,17 @@ fun TuViApp(isDark: Boolean = true) {
                 viewModel = savedVm
             )
         }
+        }
+
+        if (showRateDialog) {
+            RateDialog(
+                packageName = context.packageName,
+                title = "Bạn thích Tử Vi không?",
+                message = "Hãy đánh giá để ủng hộ chúng tôi trên Play Store!",
+                confirmText = "Đánh giá ngay",
+                dismissText = "Để sau",
+                onDismiss = { showRateDialog = false }
+            )
         }
     }
 }

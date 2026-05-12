@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.tuvi.R
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.domain.AiInterpretationUnavailableException
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.usecase.DeleteSavedChartUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
+import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +23,7 @@ import kotlinx.coroutines.launch
 
 class TuViViewModel(
     private val getTuViChart: GetTuViChartUseCase,
+    private val getTuViInterpret: GetTuViInterpretUseCase,
     private val saveChartUseCase: SaveChartUseCase,
     private val deleteChartUseCase: DeleteSavedChartUseCase,
     private val json: Json
@@ -48,18 +52,39 @@ class TuViViewModel(
         gio: Int,
         phut: Int,
         gioiTinh: Int,
-        duongLich: Boolean = true
+        duongLich: Boolean = true,
+        withAiInterpretation: Boolean = false,
     ) {
         val input = TuViChartInput(ten, ngay, thang, nam, namXem, gio, phut, gioiTinh, duongLich)
         _lastInput.value = input
         _openedFromSavedLibrary.value = false
         _savedChartId.value = null
         viewModelScope.launch {
-            _uiState.value = TuViUiState.Loading
-            getTuViChart(input)
-                .onSuccess { _uiState.value = TuViUiState.Success(it) }
-                .onFailure { _uiState.value = TuViUiState.Error(it.message ?: "Unknown error") }
+            _uiState.value = TuViUiState.Loading(requestingAiReading = withAiInterpretation)
+            if (withAiInterpretation) {
+                getTuViInterpret(input)
+                    .onSuccess { interpretation ->
+                        _uiState.value = TuViUiState.Success(
+                            data = interpretation.chart,
+                            aiReading = interpretation.aiReading,
+                        )
+                    }
+                    .onFailure { mapFailureToUi(it) }
+            } else {
+                getTuViChart(input)
+                    .onSuccess { _uiState.value = TuViUiState.Success(it) }
+                    .onFailure { mapFailureToUi(it) }
+            }
         }
+    }
+
+    private fun mapFailureToUi(t: Throwable) {
+        val msg = when (t) {
+            is AiInterpretationUnavailableException ->
+                AppContainer.app.getString(R.string.error_ai_interpret_503)
+            else -> t.message ?: AppContainer.app.getString(R.string.error_unknown)
+        }
+        _uiState.value = TuViUiState.Error(msg)
     }
 
     fun resetState() {
@@ -129,6 +154,7 @@ class TuViViewModel(
             initializer {
                 TuViViewModel(
                     AppContainer.getTuViChartUseCase,
+                    AppContainer.getTuViInterpretUseCase,
                     AppContainer.saveChartUseCase,
                     AppContainer.deleteSavedChartUseCase,
                     AppContainer.appJson

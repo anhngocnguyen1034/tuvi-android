@@ -2,6 +2,7 @@ package com.example.tuvi.data.remote
 
 import com.example.tuvi.data.remote.dto.NgayInfoDto
 import com.example.tuvi.data.remote.dto.ThangLichDto
+import com.example.tuvi.data.remote.dto.InterpretResponse
 import com.example.tuvi.data.remote.dto.TuViRequest
 import com.example.tuvi.data.remote.dto.TuViResponse
 import retrofit2.http.Body
@@ -12,6 +13,9 @@ import retrofit2.http.Path
 interface TuViApiService {
     @POST("/api/tuvi")
     suspend fun getTuVi(@Body request: TuViRequest): TuViResponse
+
+    @POST("/api/interpret")
+    suspend fun interpret(@Body request: TuViRequest): InterpretResponse
 
     /** Lấy toàn bộ lịch của một tháng dương lịch. */
     @GET("/api/lich/{nam}/{thang}")
