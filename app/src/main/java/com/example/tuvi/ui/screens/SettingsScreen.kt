@@ -82,6 +82,8 @@ fun SettingsScreen(
     onOpenSaved: () -> Unit = {},
     onOpenLanguage: () -> Unit = {},
     onOpenPrivacy: () -> Unit = {},
+    onOpenFeedback: () -> Unit = {},
+    onRateApp: () -> Unit = {},
     viewModel: SettingsViewModel = viewModel(
         factory = AndroidViewModelFactory.getInstance(
             LocalContext.current.applicationContext as Application
@@ -187,6 +189,18 @@ fun SettingsScreen(
                 letterSpacing = 0.8.sp
             )
             PrivacyPolicyRow(onClick = onOpenPrivacy)
+            AboutActionRow(
+                iconRes = R.drawable.ic_rate_app,
+                title = stringResource(R.string.settings_rate_title),
+                desc = stringResource(R.string.settings_rate_desc),
+                onClick = onRateApp
+            )
+            AboutActionRow(
+                iconRes = R.drawable.ic_feedback,
+                title = stringResource(R.string.settings_feedback_title),
+                desc = stringResource(R.string.settings_feedback_desc),
+                onClick = onOpenFeedback
+            )
 
             Text(
                 text = stringResource(R.string.settings_footer_hint),
@@ -439,7 +453,12 @@ private fun LanguageRow(onClick: () -> Unit) {
 }
 
 @Composable
-private fun PrivacyPolicyRow(onClick: () -> Unit) {
+private fun AboutActionRow(
+    iconRes: Int,
+    title: String,
+    desc: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -472,7 +491,7 @@ private fun PrivacyPolicyRow(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_privacy_policy),
+                    painter = painterResource(iconRes),
                     contentDescription = null,
                     tint = TuViGold,
                     modifier = Modifier.size(22.dp)
@@ -481,13 +500,13 @@ private fun PrivacyPolicyRow(onClick: () -> Unit) {
             Spacer(Modifier.size(14.dp))
             Column {
                 Text(
-                    text = stringResource(R.string.settings_privacy_title),
+                    text = title,
                     color = TuViIvory,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = stringResource(R.string.settings_privacy_desc),
+                    text = desc,
                     color = TuViIvoryDim,
                     fontSize = 12.sp
                 )
@@ -502,6 +521,16 @@ private fun PrivacyPolicyRow(onClick: () -> Unit) {
                 .rotate(180f)
         )
     }
+}
+
+@Composable
+private fun PrivacyPolicyRow(onClick: () -> Unit) {
+    AboutActionRow(
+        iconRes = R.drawable.ic_privacy_policy,
+        title = stringResource(R.string.settings_privacy_title),
+        desc = stringResource(R.string.settings_privacy_desc),
+        onClick = onClick
+    )
 }
 
 @Composable

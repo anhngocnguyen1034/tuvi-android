@@ -13,7 +13,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,13 +42,13 @@ import java.util.Calendar
 @Composable
 fun LichScreen(
     onBack: () -> Unit,
-    lichVm: LichViewModel   = viewModel(factory = LichViewModel.Factory),
+    lichVm: LichViewModel = viewModel(factory = LichViewModel.Factory),
     suKienVm: SuKienViewModel = viewModel(factory = SuKienViewModel.Factory),
 ) {
-    val uiState     by lichVm.uiState.collectAsStateWithLifecycle()
+    val uiState by lichVm.uiState.collectAsStateWithLifecycle()
     val selectedDay by lichVm.selectedDay.collectAsStateWithLifecycle()
     val currentMonth by lichVm.currentMonth.collectAsStateWithLifecycle()
-    val currentYear  by lichVm.currentYear.collectAsStateWithLifecycle()
+    val currentYear by lichVm.currentYear.collectAsStateWithLifecycle()
 
     // Đồng bộ tháng/năm với SuKienViewModel để lấy sự kiện tháng
     LaunchedEffect(currentMonth, currentYear) {
@@ -59,7 +59,11 @@ fun LichScreen(
     // Sự kiện của ngày đang chọn
     val suKienNgay by remember(selectedDay) {
         if (selectedDay != null)
-            suKienVm.getSuKienNgay(selectedDay!!.ngayDuong, selectedDay!!.thangDuong, selectedDay!!.namDuong)
+            suKienVm.getSuKienNgay(
+                selectedDay!!.ngayDuong,
+                selectedDay!!.thangDuong,
+                selectedDay!!.namDuong
+            )
         else kotlinx.coroutines.flow.flowOf(emptyList())
     }.collectAsStateWithLifecycle(emptyList())
 
@@ -80,7 +84,11 @@ fun LichScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.settings_back), tint = TuViGold)
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    stringResource(R.string.settings_back),
+                    tint = TuViGold
+                )
             }
             Text(
                 stringResource(R.string.calendar_screen_title),
@@ -115,7 +123,11 @@ fun LichScreen(
                 )
                 if (uiState is LichUiState.Success) {
                     val data = (uiState as LichUiState.Success).data
-                    Text("${data.canChiThang} – ${data.canChiNam}", color = TuViGoldLight, fontSize = 12.sp)
+                    Text(
+                        "${data.canChiThang} – ${data.canChiNam}",
+                        color = TuViGoldLight,
+                        fontSize = 12.sp
+                    )
                 }
             }
             IconButton(onClick = { lichVm.nextMonth() }) {
@@ -124,30 +136,38 @@ fun LichScreen(
         }
 
         when (val state = uiState) {
-            is LichUiState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            is LichUiState.Loading -> Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator(color = TuViGold)
             }
-            is LichUiState.Error   -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            is LichUiState.Error -> Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(state.message, color = TuViRedLight, textAlign = TextAlign.Center)
             }
+
             is LichUiState.Success -> {
                 // Set sự kiện có trong tháng (để đánh dấu chấm trên ô)
                 val daysWithEvent = suKienThang.map { it.ngayDuong }.toSet()
 
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     CalendarGrid(
-                        data            = state.data,
-                        selectedDay     = selectedDay,
-                        daysWithEvent   = daysWithEvent,
-                        onDayClick      = { lichVm.selectDay(it) },
+                        data = state.data,
+                        selectedDay = selectedDay,
+                        daysWithEvent = daysWithEvent,
+                        onDayClick = { lichVm.selectDay(it) },
                     )
 
                     selectedDay?.let { day ->
                         DayDetail(
-                            day        = day,
+                            day = day,
                             suKienList = suKienNgay,
                             onAddClick = { showAddSheet = true },
-                            onDelete   = { suKienVm.xoa(it) },
+                            onDelete = { suKienVm.xoa(it) },
                         )
                     }
                     Spacer(Modifier.height(16.dp))
@@ -160,12 +180,12 @@ fun LichScreen(
     if (showAddSheet && selectedDay != null) {
         val day = selectedDay!!
         ThemSuKienSheet(
-            ngay    = day.ngayDuong,
-            thang   = day.thangDuong,
-            nam     = day.namDuong,
+            ngay = day.ngayDuong,
+            thang = day.thangDuong,
+            nam = day.namDuong,
             thuText = day.thu,
             onDismiss = { showAddSheet = false },
-            onSave  = { tieuDe, ghiChu, epoch ->
+            onSave = { tieuDe, ghiChu, epoch ->
                 suKienVm.them(tieuDe, ghiChu, day.ngayDuong, day.thangDuong, day.namDuong, epoch)
             },
         )
@@ -196,7 +216,9 @@ private fun CalendarGrid(
         stringResource(R.string.calendar_day_sat),
     )
     // Day-of-week header
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 4.dp)) {
         daysOfWeek.forEachIndexed { i, label ->
             Text(
                 label,
@@ -216,33 +238,38 @@ private fun CalendarGrid(
     while (cells.size % 7 != 0) cells.add(null)
 
     cells.chunked(7).forEach { row ->
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 2.dp)) {
             row.forEachIndexed { colIdx, dayInfo ->
                 Box(
-                    modifier = Modifier.weight(1f).aspectRatio(1f).padding(2.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(2.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (dayInfo != null) {
-                        val isToday    = isCurrentMonth && dayInfo.ngayDuong == todayNum
+                        val isToday = isCurrentMonth && dayInfo.ngayDuong == todayNum
                         val isSelected = selectedDay?.ngayDuong == dayInfo.ngayDuong
-                        val hasApiEvent= dayInfo.leDuongLich != null || dayInfo.leAmLich != null
+                        val hasApiEvent = dayInfo.leDuongLich != null || dayInfo.leAmLich != null
                         val hasMyEvent = dayInfo.ngayDuong in daysWithEvent
-                        val isSunday   = colIdx == 0
+                        val isSunday = colIdx == 0
 
                         val bgColor = when {
                             isSelected -> TuViGold
-                            isToday    -> TuViNavyLight
-                            else       -> Color.Transparent
+                            isToday -> TuViNavyLight
+                            else -> Color.Transparent
                         }
                         val solarColor = when {
                             isSelected -> TuViNavy
-                            isSunday   -> TuViRed
-                            else       -> TuViIvory
+                            isSunday -> TuViRed
+                            else -> TuViIvory
                         }
                         val lunarColor = when {
                             isSelected -> TuViNavy
                             hasApiEvent -> TuViGold
-                            else       -> TuViIvoryDim
+                            else -> TuViIvoryDim
                         }
 
                         Box(
@@ -318,7 +345,7 @@ private fun DayDetail(
                 )
                 Text(
                     stringResource(R.string.calendar_lunar_prefix, day.amLichText) +
-                        if (day.thangNhuan) " ${stringResource(R.string.calendar_intercalary)}" else "",
+                            if (day.thangNhuan) " ${stringResource(R.string.calendar_intercalary)}" else "",
                     color = TuViIvory, fontSize = 13.sp,
                 )
             }
@@ -328,69 +355,111 @@ private fun DayDetail(
                     .size(36.dp)
                     .background(TuViGold, CircleShape),
             ) {
-                Icon(Icons.Default.Add, stringResource(R.string.calendar_cd_add_event), tint = TuViNavy)
+                Icon(
+                    Icons.Default.Add,
+                    stringResource(R.string.calendar_cd_add_event),
+                    tint = TuViNavy
+                )
             }
         }
 
         HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
-        DetailRow(stringResource(R.string.calendar_label_day),          day.canChiNgay)
-        DetailRow(stringResource(R.string.calendar_label_lunar_month),  day.canChiThang)
-        DetailRow(stringResource(R.string.calendar_label_lunar_year),   day.canChiNam)
+        DetailRow(stringResource(R.string.calendar_label_day), day.canChiNgay)
+        DetailRow(stringResource(R.string.calendar_label_lunar_month), day.canChiThang)
+        DetailRow(stringResource(R.string.calendar_label_lunar_year), day.canChiNam)
 
         // Trực, Lục Nhâm, Giờ Hoàng Đạo
         if (day.truc != null || day.lucNham != null || !day.gioHoangDao.isNullOrEmpty()) {
             HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
             day.truc?.let { truc ->
                 val trucColor = if (truc.tot) TuViGold else TuViRedLight
-                val trucLabel = if (truc.tot) stringResource(R.string.calendar_truc_good) else stringResource(R.string.calendar_truc_bad)
+                val trucLabel =
+                    if (truc.tot) stringResource(R.string.calendar_truc_good) else stringResource(R.string.calendar_truc_bad)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(stringResource(R.string.calendar_label_truc), color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.calendar_label_truc),
+                        color = TuViIvoryDim,
+                        fontSize = 12.sp,
+                        modifier = Modifier.weight(1f)
+                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Text(truc.ten, color = TuViIvory, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            truc.ten,
+                            color = TuViIvory,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
                         Box(
                             modifier = Modifier
                                 .background(trucColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp),
                         ) {
-                            Text(trucLabel, color = trucColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                trucLabel,
+                                color = trucColor,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
             }
             day.lucNham?.let { ln ->
                 val lnColor = if (ln.hoangDao) TuViGold else TuViRedLight
-                val lnLabel = if (ln.hoangDao) stringResource(R.string.calendar_hoang_dao) else stringResource(R.string.calendar_hac_dao)
+                val lnLabel =
+                    if (ln.hoangDao) stringResource(R.string.calendar_hoang_dao) else stringResource(
+                        R.string.calendar_hac_dao
+                    )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(stringResource(R.string.calendar_luc_nham_label), color = TuViIvoryDim, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.calendar_luc_nham_label),
+                        color = TuViIvoryDim,
+                        fontSize = 12.sp,
+                        modifier = Modifier.weight(1f)
+                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Text(ln.ten, color = lnColor, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            ln.ten,
+                            color = lnColor,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
                         Box(
                             modifier = Modifier
                                 .background(lnColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp),
                         ) {
-                            Text(lnLabel, color = lnColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                lnLabel,
+                                color = lnColor,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
             }
             if (!day.gioHoangDao.isNullOrEmpty()) {
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.calendar_hoang_dao_hours_label), color = TuViIvoryDim, fontSize = 12.sp)
+                Text(
+                    stringResource(R.string.calendar_hoang_dao_hours_label),
+                    color = TuViIvoryDim,
+                    fontSize = 12.sp
+                )
                 Spacer(Modifier.height(4.dp))
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -402,7 +471,12 @@ private fun DayDetail(
                                 .background(TuViGold.copy(alpha = 0.15f), RoundedCornerShape(6.dp))
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                         ) {
-                            Text(gio, color = TuViGold, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                gio,
+                                color = TuViGold,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
@@ -423,7 +497,11 @@ private fun DayDetail(
         // Sự kiện cá nhân
         if (suKienList.isNotEmpty()) {
             HorizontalDivider(color = TuViDivider, thickness = 0.5.dp)
-            Text(stringResource(R.string.calendar_your_events), color = TuViGoldLight, fontSize = 12.sp)
+            Text(
+                stringResource(R.string.calendar_your_events),
+                color = TuViGoldLight,
+                fontSize = 12.sp
+            )
             suKienList.forEach { sk ->
                 Row(
                     modifier = Modifier
@@ -434,17 +512,31 @@ private fun DayDetail(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
                             if (sk.alarmEpoch > 0) {
-                                Icon(Icons.Default.Notifications, null, tint = TuViGold, modifier = Modifier.size(14.dp))
+                                Icon(
+                                    Icons.Default.Notifications,
+                                    null,
+                                    tint = TuViGold,
+                                    modifier = Modifier.size(14.dp)
+                                )
                             }
-                            Text(sk.tieuDe, color = TuViIvory, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(
+                                sk.tieuDe,
+                                color = TuViIvory,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
+                            )
                         }
                         if (sk.ghiChu.isNotBlank()) {
                             Text(sk.ghiChu, color = TuViIvoryDim, fontSize = 11.sp)
                         }
                         if (sk.alarmEpoch > 0) {
-                            val cal = java.util.Calendar.getInstance().apply { timeInMillis = sk.alarmEpoch }
+                            val cal = java.util.Calendar.getInstance()
+                                .apply { timeInMillis = sk.alarmEpoch }
                             Text(
                                 stringResource(
                                     R.string.add_event_remind_at,
@@ -456,7 +548,12 @@ private fun DayDetail(
                         }
                     }
                     IconButton(onClick = { onDelete(sk) }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Delete, stringResource(R.string.btn_delete), tint = TuViRedLight, modifier = Modifier.size(18.dp))
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete),
+                            stringResource(R.string.btn_delete),
+                            tint = TuViRedLight,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             }
@@ -469,7 +566,9 @@ private val leadingEmojiRe = Regex("^[^\\p{L}\\p{N}\\p{P}]+\\s*")
 @Composable
 private fun EventChip(text: String, dotColor: androidx.compose.ui.graphics.Color) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(6.dp).background(dotColor, CircleShape))
+        Box(Modifier
+            .size(6.dp)
+            .background(dotColor, CircleShape))
         Spacer(Modifier.width(6.dp))
         Text(leadingEmojiRe.replace(text, ""), color = dotColor, fontSize = 13.sp)
     }
@@ -501,5 +600,5 @@ private fun DetailRow(label: String, value: String) {
 
 private fun thuToIndex(thu: String): Int = when (thu) {
     "Chủ nhật" -> 0; "Thứ hai" -> 1; "Thứ ba" -> 2; "Thứ tư" -> 3
-    "Thứ năm"  -> 4; "Thứ sáu" -> 5; "Thứ bảy" -> 6; else -> 0
+    "Thứ năm" -> 4; "Thứ sáu" -> 5; "Thứ bảy" -> 6; else -> 0
 }

@@ -90,6 +90,10 @@ dependencies {
     // Language picker
     implementation("com.github.anhngocnguyen1034:anhnn-language:1.0.0")
 
+    // anhnn-components
+    implementation("com.github.anhngocnguyen1034.anhnn-components:feedback:1.0.0")
+    implementation("com.github.anhngocnguyen1034.anhnn-components:rate:1.0.0")
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
