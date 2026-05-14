@@ -91,9 +91,10 @@ dependencies {
     // Language picker
     implementation("com.github.anhngocnguyen1034:anhnn-language:1.0.0")
 
-    // anhnn-components
-    implementation("com.github.anhngocnguyen1034.anhnn-components:feedback:1.0.0")
-    implementation("com.github.anhngocnguyen1034.anhnn-components:rate:1.0.0")
+    // anhnn-components — artifactId khớp với `publishing.publications` trong mỗi module
+    // (xem afterEvaluate trong anhnn-components/<module>/build.gradle.kts).
+    implementation("com.github.anhngocnguyen1034.anhnn-components:anhnn-components-feedback:1.0.1")
+    implementation("com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate:1.0.1")
 
     // Room Database
     implementation(libs.room.runtime)

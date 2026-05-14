@@ -38,6 +38,7 @@ import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.presentation.TuViError
 import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
+import com.example.tuvi.presentation.resolve
 import com.example.tuvi.presentation.screens.InputScreen
 import com.example.tuvi.presentation.screens.TuViChartScreen
 import com.example.tuvi.ui.browser.BookmarkScreen
