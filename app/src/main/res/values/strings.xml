@@ -80,7 +80,6 @@
     <string name="input_hint_view_year">Chart view year</string>
     <string name="input_view_year_range_hint">Select year from %1$d to %2$d (default: current year)</string>
     <string name="input_btn_view_chart">VIEW TỬ VI CHART</string>
-    <string name="input_btn_chart_with_ai">Lá số &amp; luận giải AI</string>
     <string name="input_footer_disclaimer">Results based on traditional Tử Vi Đẩu Số</string>
 
     <!-- TuViChartScreen -->
@@ -98,6 +97,8 @@
     <string name="chart_dialog_download_message">Do you want to download the chart image to gallery?</string>
     <string name="chart_btn_download">Download</string>
     <string name="chart_loading_ai">AI đang phân tích lá số…</string>
+    <string name="chart_ai_request_btn">Luận giải AI</string>
+    <string name="chart_ai_refresh_btn">Tải lại luận giải AI</string>
     <string name="chart_ai_reading_title">Luận giải AI</string>
     <string name="chart_ai_reading_empty">Máy chủ không trả về nội dung luận giải.</string>
     <string name="chart_footer">Tử Vi By AnhNN</string>
@@ -278,6 +279,8 @@
     <string name="browser_tab_new_title">New tab</string>
     <string name="error_unknown">Đã xảy ra lỗi không xác định.</string>
     <string name="error_ai_interpret_503">Dịch vụ luận giải AI chưa sẵn sàng (HTTP 503). Vui lòng cấu hình API Gemini trên máy chủ hoặc thử lại sau.</string>
+    <string name="error_ai_no_input">Thiếu dữ liệu sinh — không thể gọi luận giải AI.</string>
+    <string name="error_ai_no_chart">Chưa có lá số hiển thị — không thể gọi luận giải AI.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 </resources>

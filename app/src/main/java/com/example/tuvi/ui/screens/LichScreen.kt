@@ -192,8 +192,6 @@ fun LichScreen(
     }
 }
 
-// ── Calendar grid ────────────────────────────────────────────────────────────
-
 @Composable
 private fun CalendarGrid(
     data: ThangLichDto,

@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -496,7 +495,7 @@ fun TuViDatePickerDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputScreen(
-    onViewChart: (String, Int, Int, Int, Int, Int, Int, Int, Boolean, Boolean) -> Unit,
+    onViewChart: (String, Int, Int, Int, Int, Int, Int, Int, Boolean) -> Unit,
     onBack: (() -> Unit)? = null
 ) {
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
@@ -868,7 +867,7 @@ fun InputScreen(
             // ── Submit ──
             Button(
                 onClick = {
-                    onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich, false)
+                    onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich)
                 },
                 enabled = name.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
@@ -886,33 +885,6 @@ fun InputScreen(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = {
-                    onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich, true)
-                },
-                enabled = name.isNotBlank(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = TuViGold,
-                    disabledContainerColor = Color.Transparent,
-                    disabledContentColor = TuViGoldDark.copy(alpha = 0.35f),
-                ),
-                border = androidx.compose.foundation.BorderStroke(1.5.dp, TuViGold.copy(alpha = 0.85f)),
-            ) {
-                Text(
-                    text = stringResource(R.string.input_btn_chart_with_ai),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.5.sp
                 )
             }
 

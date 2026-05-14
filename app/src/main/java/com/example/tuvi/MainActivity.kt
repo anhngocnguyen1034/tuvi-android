@@ -13,14 +13,8 @@ import com.anhnn.language.LanguageScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -31,8 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -173,7 +165,7 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("input") {
             InputScreen(
-                onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich, withAiInterpretation ->
+                onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
                     viewModel.getTuVi(
                         name,
                         day,
@@ -184,7 +176,6 @@ fun TuViApp(isDark: Boolean = true) {
                         minute,
                         gender,
                         duongLich,
-                        withAiInterpretation = withAiInterpretation
                     )
                     navController.navigate("chart")
                 },
@@ -193,20 +184,11 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("chart") {
             val savedChartIdVm by viewModel.savedChartId.collectAsStateWithLifecycle()
+            val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             when (val state = uiState) {
                 is TuViUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
-                            if (state.requestingAiReading) {
-                                Spacer(Modifier.height(16.dp))
-                                Text(
-                                    text = stringResource(R.string.chart_loading_ai),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
-                                )
-                            }
-                        }
+                        CircularProgressIndicator()
                     }
                 }
 
@@ -214,6 +196,12 @@ fun TuViApp(isDark: Boolean = true) {
                     TuViChartScreen(
                         data = state.data,
                         aiReading = state.aiReading,
+                        aiInterpretLoading = aiInterpretLoading,
+                        onRequestAiInterpretation = {
+                            viewModel.fetchAiInterpretation { msg ->
+                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            }
+                        },
                         savedChartId = savedChartIdVm,
                         onBack = {
                             viewModel.resetState()

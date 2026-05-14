@@ -43,6 +43,9 @@ class TuViViewModel(
     private val _savedChartId = MutableStateFlow<Long?>(null)
     val savedChartId: StateFlow<Long?> = _savedChartId.asStateFlow()
 
+    private val _aiInterpretLoading = MutableStateFlow(false)
+    val aiInterpretLoading: StateFlow<Boolean> = _aiInterpretLoading.asStateFlow()
+
     fun getTuVi(
         ten: String,
         ngay: Int,
@@ -53,50 +56,71 @@ class TuViViewModel(
         phut: Int,
         gioiTinh: Int,
         duongLich: Boolean = true,
-        withAiInterpretation: Boolean = false,
     ) {
         val input = TuViChartInput(ten, ngay, thang, nam, namXem, gio, phut, gioiTinh, duongLich)
         _lastInput.value = input
         _openedFromSavedLibrary.value = false
         _savedChartId.value = null
+        _aiInterpretLoading.value = false
         viewModelScope.launch {
-            _uiState.value = TuViUiState.Loading(requestingAiReading = withAiInterpretation)
-            if (withAiInterpretation) {
+            _uiState.value = TuViUiState.Loading
+            getTuViChart(input)
+                .onSuccess { _uiState.value = TuViUiState.Success(it) }
+                .onFailure { mapFailureToUi(it) }
+        }
+    }
+
+    /** POST /api/interpret while chart is already shown; errors delivered via [onError] (toast/snackbar). */
+    fun fetchAiInterpretation(onError: (String) -> Unit) {
+        val input = _lastInput.value
+        if (input == null) {
+            onError(AppContainer.app.getString(R.string.error_ai_no_input))
+            return
+        }
+        if ((_uiState.value as? TuViUiState.Success) == null) {
+            onError(AppContainer.app.getString(R.string.error_ai_no_chart))
+            return
+        }
+        viewModelScope.launch {
+            _aiInterpretLoading.value = true
+            try {
                 getTuViInterpret(input)
                     .onSuccess { interpretation ->
-                        _uiState.value = TuViUiState.Success(
+                        val base = _uiState.value as? TuViUiState.Success ?: return@onSuccess
+                        _uiState.value = base.copy(
                             data = interpretation.chart,
                             aiReading = interpretation.aiReading,
                         )
                     }
-                    .onFailure { mapFailureToUi(it) }
-            } else {
-                getTuViChart(input)
-                    .onSuccess { _uiState.value = TuViUiState.Success(it) }
-                    .onFailure { mapFailureToUi(it) }
+                    .onFailure { onError(aiFailureMessage(it)) }
+            } finally {
+                _aiInterpretLoading.value = false
             }
         }
     }
 
+    private fun aiFailureMessage(t: Throwable): String = when (t) {
+        is AiInterpretationUnavailableException ->
+            AppContainer.app.getString(R.string.error_ai_interpret_503)
+        else -> t.message ?: AppContainer.app.getString(R.string.error_unknown)
+    }
+
     private fun mapFailureToUi(t: Throwable) {
-        val msg = when (t) {
-            is AiInterpretationUnavailableException ->
-                AppContainer.app.getString(R.string.error_ai_interpret_503)
-            else -> t.message ?: AppContainer.app.getString(R.string.error_unknown)
-        }
-        _uiState.value = TuViUiState.Error(msg)
+        _uiState.value = TuViUiState.Error(aiFailureMessage(t))
     }
 
     fun resetState() {
         _uiState.value = TuViUiState.Idle
         _openedFromSavedLibrary.value = false
         _savedChartId.value = null
+        _aiInterpretLoading.value = false
     }
 
     fun loadSavedChart(input: TuViChartInput, chart: TuViChart, savedChartId: Long) {
         _lastInput.value = input
         _openedFromSavedLibrary.value = true
         _savedChartId.value = savedChartId
+        _aiInterpretLoading.value = false
         _uiState.value = TuViUiState.Success(chart)
     }
 

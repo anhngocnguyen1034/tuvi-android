@@ -7,6 +7,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -289,8 +290,10 @@ fun TuViChartScreen(
     savedChartId: Long? = null,
     onSave: ((String, (Boolean) -> Unit) -> Unit)? = null,
     onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null,
-    /** Set when opened via `/api/interpret`; plain chart flow leaves this null. */
     aiReading: String? = null,
+    aiInterpretLoading: Boolean = false,
+    /** When non-null, shows request/refresh AI controls below the chart grid. */
+    onRequestAiInterpretation: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -477,6 +480,15 @@ fun TuViChartScreen(
                             drawContent()
                         }
                     )
+
+                    if (onRequestAiInterpretation != null) {
+                        Spacer(Modifier.height(16.dp))
+                        AiInterpretActions(
+                            aiReading = aiReading,
+                            loading = aiInterpretLoading,
+                            onRequest = onRequestAiInterpretation,
+                        )
+                    }
 
                     if (aiReading != null) {
                         Spacer(Modifier.height(20.dp))
@@ -1078,6 +1090,86 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
         maxLines = 1,
         overflow = TextOverflow.Clip
     )
+}
+
+@Composable
+private fun AiInterpretActions(
+    aiReading: String?,
+    loading: Boolean,
+    onRequest: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(ChartCardBg.copy(alpha = 0.65f))
+            .border(1.dp, ChartGoldDim.copy(alpha = 0.45f), RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Button(
+            onClick = onRequest,
+            enabled = !loading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ChartNavy.copy(alpha = 0.45f),
+                contentColor = ChartGold,
+                disabledContainerColor = ChartNavy.copy(alpha = 0.25f),
+                disabledContentColor = ChartGoldDim.copy(alpha = 0.45f),
+            ),
+            border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
+        ) {
+            Text(
+                text = if (aiReading == null) {
+                    stringResource(R.string.chart_ai_request_btn)
+                } else {
+                    stringResource(R.string.chart_ai_refresh_btn)
+                },
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+                fontFamily = BeVietnamProFamily,
+            )
+        }
+        if (loading) {
+            Text(
+                text = stringResource(R.string.chart_loading_ai),
+                color = ChartIvoryDim,
+                fontSize = 12.sp,
+            )
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp)),
+                color = ChartGold,
+                trackColor = ChartGoldDim.copy(alpha = 0.35f),
+            )
+        }
+    }
+}
+
+@Preview(name = "AI actions idle", showBackground = true)
+@Composable
+private fun AiInterpretActionsPreviewIdle() {
+    TuViTheme(darkTheme = true) {
+        Box(Modifier.background(ChartNavy).padding(8.dp)) {
+            AiInterpretActions(aiReading = null, loading = false, onRequest = {})
+        }
+    }
+}
+
+@Preview(name = "AI actions loading", showBackground = true)
+@Composable
+private fun AiInterpretActionsPreviewLoading() {
+    TuViTheme(darkTheme = true) {
+        Box(Modifier.background(ChartNavy).padding(8.dp)) {
+            AiInterpretActions(aiReading = "x", loading = true, onRequest = {})
+        }
+    }
 }
 
 @Composable

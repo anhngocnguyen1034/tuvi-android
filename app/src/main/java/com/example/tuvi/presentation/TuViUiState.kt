@@ -6,13 +6,12 @@ import com.example.tuvi.domain.model.TuViChart
 sealed interface TuViUiState {
     object Idle : TuViUiState
 
-    @Immutable
-    data class Loading(val requestingAiReading: Boolean = false) : TuViUiState
+    object Loading : TuViUiState
 
     @Immutable
     data class Success(
         val data: TuViChart,
-        /** Non-null after `/api/interpret`; plain chart flow keeps this null. */
+        /** Filled after user requests `/api/interpret` from the chart screen. */
         val aiReading: String? = null,
     ) : TuViUiState
 
