@@ -294,4 +294,8 @@
     <string name="rate_dialog_message">Hãy đánh giá để ủng hộ chúng tôi trên Play Store!</string>
     <string name="rate_dialog_confirm">Đánh giá ngay</string>
     <string name="rate_dialog_dismiss">Để sau</string>
+
+    <!-- AI reading screen -->
+    <string name="chart_open_ai_reading_btn">Xem luận giải AI</string>
+    <string name="ai_reading_hint">Nhấn nút phía trên để AI luận giải lá số của bạn dựa trên dữ liệu sao và cung.</string>
 </resources>

@@ -290,10 +290,8 @@ fun TuViChartScreen(
     savedChartId: Long? = null,
     onSave: ((String, (Boolean) -> Unit) -> Unit)? = null,
     onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null,
-    aiReading: String? = null,
-    aiInterpretLoading: Boolean = false,
-    /** When non-null, shows request/refresh AI controls below the chart grid. */
-    onRequestAiInterpretation: (() -> Unit)? = null,
+    /** When non-null, hiển thị nút mở màn luận giải AI dưới lưới lá số. */
+    onOpenAiReading: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -481,23 +479,9 @@ fun TuViChartScreen(
                         }
                     )
 
-                    if (onRequestAiInterpretation != null) {
+                    if (onOpenAiReading != null) {
                         Spacer(Modifier.height(16.dp))
-                        AiInterpretActions(
-                            aiReading = aiReading,
-                            loading = aiInterpretLoading,
-                            onRequest = onRequestAiInterpretation,
-                        )
-                    }
-
-                    if (aiReading != null) {
-                        Spacer(Modifier.height(20.dp))
-                        val bodyText = if (aiReading.isNotBlank()) {
-                            aiReading
-                        } else {
-                            stringResource(R.string.chart_ai_reading_empty)
-                        }
-                        AiReadingSection(bodyText = bodyText)
+                        OpenAiReadingButton(onClick = onOpenAiReading)
                     }
 
                     Spacer(Modifier.height(16.dp))
@@ -1093,24 +1077,14 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
 }
 
 @Composable
-private fun AiInterpretActions(
-    aiReading: String?,
-    loading: Boolean,
-    onRequest: () -> Unit,
-) {
-    Column(
+private fun OpenAiReadingButton(onClick: () -> Unit) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(ChartCardBg.copy(alpha = 0.65f))
-            .border(1.dp, ChartGoldDim.copy(alpha = 0.45f), RoundedCornerShape(14.dp))
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 12.dp),
     ) {
         Button(
-            onClick = onRequest,
-            enabled = !loading,
+            onClick = onClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -1118,62 +1092,31 @@ private fun AiInterpretActions(
             colors = ButtonDefaults.buttonColors(
                 containerColor = ChartNavy.copy(alpha = 0.45f),
                 contentColor = ChartGold,
-                disabledContainerColor = ChartNavy.copy(alpha = 0.25f),
-                disabledContentColor = ChartGoldDim.copy(alpha = 0.45f),
             ),
             border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
         ) {
             Text(
-                text = if (aiReading == null) {
-                    stringResource(R.string.chart_ai_request_btn)
-                } else {
-                    stringResource(R.string.chart_ai_refresh_btn)
-                },
+                text = stringResource(R.string.chart_open_ai_reading_btn),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
                 fontFamily = BeVietnamProFamily,
             )
         }
-        if (loading) {
-            Text(
-                text = stringResource(R.string.chart_loading_ai),
-                color = ChartIvoryDim,
-                fontSize = 12.sp,
-            )
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .clip(RoundedCornerShape(2.dp)),
-                color = ChartGold,
-                trackColor = ChartGoldDim.copy(alpha = 0.35f),
-            )
-        }
     }
 }
 
-@Preview(name = "AI actions idle", showBackground = true)
+@Preview(name = "Open AI reading button", showBackground = true)
 @Composable
-private fun AiInterpretActionsPreviewIdle() {
+private fun OpenAiReadingButtonPreview() {
     TuViTheme(darkTheme = true) {
         Box(Modifier.background(ChartNavy).padding(8.dp)) {
-            AiInterpretActions(aiReading = null, loading = false, onRequest = {})
-        }
-    }
-}
-
-@Preview(name = "AI actions loading", showBackground = true)
-@Composable
-private fun AiInterpretActionsPreviewLoading() {
-    TuViTheme(darkTheme = true) {
-        Box(Modifier.background(ChartNavy).padding(8.dp)) {
-            AiInterpretActions(aiReading = "x", loading = true, onRequest = {})
+            OpenAiReadingButton(onClick = {})
         }
     }
 }
 
 @Composable
-private fun AiReadingSection(
+internal fun AiReadingSection(
     bodyText: String,
     modifier: Modifier = Modifier,
 ) {

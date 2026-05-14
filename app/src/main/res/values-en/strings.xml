@@ -277,4 +277,8 @@
     <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
     <string name="rate_dialog_confirm">Rate now</string>
     <string name="rate_dialog_dismiss">Maybe later</string>
+
+    <!-- AI reading screen -->
+    <string name="chart_open_ai_reading_btn">View AI interpretation</string>
+    <string name="ai_reading_hint">Tap the button above to have AI interpret your chart based on stars and palaces.</string>
 </resources>

@@ -47,6 +47,7 @@ import com.example.tuvi.ui.browser.BrowserConfig
 import com.example.tuvi.ui.browser.BrowserScreen
 import com.example.tuvi.presentation.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
+import com.example.tuvi.ui.screens.AiReadingScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
@@ -187,7 +188,6 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("chart") {
             val savedChartIdVm by viewModel.savedChartId.collectAsStateWithLifecycle()
-            val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             when (val state = uiState) {
                 is TuViUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -198,13 +198,7 @@ fun TuViApp(isDark: Boolean = true) {
                 is TuViUiState.Success -> {
                     TuViChartScreen(
                         data = state.data,
-                        aiReading = state.aiReading,
-                        aiInterpretLoading = aiInterpretLoading,
-                        onRequestAiInterpretation = {
-                            viewModel.fetchAiInterpretation { err ->
-                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
-                            }
-                        },
+                        onOpenAiReading = { navController.navigate("ai_reading") },
                         savedChartId = savedChartIdVm,
                         onBack = {
                             viewModel.resetState()
@@ -254,6 +248,20 @@ fun TuViApp(isDark: Boolean = true) {
 
                 is TuViUiState.Idle -> {}
             }
+        }
+        composable("ai_reading") {
+            val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
+            val aiReading = (uiState as? TuViUiState.Success)?.aiReading
+            AiReadingScreen(
+                aiReading = aiReading,
+                loading = aiInterpretLoading,
+                onRequest = {
+                    viewModel.fetchAiInterpretation { err ->
+                        Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
+                    }
+                },
+                onBack = { navController.popBackStack() },
+            )
         }
         composable(
             route = "browser?url={url}&title={title}",
