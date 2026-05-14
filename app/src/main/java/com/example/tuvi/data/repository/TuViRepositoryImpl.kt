@@ -24,13 +24,13 @@ class TuViRepositoryImpl(
         return try {
             val body = apiService.interpret(request)
             val raw = body.data_la_so
-                ?: error("Server response missing data_la_so")
+                ?: throw AiInterpretationUnavailableException()
             TuViInterpretation(
                 chart = raw.toDomain(),
                 aiReading = body.ai_reading.orEmpty(),
             )
         } catch (e: HttpException) {
-            if (e.code() == 503) throw AiInterpretationUnavailableException()
+            if (e.code() in setOf(429, 502, 503, 504)) throw AiInterpretationUnavailableException()
             throw e
         }
     }

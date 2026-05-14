@@ -67,7 +67,7 @@ data class ThienBanDto(
     val ngay_duong: String,
     val ngay_am: String,
     @SerialName("ngay_am_lich_ten") val ngayAmLichTen: String? = null,
-    @Serializable(with = IntOrStringSerializer::class) @SerialName("thang_nhuan") val thangNhuan: Int? = null,
+    @SerialName("thang_nhuan") val thangNhuan: Boolean? = null,
     @SerialName("gio_sinh") val gioSinh: String? = null,
     @SerialName("chi_gio_sinh") val chiGioSinh: String? = null,
     @SerialName("can_nam") val canNam: String? = null,

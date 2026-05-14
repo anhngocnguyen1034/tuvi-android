@@ -34,7 +34,7 @@ data class ThienBanInfo(
     val ngayDuong: String,
     val ngayAm: String,
     val ngayAmLichTen: String? = null,
-    val thangNhuan: Int? = null,
+    val thangNhuan: Boolean? = null,
     val gioSinh: String? = null,
     val chiGioSinh: String? = null,
     val canNam: String? = null,

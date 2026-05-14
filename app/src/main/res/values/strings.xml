@@ -283,4 +283,15 @@
     <string name="error_ai_no_chart">Chưa có lá số hiển thị — không thể gọi luận giải AI.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
+
+    <!-- Toast & dialog -->
+    <string name="toast_chart_saved">Đã lưu lá số của %1$s</string>
+    <string name="toast_chart_save_failed">Lỗi khi lưu: %1$s</string>
+    <string name="toast_chart_unsaved">Đã huỷ lưu lá số</string>
+    <string name="toast_chart_unsave_failed">Không thể huỷ lưu: %1$s</string>
+    <string name="toast_chart_open_failed">Không thể mở lá số</string>
+    <string name="rate_dialog_title">Bạn thích Tử Vi không?</string>
+    <string name="rate_dialog_message">Hãy đánh giá để ủng hộ chúng tôi trên Play Store!</string>
+    <string name="rate_dialog_confirm">Đánh giá ngay</string>
+    <string name="rate_dialog_dismiss">Để sau</string>
 </resources>

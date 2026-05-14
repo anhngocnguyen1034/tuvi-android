@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
 import com.example.tuvi.presentation.SettingsViewModel
+import com.example.tuvi.presentation.TuViError
 import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.screens.InputScreen
@@ -198,8 +200,8 @@ fun TuViApp(isDark: Boolean = true) {
                         aiReading = state.aiReading,
                         aiInterpretLoading = aiInterpretLoading,
                         onRequestAiInterpretation = {
-                            viewModel.fetchAiInterpretation { msg ->
-                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            viewModel.fetchAiInterpretation { err ->
+                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
                             }
                         },
                         savedChartId = savedChartIdVm,
@@ -213,7 +215,7 @@ fun TuViApp(isDark: Boolean = true) {
                                     .onSuccess { _ ->
                                         Toast.makeText(
                                             context,
-                                            "Đã lưu lá số của ${lastInput?.ten}",
+                                            context.getString(R.string.toast_chart_saved, lastInput?.ten.orEmpty()),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         onResult(true)
@@ -221,7 +223,7 @@ fun TuViApp(isDark: Boolean = true) {
                                     .onFailure {
                                         Toast.makeText(
                                             context,
-                                            "Lỗi khi lưu: ${it.message}",
+                                            context.getString(R.string.toast_chart_save_failed, it.message.orEmpty()),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         onResult(false)
@@ -232,11 +234,11 @@ fun TuViApp(isDark: Boolean = true) {
                             viewModel.deleteChart(id) { result ->
                                 result
                                     .onSuccess {
-                                        Toast.makeText(context, "Đã huỷ lưu lá số", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_chart_unsaved), Toast.LENGTH_SHORT).show()
                                         onResult(true)
                                     }
                                     .onFailure {
-                                        Toast.makeText(context, "Không thể huỷ lưu: ${it.message}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_chart_unsave_failed, it.message.orEmpty()), Toast.LENGTH_SHORT).show()
                                         onResult(false)
                                     }
                             }
@@ -245,7 +247,7 @@ fun TuViApp(isDark: Boolean = true) {
                 }
 
                 is TuViUiState.Error -> {
-                    Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, state.error.resolve(context), Toast.LENGTH_LONG).show()
                     navController.popBackStack()
                 }
 
@@ -311,7 +313,7 @@ fun TuViApp(isDark: Boolean = true) {
                 onOpenChart = { saved ->
                     viewModel.openSavedChart(saved) { ok ->
                         if (ok) navController.navigate("chart")
-                        else Toast.makeText(context, "Không thể mở lá số", Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(context, context.getString(R.string.toast_chart_open_failed), Toast.LENGTH_SHORT).show()
                     }
                 },
                 viewModel = savedVm
@@ -322,10 +324,10 @@ fun TuViApp(isDark: Boolean = true) {
         if (showRateDialog) {
             RateDialog(
                 packageName = context.packageName,
-                title = "Bạn thích Tử Vi không?",
-                message = "Hãy đánh giá để ủng hộ chúng tôi trên Play Store!",
-                confirmText = "Đánh giá ngay",
-                dismissText = "Để sau",
+                title = stringResource(R.string.rate_dialog_title),
+                message = stringResource(R.string.rate_dialog_message),
+                confirmText = stringResource(R.string.rate_dialog_confirm),
+                dismissText = stringResource(R.string.rate_dialog_dismiss),
                 onDismiss = { showRateDialog = false }
             )
         }

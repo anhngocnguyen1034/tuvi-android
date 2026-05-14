@@ -1,6 +1,7 @@
 package com.example.tuvi.di
 
 import android.content.Context
+import com.example.tuvi.BuildConfig
 import com.example.tuvi.data.local.TuViDatabase
 import com.example.tuvi.data.remote.TuViApiService
 import com.example.tuvi.data.repository.SavedChartRepositoryImpl
@@ -24,7 +25,6 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-//    private const val BASE_URL = "http://192.168.1.17:8000"
     private const val BASE_URL = "http://192.168.1.17:8000"
 
     lateinit var app: android.app.Application
@@ -40,9 +40,14 @@ object AppContainer {
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(180, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        })
+        .apply {
+            // Body chứa PII (tên, ngày/giờ sinh, giới tính) — chỉ log trong debug build.
+            if (BuildConfig.DEBUG) {
+                addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
+        }
         .build()
 
     val apiService: TuViApiService by lazy {

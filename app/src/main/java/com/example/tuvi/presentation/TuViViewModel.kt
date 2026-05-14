@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.tuvi.R
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.domain.AiInterpretationUnavailableException
 import com.example.tuvi.domain.model.SavedChart
@@ -71,14 +70,14 @@ class TuViViewModel(
     }
 
     /** POST /api/interpret while chart is already shown; errors delivered via [onError] (toast/snackbar). */
-    fun fetchAiInterpretation(onError: (String) -> Unit) {
+    fun fetchAiInterpretation(onError: (TuViError) -> Unit) {
         val input = _lastInput.value
         if (input == null) {
-            onError(AppContainer.app.getString(R.string.error_ai_no_input))
+            onError(TuViError.AiNoInput)
             return
         }
         if ((_uiState.value as? TuViUiState.Success) == null) {
-            onError(AppContainer.app.getString(R.string.error_ai_no_chart))
+            onError(TuViError.AiNoChart)
             return
         }
         viewModelScope.launch {
@@ -92,21 +91,20 @@ class TuViViewModel(
                             aiReading = interpretation.aiReading,
                         )
                     }
-                    .onFailure { onError(aiFailureMessage(it)) }
+                    .onFailure { onError(mapThrowable(it)) }
             } finally {
                 _aiInterpretLoading.value = false
             }
         }
     }
 
-    private fun aiFailureMessage(t: Throwable): String = when (t) {
-        is AiInterpretationUnavailableException ->
-            AppContainer.app.getString(R.string.error_ai_interpret_503)
-        else -> t.message ?: AppContainer.app.getString(R.string.error_unknown)
+    private fun mapThrowable(t: Throwable): TuViError = when (t) {
+        is AiInterpretationUnavailableException -> TuViError.AiUnavailable
+        else -> t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
     }
 
     private fun mapFailureToUi(t: Throwable) {
-        _uiState.value = TuViUiState.Error(aiFailureMessage(t))
+        _uiState.value = TuViUiState.Error(mapThrowable(t))
     }
 
     fun resetState() {

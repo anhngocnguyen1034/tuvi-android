@@ -266,4 +266,15 @@
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
+
+    <!-- Toast & dialog -->
+    <string name="toast_chart_saved">Saved chart for %1$s</string>
+    <string name="toast_chart_save_failed">Save failed: %1$s</string>
+    <string name="toast_chart_unsaved">Chart unsaved</string>
+    <string name="toast_chart_unsave_failed">Could not unsave: %1$s</string>
+    <string name="toast_chart_open_failed">Could not open chart</string>
+    <string name="rate_dialog_title">Enjoying TuVi?</string>
+    <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
+    <string name="rate_dialog_confirm">Rate now</string>
+    <string name="rate_dialog_dismiss">Maybe later</string>
 </resources>
