@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -34,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tuvi.R
+import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.presentation.screens.AiReadingSection
 import com.example.tuvi.ui.theme.BeVietnamProFamily
 import com.example.tuvi.ui.theme.ChartDeepBg
@@ -45,20 +50,23 @@ import com.example.tuvi.ui.theme.ChartNavy
 import com.example.tuvi.ui.theme.TuViTheme
 
 /**
- * Màn riêng để xem luận giải lá số bằng AI.
+ * Màn riêng để xem luận giải lá số bằng AI cho TỪNG CUNG.
  *
- * Trạng thái:
- *  - Chưa có & không loading → nút "Luận giải AI" (gọi [onRequest]).
- *  - Đang loading → progress indicator + nút disabled.
- *  - Có nội dung → hiển thị + nút refresh.
+ * - Người dùng chọn 1 cung trong 12 cung → bấm "Luận giải cung X".
+ * - Reading được cache theo cung trong [aiReadings]; chuyển cung khác mà đã có cache → hiển thị ngay,
+ *   chưa có → hiển thị nút yêu cầu.
  */
 @Composable
 fun AiReadingScreen(
-    aiReading: String?,
+    selectedCung: CungSlug?,
+    aiReadings: Map<CungSlug, String>,
     loading: Boolean,
+    onSelectCung: (CungSlug) -> Unit,
     onRequest: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val currentReading = selectedCung?.let(aiReadings::get)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,21 +80,28 @@ fun AiReadingScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp),
         ) {
+            CungPicker(
+                selected = selectedCung,
+                aiReadings = aiReadings,
+                onSelect = onSelectCung,
+            )
+
             ActionPanel(
-                aiReading = aiReading,
+                selectedCung = selectedCung,
+                hasReadingForSelected = currentReading != null,
                 loading = loading,
                 onRequest = onRequest,
             )
 
-            if (aiReading != null) {
+            if (currentReading != null) {
                 Spacer(Modifier.height(20.dp))
-                val bodyText = aiReading.takeIf { it.isNotBlank() }
+                val bodyText = currentReading.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.chart_ai_reading_empty)
                 AiReadingSection(bodyText = bodyText)
             } else if (!loading) {
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    text = stringResource(R.string.ai_reading_hint),
+                    text = stringResource(R.string.ai_reading_hint_single_cung),
                     color = ChartIvoryDim,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -125,9 +140,60 @@ private fun TopBar(onBack: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CungPicker(
+    selected: CungSlug?,
+    aiReadings: Map<CungSlug, String>,
+    onSelect: (CungSlug) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.ai_reading_cung_picker_label),
+            color = ChartIvory,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            fontFamily = BeVietnamProFamily,
+        )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            CungSlug.entries.forEach { cung ->
+                val cached = aiReadings.containsKey(cung)
+                val label = if (cached) "${cung.displayName} ✓" else cung.displayName
+                FilterChip(
+                    selected = cung == selected,
+                    onClick = { onSelect(cung) },
+                    label = {
+                        Text(
+                            text = label,
+                            fontSize = 13.sp,
+                            fontFamily = BeVietnamProFamily,
+                        )
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = ChartNavy.copy(alpha = 0.35f),
+                        labelColor = ChartIvory,
+                        selectedContainerColor = ChartGold.copy(alpha = 0.85f),
+                        selectedLabelColor = ChartDeepBg,
+                    ),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun ActionPanel(
-    aiReading: String?,
+    selectedCung: CungSlug?,
+    hasReadingForSelected: Boolean,
     loading: Boolean,
     onRequest: () -> Unit,
 ) {
@@ -137,9 +203,15 @@ private fun ActionPanel(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        val cungName = selectedCung?.displayName
+        val btnText = when {
+            cungName == null -> stringResource(R.string.chart_ai_request_btn)
+            hasReadingForSelected -> stringResource(R.string.ai_reading_refresh_btn_for_cung, cungName)
+            else -> stringResource(R.string.ai_reading_request_btn_for_cung, cungName)
+        }
         Button(
             onClick = onRequest,
-            enabled = !loading,
+            enabled = !loading && selectedCung != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -153,10 +225,7 @@ private fun ActionPanel(
             border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
         ) {
             Text(
-                text = stringResource(
-                    if (aiReading == null) R.string.chart_ai_request_btn
-                    else R.string.chart_ai_refresh_btn
-                ),
+                text = btnText,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
                 fontFamily = BeVietnamProFamily,
@@ -164,7 +233,8 @@ private fun ActionPanel(
         }
         if (loading) {
             Text(
-                text = stringResource(R.string.chart_loading_ai),
+                text = cungName?.let { stringResource(R.string.ai_reading_loading_cung, it) }
+                    ?: stringResource(R.string.chart_loading_ai),
                 color = ChartIvoryDim,
                 fontSize = 12.sp,
             )
@@ -184,7 +254,14 @@ private fun ActionPanel(
 @Composable
 private fun AiReadingScreenEmptyPreview() {
     TuViTheme(darkTheme = true) {
-        AiReadingScreen(aiReading = null, loading = false, onRequest = {}, onBack = {})
+        AiReadingScreen(
+            selectedCung = null,
+            aiReadings = emptyMap(),
+            loading = false,
+            onSelectCung = {},
+            onRequest = {},
+            onBack = {},
+        )
     }
 }
 
@@ -192,7 +269,14 @@ private fun AiReadingScreenEmptyPreview() {
 @Composable
 private fun AiReadingScreenLoadingPreview() {
     TuViTheme(darkTheme = true) {
-        AiReadingScreen(aiReading = null, loading = true, onRequest = {}, onBack = {})
+        AiReadingScreen(
+            selectedCung = CungSlug.MENH,
+            aiReadings = emptyMap(),
+            loading = true,
+            onSelectCung = {},
+            onRequest = {},
+            onBack = {},
+        )
     }
 }
 
@@ -201,8 +285,12 @@ private fun AiReadingScreenLoadingPreview() {
 private fun AiReadingScreenContentPreview() {
     TuViTheme(darkTheme = true) {
         AiReadingScreen(
-            aiReading = "Mẫu luận giải: cung Mệnh vượng, đại vận hiện tại thuận lợi cho sự nghiệp.",
+            selectedCung = CungSlug.MENH,
+            aiReadings = mapOf(
+                CungSlug.MENH to "Mẫu luận giải: cung Mệnh vượng, đại vận hiện tại thuận lợi cho sự nghiệp.",
+            ),
             loading = false,
+            onSelectCung = {},
             onRequest = {},
             onBack = {},
         )

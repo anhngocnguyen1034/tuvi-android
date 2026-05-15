@@ -264,6 +264,12 @@
     <string name="error_ai_interpret_503">AI interpretation is not available (HTTP 503). Configure the Gemini API key on the server or try again later.</string>
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
+    <string name="error_ai_no_cung">Pick a palace before asking AI.</string>
+    <string name="ai_reading_cung_picker_label">Pick a palace to interpret</string>
+    <string name="ai_reading_request_btn_for_cung">Interpret %1$s palace</string>
+    <string name="ai_reading_refresh_btn_for_cung">Refresh %1$s palace</string>
+    <string name="ai_reading_loading_cung">Asking AI about the %1$s palace…</string>
+    <string name="ai_reading_hint_single_cung">Pick one palace at a time — the answer goes deeper than asking about the whole chart.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 

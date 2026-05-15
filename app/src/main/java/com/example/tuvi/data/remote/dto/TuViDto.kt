@@ -25,7 +25,8 @@ data class TuViRequest(
     val gio_sinh: Int? = null,
     val ten: String = "",
     val duong_lich: Boolean = true,
-    val time_zone: Int = 7
+    val time_zone: Int = 7,
+    val cung: String? = null,
 )
 
 /** Cho phép giá trị Int đến từ số (1) hoặc chuỗi ("1") trong JSON. */
@@ -56,6 +57,7 @@ data class TuViResponse(
 @Serializable
 data class InterpretResponse(
     val status: String? = null,
+    val cung: String? = null,
     @SerialName("data_la_so") val data_la_so: TuViResponse? = null,
     @SerialName("ai_reading") val ai_reading: String? = null,
 )

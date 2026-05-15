@@ -4,6 +4,7 @@ import com.example.tuvi.data.mapper.toDomain
 import com.example.tuvi.data.remote.TuViApiService
 import com.example.tuvi.data.remote.dto.TuViRequest
 import com.example.tuvi.domain.AiInterpretationUnavailableException
+import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.model.TuViInterpretation
@@ -19,8 +20,11 @@ class TuViRepositoryImpl(
         return apiService.getTuVi(request).toDomain()
     }
 
-    override suspend fun getTuViInterpretation(input: TuViChartInput): TuViInterpretation {
-        val request = buildRequest(input)
+    override suspend fun getTuViInterpretation(
+        input: TuViChartInput,
+        cung: CungSlug,
+    ): TuViInterpretation {
+        val request = buildRequest(input).copy(cung = cung.slug)
         return try {
             val body = apiService.interpret(request)
             val raw = body.data_la_so

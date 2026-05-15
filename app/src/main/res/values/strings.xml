@@ -281,6 +281,12 @@
     <string name="error_ai_interpret_503">Dịch vụ luận giải AI chưa sẵn sàng (HTTP 503). Vui lòng cấu hình API Gemini trên máy chủ hoặc thử lại sau.</string>
     <string name="error_ai_no_input">Thiếu dữ liệu sinh — không thể gọi luận giải AI.</string>
     <string name="error_ai_no_chart">Chưa có lá số hiển thị — không thể gọi luận giải AI.</string>
+    <string name="error_ai_no_cung">Hãy chọn 1 cung trước khi luận giải.</string>
+    <string name="ai_reading_cung_picker_label">Chọn cung để luận giải</string>
+    <string name="ai_reading_request_btn_for_cung">Luận giải cung %1$s</string>
+    <string name="ai_reading_refresh_btn_for_cung">Tải lại cung %1$s</string>
+    <string name="ai_reading_loading_cung">Đang hỏi AI về cung %1$s…</string>
+    <string name="ai_reading_hint_single_cung">Mỗi lần chọn 1 cung — câu trả lời sẽ sâu hơn so với hỏi cả lá số.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 

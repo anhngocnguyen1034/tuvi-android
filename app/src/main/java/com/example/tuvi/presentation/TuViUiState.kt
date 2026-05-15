@@ -3,6 +3,7 @@ package com.example.tuvi.presentation
 import androidx.compose.runtime.Immutable
 import androidx.annotation.StringRes
 import com.example.tuvi.R
+import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.domain.model.TuViChart
 
 /**
@@ -18,6 +19,7 @@ sealed interface TuViError {
         val AiUnavailable = Res(R.string.error_ai_interpret_503)
         val AiNoInput = Res(R.string.error_ai_no_input)
         val AiNoChart = Res(R.string.error_ai_no_chart)
+        val AiNoCung = Res(R.string.error_ai_no_cung)
     }
 }
 
@@ -29,8 +31,8 @@ sealed interface TuViUiState {
     @Immutable
     data class Success(
         val data: TuViChart,
-        /** Filled after user requests `/api/interpret` from the chart screen. */
-        val aiReading: String? = null,
+        /** Cache luận giải theo từng cung sau khi gọi `/api/interpret`. */
+        val aiReadings: Map<CungSlug, String> = emptyMap(),
     ) : TuViUiState
 
     @Immutable

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.domain.AiInterpretationUnavailableException
+import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
@@ -45,6 +46,14 @@ class TuViViewModel(
     private val _aiInterpretLoading = MutableStateFlow(false)
     val aiInterpretLoading: StateFlow<Boolean> = _aiInterpretLoading.asStateFlow()
 
+    /** Cung user đang chọn trên màn AI; null = chưa chọn. */
+    private val _selectedCung = MutableStateFlow<CungSlug?>(null)
+    val selectedCung: StateFlow<CungSlug?> = _selectedCung.asStateFlow()
+
+    fun selectCung(cung: CungSlug) {
+        _selectedCung.value = cung
+    }
+
     fun getTuVi(
         ten: String,
         ngay: Int,
@@ -61,6 +70,7 @@ class TuViViewModel(
         _openedFromSavedLibrary.value = false
         _savedChartId.value = null
         _aiInterpretLoading.value = false
+        _selectedCung.value = null
         viewModelScope.launch {
             _uiState.value = TuViUiState.Loading
             getTuViChart(input)
@@ -69,26 +79,34 @@ class TuViViewModel(
         }
     }
 
-    /** POST /api/interpret while chart is already shown; errors delivered via [onError] (toast/snackbar). */
-    fun fetchAiInterpretation(onError: (TuViError) -> Unit) {
+    /**
+     * POST /api/interpret cho [cung] cụ thể; cache kết quả vào [TuViUiState.Success.aiReadings].
+     * Lỗi trả qua [onError] (toast/snackbar).
+     */
+    fun fetchAiInterpretation(cung: CungSlug?, onError: (TuViError) -> Unit) {
         val input = _lastInput.value
         if (input == null) {
             onError(TuViError.AiNoInput)
             return
         }
-        if ((_uiState.value as? TuViUiState.Success) == null) {
+        val success = _uiState.value as? TuViUiState.Success
+        if (success == null) {
             onError(TuViError.AiNoChart)
+            return
+        }
+        if (cung == null) {
+            onError(TuViError.AiNoCung)
             return
         }
         viewModelScope.launch {
             _aiInterpretLoading.value = true
             try {
-                getTuViInterpret(input)
+                getTuViInterpret(input, cung)
                     .onSuccess { interpretation ->
                         val base = _uiState.value as? TuViUiState.Success ?: return@onSuccess
                         _uiState.value = base.copy(
                             data = interpretation.chart,
-                            aiReading = interpretation.aiReading,
+                            aiReadings = base.aiReadings + (cung to interpretation.aiReading),
                         )
                     }
                     .onFailure { onError(mapThrowable(it)) }
@@ -112,6 +130,7 @@ class TuViViewModel(
         _openedFromSavedLibrary.value = false
         _savedChartId.value = null
         _aiInterpretLoading.value = false
+        _selectedCung.value = null
     }
 
     fun loadSavedChart(input: TuViChartInput, chart: TuViChart, savedChartId: Long) {
@@ -119,6 +138,7 @@ class TuViViewModel(
         _openedFromSavedLibrary.value = true
         _savedChartId.value = savedChartId
         _aiInterpretLoading.value = false
+        _selectedCung.value = null
         _uiState.value = TuViUiState.Success(chart)
     }
 

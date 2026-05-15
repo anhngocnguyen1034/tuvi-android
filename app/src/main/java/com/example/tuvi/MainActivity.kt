@@ -251,12 +251,15 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("ai_reading") {
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
-            val aiReading = (uiState as? TuViUiState.Success)?.aiReading
+            val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
+            val aiReadings = (uiState as? TuViUiState.Success)?.aiReadings ?: emptyMap()
             AiReadingScreen(
-                aiReading = aiReading,
+                selectedCung = selectedCung,
+                aiReadings = aiReadings,
                 loading = aiInterpretLoading,
+                onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
-                    viewModel.fetchAiInterpretation { err ->
+                    viewModel.fetchAiInterpretation(selectedCung) { err ->
                         Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
                     }
                 },
