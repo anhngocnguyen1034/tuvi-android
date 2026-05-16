@@ -32,6 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tuvi.presentation.AuthUiState
+import com.example.tuvi.presentation.AuthViewModel
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
 import com.example.tuvi.presentation.SettingsViewModel
@@ -51,6 +53,7 @@ import com.example.tuvi.ui.screens.AiReadingScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
+import com.example.tuvi.ui.screens.LoginScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.anhnn.feedback.FeedbackScreen
 import com.anhnn.rate.RateDialog
@@ -93,9 +96,12 @@ class MainActivity : ComponentActivity() {
 fun TuViApp(isDark: Boolean = true) {
     val navController = rememberNavController()
     val viewModel: TuViViewModel = viewModel(factory = TuViViewModel.Factory)
+    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lastInput by viewModel.lastInput.collectAsStateWithLifecycle()
+    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val startDestination = remember { if (authViewModel.isSignedIn) "home" else "login" }
     var showRateDialog by remember { mutableStateOf(false) }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -112,8 +118,32 @@ fun TuViApp(isDark: Boolean = true) {
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
-            startDestination = "home"
+            startDestination = startDestination
         ) {
+        composable("login") {
+            val loading = authState is AuthUiState.Loading
+            LaunchedEffect(authState) {
+                when (val s = authState) {
+                    is AuthUiState.SignedIn -> {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
+                    is AuthUiState.Error -> {
+                        val msg = s.message.takeIf { it.isNotBlank() }
+                            ?.let { context.getString(R.string.login_error_generic, it) }
+                            ?: context.getString(R.string.login_error_unknown)
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                        authViewModel.consumeError()
+                    }
+                    else -> Unit
+                }
+            }
+            LoginScreen(
+                loading = loading,
+                onSignInWithGoogle = { authViewModel.signInWithGoogle(context) },
+            )
+        }
         composable("home") {
             HomeScreen(
                 onOpenTuVi = { navController.navigate("input") },
@@ -135,8 +165,17 @@ fun TuViApp(isDark: Boolean = true) {
             LichScreen(onBack = { navController.popBackStack() })
         }
         composable("settings") {
+            val authUser = (authState as? AuthUiState.SignedIn)?.user
             SettingsScreen(
                 onBack = { navController.popBackStack() },
+                authUser = authUser,
+                onSignOut = {
+                    authViewModel.signOut(context)
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onOpenSaved = { navController.navigate("saved_charts") },
                 onOpenLanguage = { navController.navigate("language") },
                 onOpenPrivacy = { navController.navigate("privacy_policy") },

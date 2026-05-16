@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
@@ -418,9 +419,11 @@ fun TuViChartScreen(
             ) {
                 Row(
                     modifier = Modifier
+                        .zIndex(2f)
                         .fillMaxWidth()
+                        .background(ChartNavy)
                         .statusBarsPadding()
-                        .padding(start = 4.dp, end = 8.dp, top = 4.dp),
+                        .padding(start = 4.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -469,6 +472,7 @@ fun TuViChartScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
+                        .clipToBounds()
                         .verticalScroll(chartScroll)
                 ) {
                     ChartGrid(

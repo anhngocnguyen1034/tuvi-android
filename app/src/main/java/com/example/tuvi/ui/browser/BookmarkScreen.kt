@@ -126,7 +126,10 @@ fun BookmarkScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = TuViNavy)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                )
             )
         }
     ) { padding ->

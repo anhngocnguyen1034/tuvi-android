@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -55,6 +57,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,7 +67,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.tuvi.R
+import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -79,6 +84,8 @@ import com.example.tuvi.ui.theme.TuViNavyLight
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    authUser: AuthUser? = null,
+    onSignOut: () -> Unit = {},
     onOpenSaved: () -> Unit = {},
     onOpenLanguage: () -> Unit = {},
     onOpenPrivacy: () -> Unit = {},
@@ -113,7 +120,8 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TuViNavy,
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
                     titleContentColor = TuViIvory,
                     navigationIconContentColor = TuViGold
                 )
@@ -129,6 +137,18 @@ fun SettingsScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            Text(
+                text = stringResource(R.string.settings_account_section),
+                color = TuViGold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.8.sp
+            )
+            AccountProfileCard(
+                user = authUser,
+                onSignOut = onSignOut
+            )
+
             Text(
                 text = stringResource(R.string.settings_theme),
                 color = TuViGold,
@@ -208,6 +228,85 @@ fun SettingsScreen(
                 fontSize = 12.sp,
                 lineHeight = 17.sp,
                 modifier = Modifier.padding(top = 12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AccountProfileCard(
+    user: AuthUser?,
+    onSignOut: () -> Unit
+) {
+    val displayName = user?.displayName
+        ?.takeIf { it.isNotBlank() }
+        ?: stringResource(R.string.settings_account_unknown_name)
+    val email = user?.email
+        ?.takeIf { it.isNotBlank() }
+        ?: stringResource(R.string.settings_account_unknown_email)
+    val initial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(TuViGold.copy(alpha = 0.18f)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!user?.photoUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = user?.photoUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Text(
+                    text = initial,
+                    color = TuViGold,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = displayName,
+                color = TuViIvory,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = email,
+                color = TuViIvoryDim,
+                fontSize = 12.sp
+            )
+        }
+        TextButton(onClick = onSignOut) {
+            Text(
+                text = stringResource(R.string.settings_logout),
+                color = TuViGold,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

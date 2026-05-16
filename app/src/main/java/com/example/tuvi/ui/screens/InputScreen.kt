@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
@@ -578,20 +579,6 @@ fun InputScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        if (onBack != null) {
-            androidx.compose.material3.IconButton(
-                onClick = onBack,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(top = 12.dp, start = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.settings_back),
-                    tint = TuViGold
-                )
-            }
-        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -601,14 +588,9 @@ fun InputScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            // ── Header ──
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                BaguaDecoration(
-                    modifier = Modifier.size(160.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                GoldDivider()
-            }
+            // Spacer chừa chỗ cho top bar (back + title) overlay phía trên.
+            Spacer(modifier = Modifier.height(48.dp))
+            GoldDivider()
 
             // ── Họ và Tên ──
             SectionCard {
@@ -853,18 +835,10 @@ fun InputScreen(
                             .clickable { showViewYearPicker = true }
                     )
                 }
-                Text(
-                    text = stringResource(R.string.input_view_year_range_hint, minViewYear, maxViewYear),
-                    color = TuViIvoryDim.copy(alpha = 0.6f),
-                    fontSize = 11.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
             }
 
             GoldDivider()
 
-            // ── Submit ──
             Button(
                 onClick = {
                     onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich)
@@ -888,23 +862,41 @@ fun InputScreen(
                 )
             }
 
-            Text(
-                text = stringResource(R.string.input_footer_disclaimer),
-                color = TuViIvoryDim.copy(alpha = 0.45f),
-                fontSize = 11.sp,
-                fontStyle = FontStyle.Italic,
-                textAlign = TextAlign.Center
-            )
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .fillMaxWidth()
+                .height(64.dp)
+                .zIndex(1f)
+                .background(inputScreenBgBrush())
+                .padding(top = 8.dp, start = 4.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (onBack != null) {
+                androidx.compose.material3.IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.settings_back),
+                        tint = TuViGold,
+                    )
+                }
+            } else {
+                Spacer(Modifier.width(8.dp))
+            }
+            Text(
+                text = stringResource(R.string.input_screen_title),
+                color = TuViGold,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+            )
         }
     }
 }
 
-// ── Bát Quái Decoration ───────────────────────────────────────────────
-// 8 quẻ Bát Quái (Càn, Đoài, Ly, Chấn, Tốn, Khảm, Cấn, Khôn)
-// Mỗi quẻ có 3 vạch: vạch liên (dương ─) hoặc vạch đứt (âm - -)
-// true = vạch liên (dương), false = vạch đứt (âm)
 private val baguaTrigramLines = listOf(
     listOf(true, true, true),   // Càn  (Trời)
     listOf(true, true, false),  // Đoài (Đầm)
@@ -930,8 +922,8 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
         val cy = size.height / 2f
         val outerR = size.minDimension / 2f
         val innerR = outerR * 0.58f
-        val lineAreaW = outerR * 0.28f  // vùng vẽ vạch quẻ (giữa innerR và outerR)
-        val lineR = (innerR + outerR) / 2f // tâm vùng vạch
+        val lineAreaW = outerR * 0.28f
+        val lineR = (innerR + outerR) / 2f
 
         // 1. Vòng ngoài viền vàng
         drawCircle(
@@ -971,13 +963,13 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
         }
 
         // 5. Vẽ 3 vạch của từng quẻ
-        val lineLen = lineAreaW * 0.75f  // độ dài nửa vạch liên
-        val gapHalf = lineLen * 0.18f    // khoảng hở giữa 2 đoạn vạch đứt
-        val lineSpacing = lineAreaW * 0.22f  // khoảng cách giữa 3 vạch
+        val lineLen = lineAreaW * 0.75f
+        val gapHalf = lineLen * 0.18f
+        val lineSpacing = lineAreaW * 0.22f
         val lineStroke = outerR * 0.04f
 
         for (i in 0 until 8) {
-            val centerAngleDeg = i * 45.0 + 22.5  // giữa khe phân cách
+            val centerAngleDeg = i * 45.0 + 22.5
             val centerAngleRad = Math.toRadians(centerAngleDeg)
             val bx = (cx + lineR * cos(centerAngleRad)).toFloat()
             val by = (cy + lineR * sin(centerAngleRad)).toFloat()
@@ -989,9 +981,8 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
                 rotate(degrees = centerAngleDeg.toFloat() + 90f, pivot = Offset(0f, 0f))
             }) {
                 for (j in 0..2) {
-                    val yOff = (j - 1) * lineSpacing  // -1, 0, +1
+                    val yOff = (j - 1) * lineSpacing
                     if (lines[j]) {
-                        // Vạch liên (dương) — một đường
                         drawLine(
                             color = goldColor,
                             start = Offset(-lineLen, yOff),
@@ -999,7 +990,6 @@ fun BaguaDecoration(modifier: Modifier = Modifier) {
                             strokeWidth = lineStroke
                         )
                     } else {
-                        // Vạch đứt (âm) — hai đoạn
                         drawLine(
                             color = goldColor,
                             start = Offset(-lineLen, yOff),

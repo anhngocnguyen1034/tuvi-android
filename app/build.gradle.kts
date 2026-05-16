@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -87,6 +88,14 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.blurview)
     implementation(libs.coil.compose)
+
+    // Firebase Auth + Credential Manager (Google Sign-In)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // Language picker
     implementation("com.github.anhngocnguyen1034:anhnn-language:1.0.0")

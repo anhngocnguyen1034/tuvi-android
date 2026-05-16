@@ -48,7 +48,8 @@ fun PrivacyPolicyScreen(onBack: () -> Unit) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TuViNavy,
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
                     titleContentColor = TuViIvory,
                     navigationIconContentColor = TuViGold
                 )

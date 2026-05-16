@@ -21,6 +21,10 @@
     <string name="settings_lang_vi">Vietnamese</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">Select display language</string>
+    <string name="settings_account_section">Account</string>
+    <string name="settings_account_unknown_name">Google user</string>
+    <string name="settings_account_unknown_email">No email</string>
+    <string name="settings_logout">Sign out</string>
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
@@ -45,7 +49,7 @@
     <string name="home_btn_view_now">View now</string>
 
     <!-- InputScreen -->
-    <string name="input_screen_title">TỬ VI BY ANHNN</string>
+    <string name="input_screen_title">Chart Information</string>
     <string name="input_lunar_picker_title">SELECT LUNAR BIRTH DATE</string>
     <string name="input_picker_day">Day</string>
     <string name="input_picker_month">Month</string>
@@ -66,9 +70,7 @@
     <string name="input_gender_female">Female</string>
     <string name="input_label_view_year">VIEW YEAR</string>
     <string name="input_hint_view_year">Chart view year</string>
-    <string name="input_view_year_range_hint">Select year from %1$d to %2$d (default: current year)</string>
     <string name="input_btn_view_chart">VIEW TỬ VI CHART</string>
-    <string name="input_footer_disclaimer">Results based on traditional Tử Vi Đẩu Số</string>
 
     <!-- TuViChartScreen -->
     <string name="chart_cd_download">Download chart image</string>
@@ -270,6 +272,12 @@
     <string name="ai_reading_refresh_btn_for_cung">Refresh %1$s palace</string>
     <string name="ai_reading_loading_cung">Asking AI about the %1$s palace…</string>
     <string name="ai_reading_hint_single_cung">Pick one palace at a time — the answer goes deeper than asking about the whole chart.</string>
+    <string name="login_title">Tu Vi AnhNN</string>
+    <string name="login_subtitle">Sign in to save your charts and unlock AI interpretation.</string>
+    <string name="login_google_btn">Sign in with Google</string>
+    <string name="login_disclaimer">By signing in you agree to the terms of use and privacy policy.</string>
+    <string name="login_error_generic">Sign-in failed: %1$s</string>
+    <string name="login_error_unknown">Sign-in failed. Please try again.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 

@@ -4,8 +4,13 @@ import android.content.Context
 import com.example.tuvi.BuildConfig
 import com.example.tuvi.data.local.TuViDatabase
 import com.example.tuvi.data.remote.TuViApiService
+import com.example.tuvi.data.repository.AuthRepositoryImpl
 import com.example.tuvi.data.repository.SavedChartRepositoryImpl
 import com.example.tuvi.data.repository.TuViRepositoryImpl
+import com.example.tuvi.domain.repository.AuthRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.example.tuvi.domain.usecase.DeleteSavedChartUseCase
 import com.example.tuvi.domain.usecase.GetAllGroupsUseCase
 import com.example.tuvi.domain.usecase.GetAllSavedChartsUseCase
@@ -25,7 +30,7 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.1.17:8000"
+    private const val BASE_URL = "http://192.168.0.101:8000"
 
     lateinit var app: android.app.Application
         private set
@@ -90,4 +95,7 @@ object AppContainer {
 
     /** Serializer dùng chung để encode/decode TuViChart và TuViChartInput khi lưu DB */
     val appJson: Json get() = json
+
+    private val firebaseAuth: FirebaseAuth by lazy { Firebase.auth }
+    val authRepository: AuthRepository by lazy { AuthRepositoryImpl(firebaseAuth, apiService) }
 }
