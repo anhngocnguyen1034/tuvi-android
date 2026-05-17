@@ -63,6 +63,7 @@ import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 
 class MainActivity : ComponentActivity() {
 
@@ -293,17 +294,42 @@ fun TuViApp(isDark: Boolean = true) {
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
             val aiReadings = (uiState as? TuViUiState.Success)?.aiReadings ?: emptyMap()
+            val authUser = (authState as? AuthUiState.SignedIn)?.user
+            var showInsufficient by rememberSaveable { mutableStateOf(false) }
+            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             AiReadingScreen(
                 selectedCung = selectedCung,
                 aiReadings = aiReadings,
                 loading = aiInterpretLoading,
                 onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
-                    viewModel.fetchAiInterpretation(selectedCung) { err ->
-                        Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
-                    }
+                    viewModel.fetchAiInterpretation(
+                        cung = selectedCung,
+                        onError = { err ->
+                            if (err == TuViError.AiInsufficientTokens) {
+                                showInsufficient = true
+                            } else {
+                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
+                            }
+                        },
+                        onBalanceUpdated = { tokens, free ->
+                            authViewModel.updateBalance(tokens, free)
+                        },
+                    )
                 },
                 onBack = { navController.popBackStack() },
+                tokens = authUser?.tokens,
+                freeQuestions = authUser?.freeQuestions,
+                aiQuestionCost = authUser?.aiQuestionCost,
+                showInsufficientDialog = showInsufficient,
+                onDismissInsufficientDialog = { showInsufficient = false },
+                onTopUp = {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.ai_topup_coming_soon),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                },
             )
         }
         composable(

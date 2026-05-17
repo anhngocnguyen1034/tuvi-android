@@ -285,6 +285,13 @@
     <string name="error_ai_no_input">Thiếu dữ liệu sinh — không thể gọi luận giải AI.</string>
     <string name="error_ai_no_chart">Chưa có lá số hiển thị — không thể gọi luận giải AI.</string>
     <string name="error_ai_no_cung">Hãy chọn 1 cung trước khi luận giải.</string>
+    <string name="error_ai_insufficient_tokens">Hết lượt miễn phí và số dư token không đủ.</string>
+    <string name="ai_insufficient_dialog_title">Hết lượt miễn phí</string>
+    <string name="ai_insufficient_dialog_body">Bạn cần %1$d token để hỏi AI tiếp. Số dư hiện tại: %2$d token. Nạp thêm để tiếp tục.</string>
+    <string name="ai_insufficient_dialog_topup">Nạp token</string>
+    <string name="ai_insufficient_dialog_cancel">Để sau</string>
+    <string name="ai_balance_hint">⭐ %1$d token · 🎁 %2$d lượt miễn phí</string>
+    <string name="ai_topup_coming_soon">Tính năng nạp token sẽ sớm có mặt.</string>
     <string name="ai_reading_cung_picker_label">Chọn cung để luận giải</string>
     <string name="ai_reading_request_btn_for_cung">Luận giải cung %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung">Tải lại cung %1$s</string>

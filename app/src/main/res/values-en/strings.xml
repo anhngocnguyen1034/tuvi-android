@@ -269,6 +269,13 @@
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
     <string name="error_ai_no_cung">Pick a palace before asking AI.</string>
+    <string name="error_ai_insufficient_tokens">Out of free questions and your token balance is too low.</string>
+    <string name="ai_insufficient_dialog_title">No free questions left</string>
+    <string name="ai_insufficient_dialog_body">You need %1$d tokens to ask the AI. Current balance: %2$d tokens. Top up to continue.</string>
+    <string name="ai_insufficient_dialog_topup">Top up</string>
+    <string name="ai_insufficient_dialog_cancel">Later</string>
+    <string name="ai_balance_hint">⭐ %1$d tokens · 🎁 %2$d free questions</string>
+    <string name="ai_topup_coming_soon">Top-up will be available soon.</string>
     <string name="ai_reading_cung_picker_label">Pick a palace to interpret</string>
     <string name="ai_reading_request_btn_for_cung">Interpret %1$s palace</string>
     <string name="ai_reading_refresh_btn_for_cung">Refresh %1$s palace</string>

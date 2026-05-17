@@ -51,6 +51,20 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Cập nhật số dư local ngay sau khi /api/interpret trả về `tokens_remaining` /
+     * `free_questions_remaining` — tránh gọi lại /api/me. No-op nếu chưa SignedIn.
+     */
+    fun updateBalance(tokens: Int?, freeQuestions: Int?) {
+        val current = _uiState.value as? AuthUiState.SignedIn ?: return
+        _uiState.value = AuthUiState.SignedIn(
+            current.user.copy(
+                tokens = tokens ?: current.user.tokens,
+                freeQuestions = freeQuestions ?: current.user.freeQuestions,
+            )
+        )
+    }
+
     /** Gọi /api/me để cập nhật số dư tokens / free_questions. No-op nếu chưa login. */
     fun refreshProfile() {
         if (!isSignedIn) return

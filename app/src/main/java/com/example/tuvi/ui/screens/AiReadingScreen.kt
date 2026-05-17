@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,8 +66,16 @@ fun AiReadingScreen(
     onSelectCung: (CungSlug) -> Unit,
     onRequest: () -> Unit,
     onBack: () -> Unit,
+    tokens: Int? = null,
+    freeQuestions: Int? = null,
+    aiQuestionCost: Int? = null,
+    showInsufficientDialog: Boolean = false,
+    onDismissInsufficientDialog: () -> Unit = {},
+    onTopUp: () -> Unit = {},
 ) {
     val currentReading = selectedCung?.let(aiReadings::get)
+    val canAfford = (freeQuestions ?: 0) > 0 ||
+        (aiQuestionCost?.let { (tokens ?: 0) >= it } ?: true)
 
     Column(
         modifier = Modifier
@@ -86,10 +96,25 @@ fun AiReadingScreen(
                 onSelect = onSelectCung,
             )
 
+            if (tokens != null || freeQuestions != null) {
+                Text(
+                    text = stringResource(
+                        R.string.ai_balance_hint,
+                        tokens ?: 0,
+                        freeQuestions ?: 0,
+                    ),
+                    color = ChartGoldDim,
+                    fontSize = 12.sp,
+                    fontFamily = BeVietnamProFamily,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                )
+            }
+
             ActionPanel(
                 selectedCung = selectedCung,
                 hasReadingForSelected = currentReading != null,
                 loading = loading,
+                canAfford = canAfford,
                 onRequest = onRequest,
             )
 
@@ -113,6 +138,39 @@ fun AiReadingScreen(
             }
         }
     }
+
+    if (showInsufficientDialog) {
+        InsufficientTokensDialog(
+            cost = aiQuestionCost ?: 0,
+            tokens = tokens ?: 0,
+            onDismiss = onDismissInsufficientDialog,
+            onTopUp = onTopUp,
+        )
+    }
+}
+
+@Composable
+private fun InsufficientTokensDialog(
+    cost: Int,
+    tokens: Int,
+    onDismiss: () -> Unit,
+    onTopUp: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.ai_insufficient_dialog_title)) },
+        text = { Text(stringResource(R.string.ai_insufficient_dialog_body, cost, tokens)) },
+        confirmButton = {
+            TextButton(onClick = { onDismiss(); onTopUp() }) {
+                Text(stringResource(R.string.ai_insufficient_dialog_topup))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.ai_insufficient_dialog_cancel))
+            }
+        },
+    )
 }
 
 @Composable
@@ -195,6 +253,7 @@ private fun ActionPanel(
     selectedCung: CungSlug?,
     hasReadingForSelected: Boolean,
     loading: Boolean,
+    canAfford: Boolean,
     onRequest: () -> Unit,
 ) {
     Column(
@@ -211,7 +270,7 @@ private fun ActionPanel(
         }
         Button(
             onClick = onRequest,
-            enabled = !loading && selectedCung != null,
+            enabled = !loading && selectedCung != null && canAfford,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),

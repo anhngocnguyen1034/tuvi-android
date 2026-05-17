@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.domain.AiInterpretationUnavailableException
+import com.example.tuvi.domain.InsufficientTokensException
 import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.model.TuViChart
@@ -83,7 +84,11 @@ class TuViViewModel(
      * POST /api/interpret cho [cung] cụ thể; cache kết quả vào [TuViUiState.Success.aiReadings].
      * Lỗi trả qua [onError] (toast/snackbar).
      */
-    fun fetchAiInterpretation(cung: CungSlug?, onError: (TuViError) -> Unit) {
+    fun fetchAiInterpretation(
+        cung: CungSlug?,
+        onError: (TuViError) -> Unit,
+        onBalanceUpdated: (tokens: Int?, freeQuestions: Int?) -> Unit = { _, _ -> },
+    ) {
         val input = _lastInput.value
         if (input == null) {
             onError(TuViError.AiNoInput)
@@ -108,6 +113,7 @@ class TuViViewModel(
                             data = interpretation.chart,
                             aiReadings = base.aiReadings + (cung to interpretation.aiReading),
                         )
+                        onBalanceUpdated(interpretation.tokensRemaining, interpretation.freeQuestionsRemaining)
                     }
                     .onFailure { onError(mapThrowable(it)) }
             } finally {
@@ -117,6 +123,7 @@ class TuViViewModel(
     }
 
     private fun mapThrowable(t: Throwable): TuViError = when (t) {
+        is InsufficientTokensException -> TuViError.AiInsufficientTokens
         is AiInterpretationUnavailableException -> TuViError.AiUnavailable
         else -> t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
     }
