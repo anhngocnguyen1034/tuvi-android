@@ -8,4 +8,7 @@ data class AuthUser(
     val email: String?,
     val displayName: String?,
     val photoUrl: String?,
+    val tokens: Int? = null,
+    val freeQuestions: Int? = null,
+    val aiQuestionCost: Int? = null,
 )

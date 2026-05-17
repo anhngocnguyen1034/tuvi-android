@@ -5,6 +5,7 @@ import com.example.tuvi.data.remote.dto.ThangLichDto
 import com.example.tuvi.data.remote.dto.InterpretResponse
 import com.example.tuvi.data.remote.dto.LoginRequest
 import com.example.tuvi.data.remote.dto.LoginResponse
+import com.example.tuvi.data.remote.dto.MeResponse
 import com.example.tuvi.data.remote.dto.TuViRequest
 import com.example.tuvi.data.remote.dto.TuViResponse
 import retrofit2.http.Body
@@ -22,6 +23,10 @@ interface TuViApiService {
     /** Backend verify idToken qua Firebase Admin, tạo/cập nhật user trong MongoDB. */
     @POST("/api/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
+
+    /** Lấy profile user hiện tại (tokens, free_questions, ai_question_cost). */
+    @GET("/api/me")
+    suspend fun getMe(): MeResponse
 
     /** Lấy toàn bộ lịch của một tháng dương lịch. */
     @GET("/api/lich/{nam}/{thang}")

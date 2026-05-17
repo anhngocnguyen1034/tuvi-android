@@ -37,6 +37,10 @@ class AuthViewModel(
 
     val isSignedIn: Boolean get() = authRepository.currentUser() != null
 
+    init {
+        if (isSignedIn) refreshProfile()
+    }
+
     fun signInWithGoogle(context: Context) {
         if (_uiState.value is AuthUiState.Loading) return
         viewModelScope.launch {
@@ -44,6 +48,15 @@ class AuthViewModel(
             runCatching { authRepository.signInWithGoogle(context) }
                 .onSuccess { _uiState.value = AuthUiState.SignedIn(it) }
                 .onFailure { _uiState.value = AuthUiState.Error(it.message.orEmpty()) }
+        }
+    }
+
+    /** Gọi /api/me để cập nhật số dư tokens / free_questions. No-op nếu chưa login. */
+    fun refreshProfile() {
+        if (!isSignedIn) return
+        viewModelScope.launch {
+            val updated = authRepository.refreshProfile() ?: return@launch
+            _uiState.value = AuthUiState.SignedIn(updated)
         }
     }
 

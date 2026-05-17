@@ -15,4 +15,10 @@ interface AuthRepository {
     suspend fun signInWithGoogle(context: Context): AuthUser
 
     suspend fun signOut(context: Context)
+
+    /**
+     * Gọi GET /api/me để lấy số dư token, số câu hỏi miễn phí và đơn giá AI mới nhất.
+     * Trả về null nếu chưa đăng nhập hoặc backend không phản hồi.
+     */
+    suspend fun refreshProfile(): AuthUser?
 }

@@ -51,10 +51,28 @@ class AuthRepositoryImpl(
             ?: throw IllegalStateException("Firebase did not return a user")
 
         // Best-effort: bắn idToken lên backend; KHÔNG block luồng login nếu backend chưa sẵn sàng.
-        runCatching { apiService.login(LoginRequest(idToken = googleIdToken)) }
-            .onFailure { Log.w(TAG, "POST /api/login failed (frontend-first): ${it.message}") }
+        val loginResult = runCatching {
+            apiService.login(LoginRequest(idToken = googleIdToken))
+        }.onFailure { Log.w(TAG, "POST /api/login failed (frontend-first): ${it.message}") }
 
-        firebaseUser.toDomain()
+        val base = firebaseUser.toDomain()
+        loginResult.getOrNull()?.let { resp ->
+            base.copy(tokens = resp.tokens, freeQuestions = resp.freeQuestions)
+        } ?: base
+    }
+
+    override suspend fun refreshProfile(): AuthUser? = withContext(Dispatchers.IO) {
+        val firebaseUser = firebaseAuth.currentUser ?: return@withContext null
+        runCatching { apiService.getMe() }
+            .onFailure { Log.w(TAG, "GET /api/me failed: ${it.message}") }
+            .getOrNull()
+            ?.let { me ->
+                firebaseUser.toDomain().copy(
+                    tokens = me.tokens,
+                    freeQuestions = me.freeQuestions,
+                    aiQuestionCost = me.aiQuestionCost,
+                )
+            }
     }
 
     override suspend fun signOut(context: Context) = withContext(Dispatchers.IO) {

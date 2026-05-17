@@ -217,6 +217,20 @@ fun SettingsScreen(
 }
 
 @Composable
+private fun BalanceLine(tokens: Int?, freeQuestions: Int?) {
+    val tokensText = tokens?.toString()
+        ?: stringResource(R.string.settings_balance_dash)
+    val freeText = freeQuestions?.toString()
+        ?: stringResource(R.string.settings_balance_dash)
+    Text(
+        text = stringResource(R.string.settings_balance_format, tokensText, freeText),
+        color = TuViGoldLight,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold
+    )
+}
+
+@Composable
 private fun AccountProfileCard(
     user: AuthUser?,
     onSignOut: () -> Unit
@@ -284,6 +298,13 @@ private fun AccountProfileCard(
                 color = TuViIvoryDim,
                 fontSize = 12.sp
             )
+            if (user != null) {
+                Spacer(Modifier.height(4.dp))
+                BalanceLine(
+                    tokens = user.tokens,
+                    freeQuestions = user.freeQuestions,
+                )
+            }
         }
         TextButton(onClick = onSignOut) {
             Text(

@@ -3,6 +3,7 @@ package com.example.tuvi.di
 import android.content.Context
 import com.example.tuvi.BuildConfig
 import com.example.tuvi.data.local.TuViDatabase
+import com.example.tuvi.data.remote.AuthInterceptor
 import com.example.tuvi.data.remote.TuViApiService
 import com.example.tuvi.data.repository.AuthRepositoryImpl
 import com.example.tuvi.data.repository.SavedChartRepositoryImpl
@@ -40,20 +41,25 @@ object AppContainer {
         coerceInputValues = true
     }
 
+    private val firebaseAuth: FirebaseAuth by lazy { Firebase.auth }
+
     /** Default OkHttp read timeout is 10s; `/api/interpret` (Gemini) often needs much longer. */
-    private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(180, TimeUnit.SECONDS)
-        .writeTimeout(60, TimeUnit.SECONDS)
-        .apply {
-            // Body chứa PII (tên, ngày/giờ sinh, giới tính) — chỉ log trong debug build.
-            if (BuildConfig.DEBUG) {
-                addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
+    private val okHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(180, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(AuthInterceptor(firebaseAuth))
+            .apply {
+                // Body chứa PII (tên, ngày/giờ sinh, giới tính) — chỉ log trong debug build.
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                }
             }
-        }
-        .build()
+            .build()
+    }
 
     val apiService: TuViApiService by lazy {
         Retrofit.Builder()
@@ -96,6 +102,5 @@ object AppContainer {
     /** Serializer dùng chung để encode/decode TuViChart và TuViChartInput khi lưu DB */
     val appJson: Json get() = json
 
-    private val firebaseAuth: FirebaseAuth by lazy { Firebase.auth }
     val authRepository: AuthRepository by lazy { AuthRepositoryImpl(firebaseAuth, apiService) }
 }

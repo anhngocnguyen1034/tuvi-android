@@ -166,6 +166,7 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("settings") {
             val authUser = (authState as? AuthUiState.SignedIn)?.user
+            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             SettingsScreen(
                 onBack = { navController.popBackStack() },
                 authUser = authUser,

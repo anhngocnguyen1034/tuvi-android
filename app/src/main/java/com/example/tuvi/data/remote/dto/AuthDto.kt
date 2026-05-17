@@ -16,4 +16,16 @@ data class LoginResponse(
     val name: String? = null,
     @SerialName("photo_url") val photoUrl: String? = null,
     val tokens: Int? = null,
+    @SerialName("free_questions") val freeQuestions: Int? = null,
+)
+
+@Serializable
+data class MeResponse(
+    val uid: String? = null,
+    val email: String? = null,
+    val name: String? = null,
+    @SerialName("photo_url") val photoUrl: String? = null,
+    val tokens: Int? = null,
+    @SerialName("free_questions") val freeQuestions: Int? = null,
+    @SerialName("ai_question_cost") val aiQuestionCost: Int? = null,
 )
