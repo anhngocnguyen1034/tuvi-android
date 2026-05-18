@@ -115,6 +115,8 @@ fun AiReadingScreen(
                 hasReadingForSelected = currentReading != null,
                 loading = loading,
                 canAfford = canAfford,
+                hasFreeQuestion = (freeQuestions ?: 0) > 0,
+                aiQuestionCost = aiQuestionCost,
                 onRequest = onRequest,
             )
 
@@ -254,6 +256,8 @@ private fun ActionPanel(
     hasReadingForSelected: Boolean,
     loading: Boolean,
     canAfford: Boolean,
+    hasFreeQuestion: Boolean,
+    aiQuestionCost: Int?,
     onRequest: () -> Unit,
 ) {
     Column(
@@ -263,10 +267,17 @@ private fun ActionPanel(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val cungName = selectedCung?.displayName
+        val cost = aiQuestionCost ?: 20
         val btnText = when {
-            cungName == null -> stringResource(R.string.chart_ai_request_btn)
-            hasReadingForSelected -> stringResource(R.string.ai_reading_refresh_btn_for_cung, cungName)
-            else -> stringResource(R.string.ai_reading_request_btn_for_cung, cungName)
+            cungName == null ->
+                if (hasFreeQuestion) stringResource(R.string.chart_ai_request_btn_free)
+                else stringResource(R.string.chart_ai_request_btn_paid, cost)
+            hasReadingForSelected ->
+                if (hasFreeQuestion) stringResource(R.string.ai_reading_refresh_btn_for_cung_free, cungName)
+                else stringResource(R.string.ai_reading_refresh_btn_for_cung_paid, cungName, cost)
+            else ->
+                if (hasFreeQuestion) stringResource(R.string.ai_reading_request_btn_for_cung_free, cungName)
+                else stringResource(R.string.ai_reading_request_btn_for_cung_paid, cungName, cost)
         }
         Button(
             onClick = onRequest,

@@ -26,7 +26,7 @@
     <string name="settings_account_unknown_email">Chưa có email</string>
     <string name="settings_logout">Đăng xuất</string>
     <string name="settings_balance_dash">—</string>
-    <string name="settings_balance_format">⭐ %1$s token · 🎁 %2$s lượt hỏi miễn phí</string>
+    <string name="settings_balance_format">⭐ %1$s token</string>
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
@@ -155,8 +155,12 @@
     <string name="add_event_sheet_title">Add event %1$d/%2$d/%3$d (%4$s)</string>
     <string name="add_event_label_title">Title *</string>
     <string name="add_event_label_note">Note</string>
-    <string name="add_event_reminder">Reminder</string>
-    <string name="add_event_notif_denied">Notification permission denied – event will still be saved</string>
+    <string name="add_event_reminder">Nhắc nhở</string>
+    <string name="add_event_notif_denied">Đã từ chối quyền thông báo – sự kiện vẫn được lưu</string>
+    <string name="notif_perm_blocked_title">Cần quyền thông báo</string>
+    <string name="notif_perm_blocked_message">Bạn đã từ chối quyền thông báo. Vui lòng vào Cài đặt để bật thủ công, ứng dụng mới có thể nhắc bạn về sự kiện.</string>
+    <string name="notif_perm_open_settings">Mở cài đặt</string>
+    <string name="notif_perm_cancel">Để sau</string>
     <string name="add_event_alarm_time">Alarm time</string>
     <string name="add_event_btn_save">Save event</string>
     <string name="add_event_remind_at">Remind at %1$s:%2$s</string>
@@ -295,6 +299,12 @@
     <string name="ai_reading_cung_picker_label">Chọn cung để luận giải</string>
     <string name="ai_reading_request_btn_for_cung">Luận giải cung %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung">Tải lại cung %1$s</string>
+    <string name="ai_reading_request_btn_for_cung_free">Hỏi AI free cung %1$s</string>
+    <string name="ai_reading_refresh_btn_for_cung_free">Hỏi AI free (tải lại %1$s)</string>
+    <string name="ai_reading_request_btn_for_cung_paid">Hỏi AI cung %1$s (%2$d token)</string>
+    <string name="ai_reading_refresh_btn_for_cung_paid">Tải lại cung %1$s (%2$d token)</string>
+    <string name="chart_ai_request_btn_free">Hỏi AI free</string>
+    <string name="chart_ai_request_btn_paid">Hỏi AI (%1$d token)</string>
     <string name="ai_reading_loading_cung">Đang hỏi AI về cung %1$s…</string>
     <string name="ai_reading_hint_single_cung">Mỗi lần chọn 1 cung — câu trả lời sẽ sâu hơn so với hỏi cả lá số.</string>
     <string name="login_title">Tử Vi AnhNN</string>

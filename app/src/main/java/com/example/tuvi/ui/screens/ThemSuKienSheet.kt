@@ -1,9 +1,15 @@
 package com.example.tuvi.ui.screens
 
 import android.Manifest
+import android.app.Activity
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
+import androidx.core.app.ActivityCompat
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -23,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.tuvi.R
 import com.example.tuvi.ui.theme.*
 import java.util.Calendar
@@ -62,6 +71,27 @@ fun ThemSuKienSheet(
         } else true
     }
     var notifGranted by remember { mutableStateOf(hasNotifPerm) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    // Refresh trạng thái khi quay lại từ màn Settings hệ thống
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                            PackageManager.PERMISSION_GRANTED
+                } else true
+                notifGranted = granted
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val notifPermPrefs = remember {
+        context.getSharedPreferences("notif_perm_prefs", Context.MODE_PRIVATE)
+    }
 
     // Launcher xin quyền POST_NOTIFICATIONS (Android 13+)
     val permLauncher = rememberLauncherForActivityResult(
@@ -69,14 +99,29 @@ fun ThemSuKienSheet(
     ) { granted ->
         notifGranted = granted
         nhacNho = true   // bật nhắc dù user từ chối (vẫn lưu, chỉ không có alarm)
+        notifPermPrefs.edit().putBoolean("asked", true).apply()
+        if (!granted) {
+            val act = context as? Activity
+            val rationale = act != null && ActivityCompat
+                .shouldShowRequestPermissionRationale(act, Manifest.permission.POST_NOTIFICATIONS)
+            // Sau khi launcher trả về mà cả granted=false và rationale=false ⇒ "Don't ask again"
+            if (!rationale) showSettingsDialog = true
+        }
     }
 
     fun requestNotifPerm() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!notifGranted) {
-                permLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notifGranted) {
+            val act = context as? Activity
+            val askedBefore = notifPermPrefs.getBoolean("asked", false)
+            val rationale = act != null && ActivityCompat
+                .shouldShowRequestPermissionRationale(act, Manifest.permission.POST_NOTIFICATIONS)
+            // Đã hỏi trước đó, hệ thống không cho phép xin lại (Don't ask again / quá số lần)
+            if (askedBefore && !rationale) {
+                showSettingsDialog = true
                 return
             }
+            permLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            return
         }
         nhacNho = true
     }
@@ -198,6 +243,34 @@ fun ThemSuKienSheet(
             }
 
             // ── Nút Lưu ────────────────────────────────────────────────────
+            if (showSettingsDialog) {
+                AlertDialog(
+                    onDismissRequest = { showSettingsDialog = false },
+                    containerColor = TuViNavyCard,
+                    titleContentColor = TuViGold,
+                    textContentColor = TuViIvory,
+                    title = { Text(stringResource(R.string.notif_perm_blocked_title), fontWeight = FontWeight.Bold) },
+                    text = { Text(stringResource(R.string.notif_perm_blocked_message), fontSize = 14.sp) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showSettingsDialog = false
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        }) {
+                            Text(stringResource(R.string.notif_perm_open_settings), color = TuViGold, fontWeight = FontWeight.SemiBold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showSettingsDialog = false }) {
+                            Text(stringResource(R.string.notif_perm_cancel), color = TuViIvoryDim)
+                        }
+                    },
+                )
+            }
+
             Button(
                 onClick = {
                     if (tieuDe.isBlank()) return@Button

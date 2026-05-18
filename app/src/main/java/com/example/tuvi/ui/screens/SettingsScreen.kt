@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -215,13 +216,11 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun BalanceLine(tokens: Int?, freeQuestions: Int?) {
+private fun BalanceLine(tokens: Int?) {
     val tokensText = tokens?.toString()
         ?: stringResource(R.string.settings_balance_dash)
-    val freeText = freeQuestions?.toString()
-        ?: stringResource(R.string.settings_balance_dash)
     Text(
-        text = stringResource(R.string.settings_balance_format, tokensText, freeText),
+        text = stringResource(R.string.settings_balance_format, tokensText),
         color = TuViGoldLight,
         fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold
@@ -289,26 +288,27 @@ private fun AccountProfileCard(
                 text = displayName,
                 color = TuViIvory,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = email,
                 color = TuViIvoryDim,
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             if (user != null) {
                 Spacer(Modifier.height(4.dp))
-                BalanceLine(
-                    tokens = user.tokens,
-                    freeQuestions = user.freeQuestions,
-                )
+                BalanceLine(tokens = user.tokens)
             }
         }
-        TextButton(onClick = onSignOut) {
-            Text(
-                text = stringResource(R.string.settings_logout),
-                color = TuViGold,
-                fontWeight = FontWeight.SemiBold
+        IconButton(onClick = onSignOut) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                contentDescription = stringResource(R.string.settings_logout),
+                tint = TuViGold
             )
         }
     }

@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.101:8000"
-
+    private const val BASE_URL = "http://192.168.0.102:8000"
+//    private const val BASE_URL = "http://192.168.1.17:8000"
     lateinit var app: android.app.Application
         private set
 
