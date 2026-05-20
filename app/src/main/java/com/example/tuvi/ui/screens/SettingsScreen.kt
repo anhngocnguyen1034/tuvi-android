@@ -1,6 +1,7 @@
 package com.example.tuvi.ui.screens
 
 import android.app.Application
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,17 +10,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,17 +47,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.SettingsViewModel
-import com.example.tuvi.ui.components.tokenAnnotated
-import com.example.tuvi.ui.components.tokenInlineContent
 import com.example.tuvi.ui.screens.components.GenZThemeSwitch
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -63,6 +63,7 @@ import com.example.tuvi.ui.theme.TuViIvoryDim
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
+import com.example.tuvi.ui.theme.TuViRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,18 +121,6 @@ fun SettingsScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Text(
-                text = stringResource(R.string.settings_account_section),
-                color = TuViGold,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 0.8.sp
-            )
-            AccountProfileCard(
-                user = authUser,
-                onSignOut = onSignOut
-            )
-
             Text(
                 text = stringResource(R.string.settings_theme),
                 color = TuViGold,
@@ -212,107 +201,41 @@ fun SettingsScreen(
                 lineHeight = 17.sp,
                 modifier = Modifier.padding(top = 12.dp)
             )
+
+            if (authUser != null) {
+                Spacer(Modifier.height(8.dp))
+                LogoutButton(onClick = onSignOut)
+            }
         }
     }
 }
 
 @Composable
-private fun BalanceLine(tokens: Int?) {
-    val tokensText = tokens?.toString()
-        ?: stringResource(R.string.settings_balance_dash)
-    Text(
-        text = tokenAnnotated(stringResource(R.string.settings_balance_format, tokensText)),
-        inlineContent = tokenInlineContent(sizeSp = 13.sp),
-        color = TuViGoldLight,
-        fontSize = 12.sp,
-        fontWeight = FontWeight.SemiBold
-    )
-}
-
-@Composable
-private fun AccountProfileCard(
-    user: AuthUser?,
-    onSignOut: () -> Unit
-) {
-    val displayName = user?.displayName
-        ?.takeIf { it.isNotBlank() }
-        ?: stringResource(R.string.settings_account_unknown_name)
-    val email = user?.email
-        ?.takeIf { it.isNotBlank() }
-        ?: stringResource(R.string.settings_account_unknown_email)
-    val initial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
-
-    Row(
+private fun LogoutButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(TuViNavyLight.copy(alpha = 0.9f), TuViNavyCard.copy(alpha = 0.85f))
-                )
-            )
-            .border(
-                width = 1.dp,
-                brush = Brush.linearGradient(
-                    listOf(TuViGold.copy(alpha = 0.35f), TuViGoldDark.copy(alpha = 0.15f))
-                ),
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(horizontal = 18.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
+            .defaultMinSize(minHeight = 52.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = TuViRed.copy(alpha = 0.18f),
+            contentColor = TuViRed,
+        ),
+        border = BorderStroke(1.dp, TuViRed.copy(alpha = 0.55f)),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
     ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(TuViGold.copy(alpha = 0.18f)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (!user?.photoUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = user?.photoUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Text(
-                    text = initial,
-                    color = TuViGold,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = displayName,
-                color = TuViIvory,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = email,
-                color = TuViIvoryDim,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (user != null) {
-                Spacer(Modifier.height(4.dp))
-                BalanceLine(tokens = user.tokens)
-            }
-        }
-        IconButton(onClick = onSignOut) {
-            Icon(
-                painter = painterResource(R.drawable.ic_logout),
-                contentDescription = stringResource(R.string.settings_logout),
-                tint = TuViGold
-            )
-        }
+        Icon(
+            painter = painterResource(R.drawable.ic_logout),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = stringResource(R.string.settings_logout),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
 }
 

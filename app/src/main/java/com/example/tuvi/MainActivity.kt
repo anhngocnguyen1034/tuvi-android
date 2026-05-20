@@ -146,6 +146,7 @@ fun TuViApp(isDark: Boolean = true) {
             )
         }
         composable("home") {
+            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             HomeScreen(
                 onOpenTuVi = { navController.navigate("input") },
                 onOpenBrowser = {
@@ -153,7 +154,8 @@ fun TuViApp(isDark: Boolean = true) {
                     navController.navigate("browser?url=$url&title=Trình+Duyệt")
                 },
                 onOpenCalendar = { navController.navigate("lich") },
-                onOpenSettings = { navController.navigate("settings") }
+                onOpenSettings = { navController.navigate("settings") },
+                authUser = (authState as? AuthUiState.SignedIn)?.user,
             )
         }
         composable("calendar_chooser") {
