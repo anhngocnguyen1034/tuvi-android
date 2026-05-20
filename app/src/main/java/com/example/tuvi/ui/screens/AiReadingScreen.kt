@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.presentation.screens.AiReadingSection
+import com.example.tuvi.ui.components.tokenAnnotated
+import com.example.tuvi.ui.components.tokenInlineContent
 import com.example.tuvi.ui.theme.BeVietnamProFamily
 import com.example.tuvi.ui.theme.ChartDeepBg
 import com.example.tuvi.ui.theme.ChartGold
@@ -98,11 +101,14 @@ fun AiReadingScreen(
 
             if (tokens != null || freeQuestions != null) {
                 Text(
-                    text = stringResource(
-                        R.string.ai_balance_hint,
-                        tokens ?: 0,
-                        freeQuestions ?: 0,
+                    text = tokenAnnotated(
+                        stringResource(
+                            R.string.ai_balance_hint,
+                            tokens ?: 0,
+                            freeQuestions ?: 0,
+                        )
                     ),
+                    inlineContent = tokenInlineContent(sizeSp = 13.sp),
                     color = ChartGoldDim,
                     fontSize = 12.sp,
                     fontFamily = BeVietnamProFamily,
@@ -161,10 +167,20 @@ private fun InsufficientTokensDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.ai_insufficient_dialog_title)) },
-        text = { Text(stringResource(R.string.ai_insufficient_dialog_body, cost, tokens)) },
+        text = {
+            Text(
+                text = tokenAnnotated(
+                    stringResource(R.string.ai_insufficient_dialog_body, cost, tokens)
+                ),
+                inlineContent = tokenInlineContent(),
+            )
+        },
         confirmButton = {
             TextButton(onClick = { onDismiss(); onTopUp() }) {
-                Text(stringResource(R.string.ai_insufficient_dialog_topup))
+                Text(
+                    text = tokenAnnotated(stringResource(R.string.ai_insufficient_dialog_topup)),
+                    inlineContent = tokenInlineContent(),
+                )
             }
         },
         dismissButton = {
@@ -284,8 +300,12 @@ private fun ActionPanel(
             enabled = !loading && selectedCung != null && canAfford,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .defaultMinSize(minHeight = 48.dp),
             shape = RoundedCornerShape(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                horizontal = 16.dp,
+                vertical = 10.dp,
+            ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ChartNavy.copy(alpha = 0.45f),
                 contentColor = ChartGold,
@@ -295,10 +315,14 @@ private fun ActionPanel(
             border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
         ) {
             Text(
-                text = btnText,
+                text = tokenAnnotated(btnText),
+                inlineContent = tokenInlineContent(sizeSp = 16.sp),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
                 fontFamily = BeVietnamProFamily,
+                maxLines = 2,
+                softWrap = true,
+                textAlign = TextAlign.Center,
             )
         }
         if (loading) {

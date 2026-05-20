@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +52,8 @@ import coil.compose.AsyncImage
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.SettingsViewModel
+import com.example.tuvi.ui.components.tokenAnnotated
+import com.example.tuvi.ui.components.tokenInlineContent
 import com.example.tuvi.ui.screens.components.GenZThemeSwitch
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -220,7 +221,8 @@ private fun BalanceLine(tokens: Int?) {
     val tokensText = tokens?.toString()
         ?: stringResource(R.string.settings_balance_dash)
     Text(
-        text = stringResource(R.string.settings_balance_format, tokensText),
+        text = tokenAnnotated(stringResource(R.string.settings_balance_format, tokensText)),
+        inlineContent = tokenInlineContent(sizeSp = 13.sp),
         color = TuViGoldLight,
         fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold
@@ -306,7 +308,7 @@ private fun AccountProfileCard(
         }
         IconButton(onClick = onSignOut) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                painter = painterResource(R.drawable.ic_logout),
                 contentDescription = stringResource(R.string.settings_logout),
                 tint = TuViGold
             )
