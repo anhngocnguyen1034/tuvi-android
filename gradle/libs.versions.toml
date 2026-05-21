@@ -1,7 +1,10 @@
 [versions]
 agp = "8.13.2"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.28"
+androidBlur = "1.0.3"
+anhnnComponentsFeedback = "1.0.1"
+anhnnLanguage = "1.0.1"
+kotlin = "2.3.21"
+ksp = "2.3.7"
 room = "2.7.0"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -16,7 +19,7 @@ navigationCompose = "2.8.5"
 kotlinxSerializationJson = "1.7.3"
 retrofitSerializationConverter = "1.0.0"
 lifecycleViewModelCompose = "2.8.7"
-serializationPlugin = "2.0.21"
+serializationPlugin = "2.3.21"
 datastore = "1.1.1"
 appcompat = "1.7.0"
 blurview = "version-2.0.6"
@@ -28,7 +31,11 @@ googleid = "1.1.1"
 coroutinesPlayServices = "1.9.0"
 
 [libraries]
+android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+anhnn-components-feedback = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-feedback", version.ref = "anhnnComponentsFeedback" }
+anhnn-components-rate = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate", version.ref = "anhnnComponentsFeedback" }
+anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -74,4 +81,3 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-

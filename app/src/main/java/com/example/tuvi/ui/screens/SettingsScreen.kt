@@ -322,7 +322,7 @@ private fun SavedChartsRow(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.property_1_linear),
+                    painter = painterResource(R.drawable.ic_saved),
                     contentDescription = null,
                     tint = TuViGold,
                     modifier = Modifier.size(22.dp)

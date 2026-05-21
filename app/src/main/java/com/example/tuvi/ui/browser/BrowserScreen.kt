@@ -55,7 +55,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
@@ -633,7 +632,6 @@ private fun BrowserBottomBar(
     modifier: Modifier = Modifier,
 ) {
     val bgBase  = if (isIncognito) IncognitoBg   else TuViNavy
-    val bgLight = if (isIncognito) IncognitoCard  else TuViNavyLight
     val divider = if (isIncognito) IncognitoDivider  else TuViDivider
     val accent  = if (isIncognito) IncognitoEmphasis else TuViGold
     val dim     = if (isIncognito) IncognitoMuted else TuViIvoryDim
@@ -642,8 +640,8 @@ private fun BrowserBottomBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(bgBase.copy(alpha = 0.96f))
             .navigationBarsPadding()
-            .background(bgBase)
     ) {
         // Top hairline border
         Box(

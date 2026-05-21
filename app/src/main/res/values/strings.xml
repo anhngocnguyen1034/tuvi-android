@@ -3,22 +3,22 @@
     <string name="app_name">TuVi</string>
 
     <!-- Common buttons -->
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_select">Select</string>
-    <string name="btn_close">Close</string>
-    <string name="btn_save">Save</string>
-    <string name="btn_delete">Delete</string>
-    <string name="btn_no">No</string>
-    <string name="btn_clear">Clear</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_select">Chọn</string>
+    <string name="btn_close">Đóng</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="btn_no">Không</string>
+    <string name="btn_clear">Xóa sạch</string>
 
     <!-- Settings -->
-    <string name="settings_title">Settings</string>
-    <string name="settings_back">Back</string>
-    <string name="settings_theme">Appearance</string>
-    <string name="settings_theme_dark">Dark</string>
-    <string name="settings_theme_light">Light</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_lang_vi">Vietnamese</string>
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_back">Quay lại</string>
+    <string name="settings_theme">Giao diện</string>
+    <string name="settings_theme_dark">Tối</string>
+    <string name="settings_theme_light">Sáng</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_lang_vi">Tiếng Việt</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">Chọn ngôn ngữ hiển thị</string>
     <string name="settings_account_section">Tài khoản</string>
@@ -26,14 +26,14 @@
     <string name="settings_account_unknown_email">Chưa có email</string>
     <string name="settings_logout">Đăng xuất</string>
     <string name="settings_balance_dash">—</string>
-    <string name="settings_balance_format">⭐ %1$s token</string>
-    <string name="settings_dark_mode_desc">Dark appearance</string>
-    <string name="settings_light_mode_desc">Light appearance</string>
-    <string name="content_desc_settings">Open settings</string>
-    <string name="settings_data_section">Data</string>
-    <string name="settings_saved_title">Saved Charts</string>
-    <string name="settings_saved_desc">View &amp; manage saved charts</string>
-    <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
+    <string name="settings_balance_format">%1$s token</string>
+    <string name="settings_dark_mode_desc">Giao diện tối</string>
+    <string name="settings_light_mode_desc">Giao diện sáng</string>
+    <string name="content_desc_settings">Mở cài đặt</string>
+    <string name="settings_data_section">Dữ liệu</string>
+    <string name="settings_saved_title">Lá số đã lưu</string>
+    <string name="settings_saved_desc">Xem và quản lý các lá số đã lưu</string>
+    <string name="settings_footer_hint">Thay đổi ngôn ngữ sẽ áp dụng cho các nhãn hệ thống và màn hình này; các màn hình khác có thể vẫn giữ tiếng Việt cho đến khi được chuyển đổi hoàn toàn sang tài nguyên chuỗi.</string>
     <string name="settings_notification_section">Thông báo</string>
     <string name="settings_notif_holiday_title">Ngày lễ</string>
     <string name="settings_notif_holiday_desc">Nhắc nhở các ngày lễ trong năm</string>
@@ -52,229 +52,230 @@
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>
     <string name="home_app_subtitle">BY ANHNN</string>
-    <string name="home_tuvi_title">Tử Vi Chart</string>
-    <string name="home_tuvi_desc">View your personal chart by birth date</string>
-    <string name="home_saved_title">Saved\nCharts</string>
-    <string name="home_saved_desc">View &amp; manage</string>
-    <string name="home_browser_title">Web Browser</string>
-    <string name="home_browser_desc">Browse web &amp; documents</string>
-    <string name="home_calendar_title">Lunar / Solar Calendar</string>
-    <string name="home_calendar_desc">Quick view lunar and solar calendar</string>
-    <string name="home_btn_view_now">View now</string>
+    <string name="home_tuvi_title">Lá số Tử Vi</string>
+    <string name="home_tuvi_desc">Xem lá số cá nhân theo ngày sinh</string>
+    <string name="home_saved_title">Lá số\nĐã lưu</string>
+    <string name="home_saved_desc">Xem &amp; quản lý</string>
+    <string name="home_browser_title">Trình duyệt Web</string>
+    <string name="home_browser_desc">Duyệt web &amp; tài liệu</string>
+    <string name="home_calendar_title">Âm Dương Lịch</string>
+    <string name="home_calendar_desc">Xem nhanh lịch âm và lịch dương</string>
+    <string name="home_btn_view_now">Xem ngay</string>
 
     <!-- InputScreen -->
     <string name="input_screen_title">Thông tin lá số</string>
-    <string name="input_lunar_picker_title">SELECT LUNAR BIRTH DATE</string>
-    <string name="input_picker_day">Day</string>
-    <string name="input_picker_month">Month</string>
-    <string name="input_picker_year">Year</string>
-    <string name="input_view_year_dialog_title">Select view year</string>
-    <string name="input_solar_picker_title">SELECT BIRTH DATE</string>
-    <string name="input_label_name">FULL NAME</string>
-    <string name="input_hint_name">Enter full name…</string>
-    <string name="input_label_birthday">DATE OF BIRTH</string>
-    <string name="input_solar_calendar">Solar calendar</string>
-    <string name="input_lunar_calendar">Lunar calendar</string>
-    <string name="input_label_birth_time">BIRTH TIME</string>
-    <string name="input_hour_label">Hour</string>
-    <string name="input_minute_label">Minute</string>
-    <string name="input_earthly_branch_hour">Earthly Branch Hour</string>
-    <string name="input_label_gender">GENDER</string>
-    <string name="input_gender_male">Male</string>
-    <string name="input_gender_female">Female</string>
-    <string name="input_label_view_year">VIEW YEAR</string>
-    <string name="input_hint_view_year">Chart view year</string>
-    <string name="input_btn_view_chart">VIEW TỬ VI CHART</string>
+    <string name="input_lunar_picker_title">CHỌN NGÀY SINH ÂM LỊCH</string>
+    <string name="input_picker_day">Ngày</string>
+    <string name="input_picker_month">Tháng</string>
+    <string name="input_picker_year">Năm</string>
+    <string name="input_view_year_dialog_title">Chọn năm xem hạn</string>
+    <string name="input_solar_picker_title">CHỌN NGÀY SINH DƯƠNG LỊCH</string>
+    <string name="input_label_name">HỌ VÀ TÊN</string>
+    <string name="input_hint_name">Nhập họ và tên…</string>
+    <string name="input_label_birthday">NGÀY SINH</string>
+    <string name="input_solar_calendar">Dương lịch</string>
+    <string name="input_lunar_calendar">Âm lịch</string>
+    <string name="input_label_birth_time">GIỜ SINH</string>
+    <string name="input_hour_label">Giờ</string>
+    <string name="input_minute_label">Phút</string>
+    <string name="input_earthly_branch_hour">Giờ theo Địa Chi</string>
+    <string name="input_label_gender">GIỚI TÍNH</string>
+    <string name="input_gender_male">Nam</string>
+    <string name="input_gender_female">Nữ</string>
+    <string name="input_label_view_year">NĂM XEM HẠN</string>
+    <string name="input_hint_view_year">Năm xem lá số</string>
+    <string name="input_btn_view_chart">XEM LÁ SỐ TỬ VI</string>
+
     <!-- TuViChartScreen -->
-    <string name="chart_cd_download">Download chart image</string>
-    <string name="chart_cd_unsave">Unsave chart</string>
-    <string name="chart_cd_save">Save chart</string>
-    <string name="chart_dialog_unsave_title">Unsave chart?</string>
-    <string name="chart_dialog_unsave_message">The chart will be removed from your saved list. Are you sure?</string>
-    <string name="chart_btn_unsave">Unsave</string>
-    <string name="chart_download_success_title">Image saved</string>
-    <string name="chart_download_fail_title">Image save failed</string>
-    <string name="chart_download_success_message">Chart image saved to gallery (Pictures/TuVi).</string>
-    <string name="chart_download_fail_message">Could not save image to gallery. Please try again.</string>
-    <string name="chart_dialog_download_title">Download chart image?</string>
-    <string name="chart_dialog_download_message">Do you want to download the chart image to gallery?</string>
-    <string name="chart_btn_download">Download</string>
+    <string name="chart_cd_download">Tải ảnh lá số</string>
+    <string name="chart_cd_unsave">Hủy lưu lá số</string>
+    <string name="chart_cd_save">Lưu lá số</string>
+    <string name="chart_dialog_unsave_title">Hủy lưu lá số?</string>
+    <string name="chart_dialog_unsave_message">Lá số này sẽ bị xóa khỏi danh sách đã lưu. Bạn có chắc chắn không?</string>
+    <string name="chart_btn_unsave">Hủy lưu</string>
+    <string name="chart_download_success_title">Đã lưu ảnh</string>
+    <string name="chart_download_fail_title">Lưu ảnh thất bại</string>
+    <string name="chart_download_success_message">Ảnh lá số đã được lưu vào thư viện (Pictures/TuVi).</string>
+    <string name="chart_download_fail_message">Không thể lưu ảnh vào thư viện. Vui lòng thử lại.</string>
+    <string name="chart_dialog_download_title">Tải ảnh lá số?</string>
+    <string name="chart_dialog_download_message">Bạn có muốn tải ảnh lá số này về thư viện không?</string>
+    <string name="chart_btn_download">Tải về</string>
     <string name="chart_loading_ai">AI đang phân tích lá số…</string>
     <string name="chart_ai_request_btn">Luận giải AI</string>
     <string name="chart_ai_refresh_btn">Tải lại luận giải AI</string>
     <string name="chart_ai_reading_title">Luận giải AI</string>
     <string name="chart_ai_reading_empty">Máy chủ không trả về nội dung luận giải.</string>
     <string name="chart_footer">Tử Vi By AnhNN</string>
-    <string name="chart_center_title">TỬ VI CHART</string>
-    <string name="chart_label_name">Full name</string>
-    <string name="chart_label_gender">Gender</string>
-    <string name="chart_label_solar_birthday">Birthday (Solar)</string>
-    <string name="chart_label_lunar_birthday">Birthday (Lunar)</string>
-    <string name="chart_label_hour">Hour</string>
-    <string name="chart_label_view_year">View year:</string>
-    <string name="chart_label_year">Year</string>
-    <string name="chart_label_month">Month</string>
-    <string name="chart_label_day">Day</string>
-    <string name="chart_label_menh">Menh</string>
-    <string name="chart_label_ban_menh">Ban Menh</string>
-    <string name="chart_label_cuc">Cuc</string>
-    <string name="chart_label_menh_chu">Menh Chu</string>
-    <string name="chart_label_than_chu">Than Chu</string>
-    <string name="chart_label_sinh_khac">Sinh/Khac</string>
-    <string name="chart_month_n">Month %1$d</string>
-    <string name="chart_month">Month</string>
+    <string name="chart_center_title">LÁ SỐ TỬ VI</string>
+    <string name="chart_label_name">Họ và tên</string>
+    <string name="chart_label_gender">Giới tính</string>
+    <string name="chart_label_solar_birthday">Ngày sinh (Dương lịch)</string>
+    <string name="chart_label_lunar_birthday">Ngày sinh (Âm lịch)</string>
+    <string name="chart_label_hour">Giờ sinh</string>
+    <string name="chart_label_view_year">Năm xem hạn:</string>
+    <string name="chart_label_year">Năm</string>
+    <string name="chart_label_month">Tháng</string>
+    <string name="chart_label_day">Ngày</string>
+    <string name="chart_label_menh">Mệnh</string>
+    <string name="chart_label_ban_menh">Bản Mệnh</string>
+    <string name="chart_label_cuc">Cục</string>
+    <string name="chart_label_menh_chu">Mệnh Chủ</string>
+    <string name="chart_label_than_chu">Thân Chủ</string>
+    <string name="chart_label_sinh_khac">Sinh/Khắc</string>
+    <string name="chart_month_n">Tháng %1$d</string>
+    <string name="chart_month">Tháng</string>
 
     <!-- SavedChartsScreen -->
-    <string name="saved_screen_title">Saved Charts</string>
-    <string name="saved_search_placeholder">Search by name…</string>
-    <string name="saved_cd_clear_search">Clear</string>
-    <string name="saved_chart_count">%1$d charts</string>
-    <string name="saved_empty_search_message">No matching charts found</string>
-    <string name="saved_empty_state_message">No saved charts yet</string>
-    <string name="saved_empty_state_hint">View a chart and tap "Save chart" to add it here</string>
-    <string name="saved_delete_dialog_title">Delete chart</string>
-    <string name="saved_delete_dialog_message">Delete %1$s\'s chart?</string>
-    <string name="saved_cd_delete">Delete</string>
+    <string name="saved_screen_title">Lá số đã lưu</string>
+    <string name="saved_search_placeholder">Tìm theo tên…</string>
+    <string name="saved_cd_clear_search">Xóa tìm kiếm</string>
+    <string name="saved_chart_count">%1$d lá số</string>
+    <string name="saved_empty_search_message">Không tìm thấy lá số phù hợp</string>
+    <string name="saved_empty_state_message">Chưa có lá số nào được lưu</string>
+    <string name="saved_empty_state_hint">Hãy xem một lá số và nhấn \"Lưu lá số\" để thêm vào đây</string>
+    <string name="saved_delete_dialog_title">Xóa lá số</string>
+    <string name="saved_delete_dialog_message">Xóa lá số của %1$s?</string>
+    <string name="saved_cd_delete">Xóa</string>
 
     <!-- SaveChartDialog -->
-    <string name="save_chart_dialog_title">Save chart</string>
-    <string name="save_chart_dialog_subtitle">Select a group to categorize</string>
-    <string name="save_chart_group_custom">Custom…</string>
-    <string name="save_chart_custom_hint">Enter group name…</string>
+    <string name="save_chart_dialog_title">Lưu lá số</string>
+    <string name="save_chart_dialog_subtitle">Chọn nhóm để phân loại</string>
+    <string name="save_chart_group_custom">Tùy chỉnh…</string>
+    <string name="save_chart_custom_hint">Nhập tên nhóm…</string>
 
     <!-- LichScreen (Lunar-Solar Calendar) -->
-    <string name="calendar_screen_title">LUNAR-SOLAR CALENDAR</string>
-    <string name="calendar_month_year">Month %1$d, Year %2$d</string>
-    <string name="calendar_your_events">Your events</string>
-    <string name="calendar_cd_add_event">Add event</string>
-    <string name="calendar_label_day">Day</string>
-    <string name="calendar_label_lunar_month">Lunar Month</string>
-    <string name="calendar_label_lunar_year">Lunar Year</string>
+    <string name="calendar_screen_title">LỊCH ÂM DƯƠNG</string>
+    <string name="calendar_month_year">Tháng %1$d, Năm %2$d</string>
+    <string name="calendar_your_events">Sự kiện của bạn</string>
+    <string name="calendar_cd_add_event">Thêm sự kiện</string>
+    <string name="calendar_label_day">Ngày</string>
+    <string name="calendar_label_lunar_month">Tháng Âm lịch</string>
+    <string name="calendar_label_lunar_year">Năm Âm lịch</string>
 
     <!-- ThemSuKienSheet (Add Event Sheet) -->
-    <string name="add_event_sheet_title">Add event %1$d/%2$d/%3$d (%4$s)</string>
-    <string name="add_event_label_title">Title *</string>
-    <string name="add_event_label_note">Note</string>
+    <string name="add_event_sheet_title">Thêm sự kiện ngày %1$d/%2$d/%3$d (%4$s)</string>
+    <string name="add_event_label_title">Tiêu đề *</string>
+    <string name="add_event_label_note">Ghi chú</string>
     <string name="add_event_reminder">Nhắc nhở</string>
     <string name="add_event_notif_denied">Đã từ chối quyền thông báo – sự kiện vẫn được lưu</string>
     <string name="notif_perm_blocked_title">Cần quyền thông báo</string>
     <string name="notif_perm_blocked_message">Bạn đã từ chối quyền thông báo. Vui lòng vào Cài đặt để bật thủ công, ứng dụng mới có thể nhắc bạn về sự kiện.</string>
     <string name="notif_perm_open_settings">Mở cài đặt</string>
     <string name="notif_perm_cancel">Để sau</string>
-    <string name="add_event_alarm_time">Alarm time</string>
-    <string name="add_event_btn_save">Save event</string>
-    <string name="add_event_remind_at">Remind at %1$s:%2$s</string>
+    <string name="add_event_alarm_time">Thời gian báo thức</string>
+    <string name="add_event_btn_save">Lưu sự kiện</string>
+    <string name="add_event_remind_at">Nhắc nhở lúc %1$s:%2$s</string>
 
     <!-- HistoryScreen -->
-    <string name="history_clear_all_title">Clear all history?</string>
-    <string name="history_clear_all_message">This action cannot be undone.</string>
-    <string name="history_btn_clear_all">Clear all</string>
-    <string name="history_screen_title">Browsing history</string>
-    <string name="history_cd_clear_all">Clear all</string>
-    <string name="history_empty_title">No browsing history yet</string>
-    <string name="history_empty_hint">Long-press an item to delete</string>
-    <string name="history_delete_item">Delete</string>
+    <string name="history_clear_all_title">Xóa toàn bộ lịch sử?</string>
+    <string name="history_clear_all_message">Hành động này không thể hoàn tác.</string>
+    <string name="history_btn_clear_all">Xóa tất cả</string>
+    <string name="history_screen_title">Lịch sử duyệt web</string>
+    <string name="history_cd_clear_all">Xóa tất cả</string>
+    <string name="history_empty_title">Chưa có lịch sử duyệt web</string>
+    <string name="history_empty_hint">Nhấn giữ một mục để xóa</string>
+    <string name="history_delete_item">Xóa</string>
 
     <!-- CalendarChooserScreen -->
-    <string name="calendar_chooser_title">LUNAR / SOLAR CALENDAR</string>
-    <string name="calendar_chooser_message">The lunar-solar calendar is integrated, tap below to open:</string>
-    <string name="calendar_chooser_btn">Open Lunar / Solar Calendar</string>
+    <string name="calendar_chooser_title">LỊCH ÂM / DƯƠNG</string>
+    <string name="calendar_chooser_message">Lịch âm dương đã được tích hợp, nhấn bên dưới để mở:</string>
+    <string name="calendar_chooser_btn">Mở Lịch Âm / Dương</string>
 
     <!-- BrowserScreen -->
-    <string name="browser_cd_home">Back to home</string>
-    <string name="browser_bookmark_added">Added to Bookmarks</string>
-    <string name="browser_bookmark_removed">Removed from Bookmarks</string>
-    <string name="browser_cd_bookmark">Bookmark</string>
-    <string name="browser_cd_back">Back</string>
-    <string name="browser_cd_forward">Forward</string>
-    <string name="browser_incognito_icon">Incognito</string>
-    <string name="browser_downloading">Downloading: %1$s</string>
-    <string name="browser_download_error">Cannot download this file</string>
-    <string name="browser_search_placeholder">Search or enter address…</string>
-    <string name="browser_cd_more">More</string>
-    <string name="browser_menu_reload">Reload page</string>
-    <string name="browser_menu_tab_manager">Manage tabs</string>
-    <string name="browser_menu_history">Browsing history</string>
-    <string name="browser_menu_bookmarks">Bookmarks</string>
+    <string name="browser_cd_home">Về trang chủ</string>
+    <string name="browser_bookmark_added">Đã thêm vào Dấu trang</string>
+    <string name="browser_bookmark_removed">Đã xóa khỏi Dấu trang</string>
+    <string name="browser_cd_bookmark">Dấu trang</string>
+    <string name="browser_cd_back">Quay lại</string>
+    <string name="browser_cd_forward">Tiến về trước</string>
+    <string name="browser_incognito_icon">Ẩn danh</string>
+    <string name="browser_downloading">Đang tải xuống: %1$s</string>
+    <string name="browser_download_error">Không thể tải xuống tệp này</string>
+    <string name="browser_search_placeholder">Tìm kiếm hoặc nhập địa chỉ…</string>
+    <string name="browser_cd_more">Thêm</string>
+    <string name="browser_menu_reload">Tải lại trang</string>
+    <string name="browser_menu_tab_manager">Quản lý các tab</string>
+    <string name="browser_menu_history">Lịch sử duyệt web</string>
+    <string name="browser_menu_bookmarks">Dấu trang</string>
 
     <!-- BookmarkScreen -->
-    <string name="bookmark_screen_title">Bookmarks</string>
-    <string name="bookmark_edit_title">Edit title</string>
-    <string name="bookmark_empty_title">No bookmarks yet</string>
-    <string name="bookmark_empty_hint">Tap ★ in the address bar to save a page</string>
+    <string name="bookmark_screen_title">Dấu trang</string>
+    <string name="bookmark_edit_title">Sửa tiêu đề</string>
+    <string name="bookmark_empty_title">Chưa có dấu trang nào</string>
+    <string name="bookmark_empty_hint">Nhấn biểu tượng ★ trên thanh địa chỉ để lưu trang</string>
 
     <!-- TabSwitcherScreen -->
-    <string name="tab_switcher_title_incognito">Incognito mode</string>
-    <string name="tab_switcher_title_open">Open tabs</string>
-    <string name="tab_switcher_close_all">Close all</string>
-    <string name="tab_switcher_incognito_icon">Incognito</string>
+    <string name="tab_switcher_title_incognito">Chế độ ẩn danh</string>
+    <string name="tab_switcher_title_open">Các tab đang mở</string>
+    <string name="tab_switcher_close_all">Đóng tất cả</string>
+    <string name="tab_switcher_incognito_icon">Ẩn danh</string>
     <string name="tab_switcher_web_icon">Web</string>
-    <string name="tab_switcher_empty_incognito">No incognito tabs</string>
-    <string name="tab_switcher_empty">No open tabs</string>
-    <string name="tab_switcher_new_incognito">New incognito tab</string>
-    <string name="tab_switcher_new_tab">New tab</string>
-    <string name="tab_cd_close">Close tab</string>
+    <string name="tab_switcher_empty_incognito">Không có tab ẩn danh nào</string>
+    <string name="tab_switcher_empty">Không có tab nào đang mở</string>
+    <string name="tab_switcher_new_incognito">Tab ẩn danh mới</string>
+    <string name="tab_switcher_new_tab">Tab mới</string>
+    <string name="tab_cd_close">Đóng tab</string>
 
     <!-- ImageActionSheet -->
-    <string name="image_sheet_title">Image / File</string>
-    <string name="image_sheet_btn_download">Download</string>
+    <string name="image_sheet_title">Hình ảnh / Tệp</string>
+    <string name="image_sheet_btn_download">Tải xuống</string>
 
     <!-- SavedChartsScreen additional -->
-    <string name="saved_group_all">All</string>
+    <string name="saved_group_all">Tất cả</string>
 
     <!-- SaveChartDialog groups -->
-    <string name="save_chart_group_family">Family</string>
-    <string name="save_chart_group_friends">Friends</string>
-    <string name="save_chart_group_colleagues">Colleagues</string>
-    <string name="save_chart_group_other">Other</string>
+    <string name="save_chart_group_family">Gia đình</string>
+    <string name="save_chart_group_friends">Bạn bè</string>
+    <string name="save_chart_group_colleagues">Đồng nghiệp</string>
+    <string name="save_chart_group_other">Khác</string>
 
     <!-- LichScreen additional -->
-    <string name="calendar_label_truc">Truc</string>
-    <string name="calendar_truc_good">Good</string>
-    <string name="calendar_truc_bad">Bad</string>
-    <string name="calendar_hoang_dao">Hoang Dao</string>
-    <string name="calendar_hac_dao">Hac Dao</string>
-    <string name="calendar_luc_nham_label">Luc Nham</string>
-    <string name="calendar_hoang_dao_hours_label">Hoang Dao Hours</string>
-    <string name="calendar_day_sun">Sun</string>
-    <string name="calendar_day_mon">Mon</string>
-    <string name="calendar_day_tue">Tue</string>
-    <string name="calendar_day_wed">Wed</string>
-    <string name="calendar_day_thu">Thu</string>
-    <string name="calendar_day_fri">Fri</string>
-    <string name="calendar_day_sat">Sat</string>
+    <string name="calendar_label_truc">Trực</string>
+    <string name="calendar_truc_good">Tốt</string>
+    <string name="calendar_truc_bad">Xấu</string>
+    <string name="calendar_hoang_dao">Hoàng Đạo</string>
+    <string name="calendar_hac_dao">Hắc Đạo</string>
+    <string name="calendar_luc_nham_label">Lục Nhâm</string>
+    <string name="calendar_hoang_dao_hours_label">Giờ Hoàng Đạo</string>
+    <string name="calendar_day_sun">CN</string>
+    <string name="calendar_day_mon">T2</string>
+    <string name="calendar_day_tue">T3</string>
+    <string name="calendar_day_wed">T4</string>
+    <string name="calendar_day_thu">T5</string>
+    <string name="calendar_day_fri">T6</string>
+    <string name="calendar_day_sat">T7</string>
 
     <!-- SettingsScreen icon labels -->
-    <string name="settings_dark_icon">Dark</string>
-    <string name="settings_light_icon">Light</string>
+    <string name="settings_dark_icon">Tối</string>
+    <string name="settings_light_icon">Sáng</string>
 
     <!-- InputScreen additional -->
-    <string name="input_hour_item">%1$s h</string>
-    <string name="input_minute_item">%1$s min</string>
+    <string name="input_hour_item">%1$s giờ</string>
+    <string name="input_minute_item">%1$s phút</string>
 
     <!-- InputScreen zodiac hours -->
-    <string name="input_zodiac_ty">Ty (23h–01h)</string>
-    <string name="input_zodiac_suu">Suu (01h–03h)</string>
-    <string name="input_zodiac_dan">Dan (03h–05h)</string>
-    <string name="input_zodiac_mao">Mao (05h–07h)</string>
-    <string name="input_zodiac_thin">Thin (07h–09h)</string>
-    <string name="input_zodiac_ty2">Ty (09h–11h)</string>
-    <string name="input_zodiac_ngo">Ngo (11h–13h)</string>
-    <string name="input_zodiac_mui">Mui (13h–15h)</string>
-    <string name="input_zodiac_than">Than (15h–17h)</string>
-    <string name="input_zodiac_dau">Dau (17h–19h)</string>
-    <string name="input_zodiac_tuat">Tuat (19h–21h)</string>
-    <string name="input_zodiac_hoi">Hoi (21h–23h)</string>
+    <string name="input_zodiac_ty">Tý (23h–01h)</string>
+    <string name="input_zodiac_suu">Sửu (01h–03h)</string>
+    <string name="input_zodiac_dan">Dần (03h–05h)</string>
+    <string name="input_zodiac_mao">Mão (05h–07h)</string>
+    <string name="input_zodiac_thin">Thìn (07h–09h)</string>
+    <string name="input_zodiac_ty2">Tỵ (09h–11h)</string>
+    <string name="input_zodiac_ngo">Ngọ (11h–13h)</string>
+    <string name="input_zodiac_mui">Mùi (13h–15h)</string>
+    <string name="input_zodiac_than">Thân (15h–17h)</string>
+    <string name="input_zodiac_dau">Dậu (17h–19h)</string>
+    <string name="input_zodiac_tuat">Tuất (19h–21h)</string>
+    <string name="input_zodiac_hoi">Hợi (21h–23h)</string>
 
     <!-- LichScreen lunar label -->
-    <string name="calendar_lunar_prefix">Lunar: %1$s</string>
-    <string name="calendar_intercalary">(intercalary)</string>
+    <string name="calendar_lunar_prefix">Âm lịch: %1$s</string>
+    <string name="calendar_intercalary">(tháng nhuận)</string>
 
     <!-- Notification -->
-    <string name="notif_event_default_title">Event</string>
-    <string name="notif_event_default_text">You have an event in your calendar today</string>
-    <string name="notif_channel_name">Calendar events</string>
-    <string name="notif_channel_desc">Reminders for events in the lunar/solar calendar</string>
+    <string name="notif_event_default_title">Sự kiện</string>
+    <string name="notif_event_default_text">Bạn có một sự kiện trong lịch hôm nay</string>
+    <string name="notif_channel_name">Sự kiện lịch</string>
+    <string name="notif_channel_desc">Nhắc nhở các sự kiện trong lịch âm/dương</string>
 
     <!-- Browser long-press context menu -->
     <string name="browser_ctx_open_link">Mở link này</string>
@@ -282,8 +283,8 @@
     <string name="browser_ctx_download_image">Tải ảnh xuống</string>
 
     <!-- Browser misc -->
-    <string name="browser_download_desc">Downloading…</string>
-    <string name="browser_tab_new_title">New tab</string>
+    <string name="browser_download_desc">Đang tải xuống…</string>
+    <string name="browser_tab_new_title">Tab mới</string>
     <string name="error_unknown">Đã xảy ra lỗi không xác định.</string>
     <string name="error_ai_interpret_503">Dịch vụ luận giải AI chưa sẵn sàng (HTTP 503). Vui lòng cấu hình API Gemini trên máy chủ hoặc thử lại sau.</string>
     <string name="error_ai_no_input">Thiếu dữ liệu sinh — không thể gọi luận giải AI.</string>
@@ -294,33 +295,33 @@
     <string name="ai_insufficient_dialog_body">Bạn cần %1$d token để hỏi AI tiếp. Số dư hiện tại: %2$d token. Nạp thêm để tiếp tục.</string>
     <string name="ai_insufficient_dialog_topup">Nạp token</string>
     <string name="ai_insufficient_dialog_cancel">Để sau</string>
-    <string name="ai_balance_hint">⭐ %1$d token · 🎁 %2$d lượt miễn phí</string>
+    <string name="ai_balance_hint">%1$d token</string>
     <string name="ai_topup_coming_soon">Tính năng nạp token sẽ sớm có mặt.</string>
     <string name="ai_reading_cung_picker_label">Chọn cung để luận giải</string>
     <string name="ai_reading_request_btn_for_cung">Luận giải cung %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung">Tải lại cung %1$s</string>
-    <string name="ai_reading_request_btn_for_cung_free">Hỏi AI free cung %1$s</string>
-    <string name="ai_reading_refresh_btn_for_cung_free">Hỏi AI free (tải lại %1$s)</string>
+    <string name="ai_reading_request_btn_for_cung_free">Hỏi AI miễn phí cung %1$s</string>
+    <string name="ai_reading_refresh_btn_for_cung_free">Hỏi AI miễn phí (tải lại %1$s)</string>
     <string name="ai_reading_request_btn_for_cung_paid">Hỏi AI cung %1$s (%2$d token)</string>
     <string name="ai_reading_refresh_btn_for_cung_paid">Tải lại cung %1$s (%2$d token)</string>
-    <string name="chart_ai_request_btn_free">Hỏi AI free</string>
+    <string name="chart_ai_request_btn_free">Hỏi AI miễn phí</string>
     <string name="chart_ai_request_btn_paid">Hỏi AI (%1$d token)</string>
     <string name="ai_reading_loading_cung">Đang hỏi AI về cung %1$s…</string>
     <string name="ai_reading_hint_single_cung">Mỗi lần chọn 1 cung — câu trả lời sẽ sâu hơn so với hỏi cả lá số.</string>
     <string name="login_title">Tử Vi AnhNN</string>
-    <string name="login_subtitle">Đăng nhập để lưu lá số và mở khoá luận giải AI.</string>
+    <string name="login_subtitle">Đăng nhập để lưu lá số và mở khóa luận giải AI.</string>
     <string name="login_google_btn">Đăng nhập với Google</string>
     <string name="login_disclaimer">Bằng cách đăng nhập, bạn đồng ý với điều khoản sử dụng và chính sách bảo mật.</string>
     <string name="login_error_generic">Đăng nhập thất bại: %1$s</string>
     <string name="login_error_unknown">Đăng nhập thất bại. Vui lòng thử lại.</string>
-    <string name="browser_error_unknown">Unknown error</string>
-    <string name="browser_default_title">Browser</string>
+    <string name="browser_error_unknown">Lỗi trình duyệt không xác định</string>
+    <string name="browser_default_title">Trình duyệt</string>
 
     <!-- Toast & dialog -->
     <string name="toast_chart_saved">Đã lưu lá số của %1$s</string>
     <string name="toast_chart_save_failed">Lỗi khi lưu: %1$s</string>
-    <string name="toast_chart_unsaved">Đã huỷ lưu lá số</string>
-    <string name="toast_chart_unsave_failed">Không thể huỷ lưu: %1$s</string>
+    <string name="toast_chart_unsaved">Đã hủy lưu lá số</string>
+    <string name="toast_chart_unsave_failed">Không thể hủy lưu: %1$s</string>
     <string name="toast_chart_open_failed">Không thể mở lá số</string>
     <string name="rate_dialog_title">Bạn thích Tử Vi không?</string>
     <string name="rate_dialog_message">Hãy đánh giá để ủng hộ chúng tôi trên Play Store!</string>

@@ -226,7 +226,7 @@ private fun LunarDatePickerDialog(
     }
 
     androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
-        androidx.compose.foundation.layout.Column(
+        Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .background(InputDatePickerSurface)
@@ -241,7 +241,6 @@ private fun LunarDatePickerDialog(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 2.sp
             )
-            // Headline — ngày đang chọn
             Text(
                 text = "%02d / %02d / %d".format(pickerDay, pickerMonth, pickerYear),
                 modifier = Modifier.padding(start = 24.dp, top = 4.dp, bottom = 12.dp),
@@ -691,7 +690,6 @@ fun InputScreen(
                     }
                 }
             }
-
 
             // Giờ sinh
             SectionCard {

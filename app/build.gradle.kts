@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    }
+}
+
 android {
     namespace = "com.example.tuvi"
     compileSdk {
@@ -45,9 +51,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -98,13 +101,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
 
     // Language picker
-    implementation("com.github.anhngocnguyen1034:anhnn-language:1.0.0")
+    implementation(libs.anhnn.language)
 
-    // anhnn-components — artifactId khớp với `publishing.publications` trong mỗi module
-    // (xem afterEvaluate trong anhnn-components/<module>/build.gradle.kts).
-    implementation("com.github.anhngocnguyen1034.anhnn-components:anhnn-components-feedback:1.0.1")
-    implementation("com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate:1.0.1")
-
+    implementation(libs.anhnn.components.feedback)
+    implementation(libs.anhnn.components.rate)
+    implementation(libs.android.blur)
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
