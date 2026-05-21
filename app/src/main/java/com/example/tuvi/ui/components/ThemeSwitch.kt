@@ -1,4 +1,4 @@
-package com.example.tuvi.ui.screens.components
+package com.example.tuvi.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring

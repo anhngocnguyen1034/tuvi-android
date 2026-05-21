@@ -1,5 +1,6 @@
-package com.example.tuvi.data.local
+package com.example.tuvi.data.mapper
 
+import com.example.tuvi.data.local.SavedChartEntity
 import com.example.tuvi.domain.model.SavedChart
 
 fun SavedChartEntity.toDomain() = SavedChart(

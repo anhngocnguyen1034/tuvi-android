@@ -54,7 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.SettingsViewModel
-import com.example.tuvi.ui.screens.components.GenZThemeSwitch
+import com.example.tuvi.ui.components.GenZThemeSwitch
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
 import com.example.tuvi.ui.theme.TuViGoldLight

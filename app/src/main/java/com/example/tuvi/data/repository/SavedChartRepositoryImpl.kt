@@ -1,8 +1,8 @@
 package com.example.tuvi.data.repository
 
 import com.example.tuvi.data.local.SavedChartDao
-import com.example.tuvi.data.local.toDomain
-import com.example.tuvi.data.local.toEntity
+import com.example.tuvi.data.mapper.toDomain
+import com.example.tuvi.data.mapper.toEntity
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.repository.SavedChartRepository
 import kotlinx.coroutines.flow.Flow
