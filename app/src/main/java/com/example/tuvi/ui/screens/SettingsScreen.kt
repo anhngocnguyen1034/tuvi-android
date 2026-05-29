@@ -194,14 +194,6 @@ fun SettingsScreen(
                 onClick = onOpenFeedback
             )
 
-            Text(
-                text = stringResource(R.string.settings_footer_hint),
-                color = TuViIvoryDim,
-                fontSize = 12.sp,
-                lineHeight = 17.sp,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-
             if (authUser != null) {
                 Spacer(Modifier.height(8.dp))
                 LogoutButton(onClick = onSignOut)
