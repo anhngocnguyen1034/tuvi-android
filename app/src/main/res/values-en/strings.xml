@@ -26,7 +26,7 @@
     <string name="settings_account_unknown_email">No email</string>
     <string name="settings_logout">Sign out</string>
     <string name="settings_balance_dash">—</string>
-    <string name="settings_balance_format">⭐ %1$s tokens</string>
+    <string name="settings_balance_format">%1$s token</string>
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>

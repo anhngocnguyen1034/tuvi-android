@@ -95,6 +95,7 @@ dependencies {
     // Firebase Auth + Credential Manager (Google Sign-In)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.config.ktx)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
@@ -106,6 +107,10 @@ dependencies {
     implementation(libs.anhnn.components.feedback)
     implementation(libs.anhnn.components.rate)
     implementation(libs.android.blur)
+
+    // AdMob
+    implementation(libs.play.services.ads)
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>ads_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>inter_min_interval_ms</key>
+        <value>30000</value>
+    </entry>
+</defaultsMap>

@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tuvi.ads.InterstitialAdManager
 import com.example.tuvi.presentation.AuthUiState
 import com.example.tuvi.presentation.AuthViewModel
 import com.example.tuvi.presentation.SavedChartsViewModel
@@ -147,13 +148,19 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("home") {
             LaunchedEffect(Unit) { authViewModel.refreshProfile() }
+            val activity = context as Activity
+            val showAdThen: (() -> Unit) -> Unit = { action ->
+                InterstitialAdManager.showThen(activity, action)
+            }
             HomeScreen(
-                onOpenTuVi = { navController.navigate("input") },
+                onOpenTuVi = { showAdThen { navController.navigate("input") } },
                 onOpenBrowser = {
-                    val url = Uri.encode("https://www.google.com")
-                    navController.navigate("browser?url=$url&title=Trình+Duyệt")
+                    showAdThen {
+                        val url = Uri.encode("https://www.google.com")
+                        navController.navigate("browser?url=$url&title=Trình+Duyệt")
+                    }
                 },
-                onOpenCalendar = { navController.navigate("lich") },
+                onOpenCalendar = { showAdThen { navController.navigate("lich") } },
                 onOpenSettings = { navController.navigate("settings") },
                 authUser = (authState as? AuthUiState.SignedIn)?.user,
             )

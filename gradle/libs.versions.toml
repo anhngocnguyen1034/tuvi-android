@@ -29,6 +29,7 @@ firebaseBom = "33.7.0"
 credentials = "1.3.0"
 googleid = "1.1.1"
 coroutinesPlayServices = "1.9.0"
+playServicesAds = "23.6.0"
 
 [libraries]
 android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
@@ -69,10 +70,14 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 # Firebase Auth + Credential Manager (Google Sign-In)
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+
+# AdMob
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
