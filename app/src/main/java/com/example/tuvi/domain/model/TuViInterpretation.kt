@@ -6,6 +6,4 @@ import androidx.compose.runtime.Immutable
 data class TuViInterpretation(
     val chart: TuViChart,
     val aiReading: String,
-    val tokensRemaining: Int? = null,
-    val freeQuestionsRemaining: Int? = null,
 )

@@ -92,14 +92,9 @@ dependencies {
     implementation(libs.blurview)
     implementation(libs.coil.compose)
 
-    // Firebase Auth + Credential Manager (Google Sign-In)
+    // Firebase Remote Config (giữ lại cho cooldown ads)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.config.ktx)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
-    implementation(libs.kotlinx.coroutines.play.services)
 
     // Language picker
     implementation(libs.anhnn.language)

@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
-import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.SettingsViewModel
 import com.example.tuvi.ui.components.GenZThemeSwitch
 import com.example.tuvi.ui.theme.TuViGold
@@ -69,8 +68,6 @@ import com.example.tuvi.ui.theme.TuViRed
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    authUser: AuthUser? = null,
-    onSignOut: () -> Unit = {},
     onOpenSaved: () -> Unit = {},
     onOpenLanguage: () -> Unit = {},
     onOpenPrivacy: () -> Unit = {},
@@ -194,40 +191,7 @@ fun SettingsScreen(
                 onClick = onOpenFeedback
             )
 
-            if (authUser != null) {
-                Spacer(Modifier.height(8.dp))
-                LogoutButton(onClick = onSignOut)
-            }
         }
-    }
-}
-
-@Composable
-private fun LogoutButton(onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 52.dp),
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = TuViRed.copy(alpha = 0.18f),
-            contentColor = TuViRed,
-        ),
-        border = BorderStroke(1.dp, TuViRed.copy(alpha = 0.55f)),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_logout),
-            contentDescription = null,
-            modifier = Modifier.size(20.dp),
-        )
-        Spacer(Modifier.width(10.dp))
-        Text(
-            text = stringResource(R.string.settings_logout),
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-        )
     }
 }
 

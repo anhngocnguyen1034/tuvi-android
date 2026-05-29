@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.di.AppContainer
-import com.example.tuvi.domain.AiInterpretationUnavailableException
-import com.example.tuvi.domain.InsufficientTokensException
 import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.model.TuViChart
@@ -18,8 +17,10 @@ import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TuViViewModel(
@@ -27,7 +28,8 @@ class TuViViewModel(
     private val getTuViInterpret: GetTuViInterpretUseCase,
     private val saveChartUseCase: SaveChartUseCase,
     private val deleteChartUseCase: DeleteSavedChartUseCase,
-    private val json: Json
+    private val json: Json,
+    private val userPrefs: UserPreferencesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TuViUiState>(TuViUiState.Idle)
@@ -50,6 +52,10 @@ class TuViViewModel(
     /** Cung user đang chọn trên màn AI; null = chưa chọn. */
     private val _selectedCung = MutableStateFlow<CungSlug?>(null)
     val selectedCung: StateFlow<CungSlug?> = _selectedCung.asStateFlow()
+
+    /** Mỗi thiết bị chỉ được gọi AI 1 lần — flag lưu trong DataStore. */
+    val aiUsed: StateFlow<Boolean> = userPrefs.aiUsedFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun selectCung(cung: CungSlug) {
         _selectedCung.value = cung
@@ -82,12 +88,11 @@ class TuViViewModel(
 
     /**
      * POST /api/interpret cho [cung] cụ thể; cache kết quả vào [TuViUiState.Success.aiReadings].
-     * Lỗi trả qua [onError] (toast/snackbar).
+     * Mỗi thiết bị chỉ gọi được 1 lần — nếu đã dùng thì emit [TuViError.AiAlreadyUsed].
      */
     fun fetchAiInterpretation(
         cung: CungSlug?,
         onError: (TuViError) -> Unit,
-        onBalanceUpdated: (tokens: Int?, freeQuestions: Int?) -> Unit = { _, _ -> },
     ) {
         val input = _lastInput.value
         if (input == null) {
@@ -104,6 +109,10 @@ class TuViViewModel(
             return
         }
         viewModelScope.launch {
+            if (userPrefs.isAiUsed()) {
+                onError(TuViError.AiAlreadyUsed)
+                return@launch
+            }
             _aiInterpretLoading.value = true
             try {
                 getTuViInterpret(input, cung)
@@ -113,7 +122,7 @@ class TuViViewModel(
                             data = interpretation.chart,
                             aiReadings = base.aiReadings + (cung to interpretation.aiReading),
                         )
-                        onBalanceUpdated(interpretation.tokensRemaining, interpretation.freeQuestionsRemaining)
+                        userPrefs.markAiUsed()
                     }
                     .onFailure { onError(mapThrowable(it)) }
             } finally {
@@ -122,11 +131,8 @@ class TuViViewModel(
         }
     }
 
-    private fun mapThrowable(t: Throwable): TuViError = when (t) {
-        is InsufficientTokensException -> TuViError.AiInsufficientTokens
-        is AiInterpretationUnavailableException -> TuViError.AiUnavailable
-        else -> t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
-    }
+    private fun mapThrowable(t: Throwable): TuViError =
+        t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
 
     private fun mapFailureToUi(t: Throwable) {
         _uiState.value = TuViUiState.Error(mapThrowable(t))
@@ -206,7 +212,8 @@ class TuViViewModel(
                     AppContainer.getTuViInterpretUseCase,
                     AppContainer.saveChartUseCase,
                     AppContainer.deleteSavedChartUseCase,
-                    AppContainer.appJson
+                    AppContainer.appJson,
+                    AppContainer.userPreferencesRepository,
                 )
             }
         }

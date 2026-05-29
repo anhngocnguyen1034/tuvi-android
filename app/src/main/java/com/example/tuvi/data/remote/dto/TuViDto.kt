@@ -60,10 +60,6 @@ data class InterpretResponse(
     val cung: String? = null,
     @SerialName("data_la_so") val data_la_so: TuViResponse? = null,
     @SerialName("ai_reading") val ai_reading: String? = null,
-    @SerialName("used_free") val usedFree: Boolean? = null,
-    val charged: Int? = null,
-    @SerialName("free_questions_remaining") val freeQuestionsRemaining: Int? = null,
-    @SerialName("tokens_remaining") val tokensRemaining: Int? = null,
 )
 
 @Serializable

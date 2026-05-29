@@ -15,10 +15,10 @@ import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
@@ -33,12 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tuvi.ads.InterstitialAdManager
-import com.example.tuvi.presentation.AuthUiState
-import com.example.tuvi.presentation.AuthViewModel
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
 import com.example.tuvi.presentation.SettingsViewModel
-import com.example.tuvi.presentation.TuViError
 import com.example.tuvi.presentation.TuViUiState
 import com.example.tuvi.presentation.TuViViewModel
 import com.example.tuvi.presentation.resolve
@@ -54,7 +51,6 @@ import com.example.tuvi.ui.screens.AiReadingScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
-import com.example.tuvi.ui.screens.LoginScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.anhnn.feedback.FeedbackScreen
 import com.anhnn.rate.RateDialog
@@ -63,8 +59,6 @@ import com.example.tuvi.ui.screens.PrivacyPolicyScreen
 import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 
 class MainActivity : ComponentActivity() {
 
@@ -94,17 +88,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
+@androidx.compose.runtime.Composable
 fun TuViApp(isDark: Boolean = true) {
     val navController = rememberNavController()
     val viewModel: TuViViewModel = viewModel(factory = TuViViewModel.Factory)
-    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lastInput by viewModel.lastInput.collectAsStateWithLifecycle()
-    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val startDestination = remember { if (authViewModel.isSignedIn) "home" else "login" }
-    var showRateDialog by remember { mutableStateOf(false) }
+    var showRateDialog by rememberSaveable { mutableStateOf(false) }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -120,34 +111,9 @@ fun TuViApp(isDark: Boolean = true) {
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
-            startDestination = startDestination
+            startDestination = "home"
         ) {
-        composable("login") {
-            val loading = authState is AuthUiState.Loading
-            LaunchedEffect(authState) {
-                when (val s = authState) {
-                    is AuthUiState.SignedIn -> {
-                        navController.navigate("home") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }
-                    is AuthUiState.Error -> {
-                        val msg = s.message.takeIf { it.isNotBlank() }
-                            ?.let { context.getString(R.string.login_error_generic, it) }
-                            ?: context.getString(R.string.login_error_unknown)
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-                        authViewModel.consumeError()
-                    }
-                    else -> Unit
-                }
-            }
-            LoginScreen(
-                loading = loading,
-                onSignInWithGoogle = { authViewModel.signInWithGoogle(context) },
-            )
-        }
         composable("home") {
-            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             val activity = context as Activity
             val showAdThen: (() -> Unit) -> Unit = { action ->
                 InterstitialAdManager.showThen(activity, action)
@@ -162,7 +128,6 @@ fun TuViApp(isDark: Boolean = true) {
                 },
                 onOpenCalendar = { showAdThen { navController.navigate("lich") } },
                 onOpenSettings = { navController.navigate("settings") },
-                authUser = (authState as? AuthUiState.SignedIn)?.user,
             )
         }
         composable("calendar_chooser") {
@@ -175,18 +140,8 @@ fun TuViApp(isDark: Boolean = true) {
             LichScreen(onBack = { navController.popBackStack() })
         }
         composable("settings") {
-            val authUser = (authState as? AuthUiState.SignedIn)?.user
-            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                authUser = authUser,
-                onSignOut = {
-                    authViewModel.signOut(context)
-                    navController.navigate("login") {
-                        popUpTo("home") { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
                 onOpenSaved = { navController.navigate("saved_charts") },
                 onOpenLanguage = { navController.navigate("language") },
                 onOpenPrivacy = { navController.navigate("privacy_policy") },
@@ -302,43 +257,23 @@ fun TuViApp(isDark: Boolean = true) {
         composable("ai_reading") {
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
+            val aiUsed by viewModel.aiUsed.collectAsStateWithLifecycle()
             val aiReadings = (uiState as? TuViUiState.Success)?.aiReadings ?: emptyMap()
-            val authUser = (authState as? AuthUiState.SignedIn)?.user
-            var showInsufficient by rememberSaveable { mutableStateOf(false) }
-            LaunchedEffect(Unit) { authViewModel.refreshProfile() }
             AiReadingScreen(
                 selectedCung = selectedCung,
                 aiReadings = aiReadings,
                 loading = aiInterpretLoading,
+                aiUsed = aiUsed,
                 onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
                     viewModel.fetchAiInterpretation(
                         cung = selectedCung,
                         onError = { err ->
-                            if (err == TuViError.AiInsufficientTokens) {
-                                showInsufficient = true
-                            } else {
-                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
-                            }
-                        },
-                        onBalanceUpdated = { tokens, free ->
-                            authViewModel.updateBalance(tokens, free)
+                            Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
                         },
                     )
                 },
                 onBack = { navController.popBackStack() },
-                tokens = authUser?.tokens,
-                freeQuestions = authUser?.freeQuestions,
-                aiQuestionCost = authUser?.aiQuestionCost,
-                showInsufficientDialog = showInsufficient,
-                onDismissInsufficientDialog = { showInsufficient = false },
-                onTopUp = {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.ai_topup_coming_soon),
-                        Toast.LENGTH_LONG,
-                    ).show()
-                },
             )
         }
         composable(
@@ -376,7 +311,6 @@ fun TuViApp(isDark: Boolean = true) {
             HistoryScreen(
                 onBack = { navController.popBackStack() },
                 onOpenUrl = { url ->
-                    // Truyền URL về browser cũ qua savedStateHandle, giữ nguyên tabs
                     navController.previousBackStackEntry
                         ?.savedStateHandle?.set("pendingUrl", url)
                     navController.popBackStack()

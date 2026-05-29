@@ -21,12 +21,6 @@
     <string name="settings_lang_vi">Vietnamese</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">Select display language</string>
-    <string name="settings_account_section">Account</string>
-    <string name="settings_account_unknown_name">Google user</string>
-    <string name="settings_account_unknown_email">No email</string>
-    <string name="settings_logout">Sign out</string>
-    <string name="settings_balance_dash">—</string>
-    <string name="settings_balance_format">%1$s token</string>
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
@@ -273,30 +267,12 @@
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
     <string name="error_ai_no_cung">Pick a palace before asking AI.</string>
-    <string name="error_ai_insufficient_tokens">Out of free questions and your token balance is too low.</string>
-    <string name="ai_insufficient_dialog_title">No free questions left</string>
-    <string name="ai_insufficient_dialog_body">You need %1$d tokens to ask the AI. Current balance: %2$d tokens. Top up to continue.</string>
-    <string name="ai_insufficient_dialog_topup">Top up</string>
-    <string name="ai_insufficient_dialog_cancel">Later</string>
-    <string name="ai_balance_hint">%1$d tokens</string>
-    <string name="ai_topup_coming_soon">Top-up will be available soon.</string>
     <string name="ai_reading_cung_picker_label">Pick a palace to interpret</string>
-    <string name="ai_reading_request_btn_for_cung">Interpret %1$s palace</string>
-    <string name="ai_reading_refresh_btn_for_cung">Refresh %1$s palace</string>
     <string name="ai_reading_request_btn_for_cung_free">Ask AI free — %1$s palace</string>
     <string name="ai_reading_refresh_btn_for_cung_free">Ask AI free (refresh %1$s)</string>
-    <string name="ai_reading_request_btn_for_cung_paid">Ask AI/(%2$d tokens)</string>
-    <string name="ai_reading_refresh_btn_for_cung_paid">Refresh %1$s palace (%2$d tokens)</string>
     <string name="chart_ai_request_btn_free">Ask AI free</string>
-    <string name="chart_ai_request_btn_paid">Ask AI (%1$d tokens)</string>
     <string name="ai_reading_loading_cung">Asking AI about the %1$s palace…</string>
     <string name="ai_reading_hint_single_cung">Pick one palace at a time — the answer goes deeper than asking about the whole chart.</string>
-    <string name="login_title">Tu Vi AnhNN</string>
-    <string name="login_subtitle">Sign in to save your charts and unlock AI interpretation.</string>
-    <string name="login_google_btn">Sign in with Google</string>
-    <string name="login_disclaimer">By signing in you agree to the terms of use and privacy policy.</string>
-    <string name="login_error_generic">Sign-in failed: %1$s</string>
-    <string name="login_error_unknown">Sign-in failed. Please try again.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 
@@ -314,4 +290,7 @@
     <!-- AI reading screen -->
     <string name="chart_open_ai_reading_btn">View AI interpretation</string>
     <string name="ai_reading_hint">Tap the button above to have AI interpret your chart based on stars and palaces.</string>
+    <string name="ai_reading_used_btn">AI quota used</string>
+    <string name="ai_already_used_hint">Each device gets one free AI reading — and you\'ve already used it.</string>
+    <string name="error_ai_already_used">You\'ve used the only free AI question on this device.</string>
 </resources>

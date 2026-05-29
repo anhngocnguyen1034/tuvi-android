@@ -21,12 +21,6 @@
     <string name="settings_lang_vi">Tiếng Việt</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">Chọn ngôn ngữ hiển thị</string>
-    <string name="settings_account_section">Tài khoản</string>
-    <string name="settings_account_unknown_name">Người dùng Google</string>
-    <string name="settings_account_unknown_email">Chưa có email</string>
-    <string name="settings_logout">Đăng xuất</string>
-    <string name="settings_balance_dash">—</string>
-    <string name="settings_balance_format">%1$s token</string>
     <string name="settings_dark_mode_desc">Giao diện tối</string>
     <string name="settings_light_mode_desc">Giao diện sáng</string>
     <string name="content_desc_settings">Mở cài đặt</string>
@@ -290,30 +284,12 @@
     <string name="error_ai_no_input">Thiếu dữ liệu sinh — không thể gọi luận giải AI.</string>
     <string name="error_ai_no_chart">Chưa có lá số hiển thị — không thể gọi luận giải AI.</string>
     <string name="error_ai_no_cung">Hãy chọn 1 cung trước khi luận giải.</string>
-    <string name="error_ai_insufficient_tokens">Hết lượt miễn phí và số dư token không đủ.</string>
-    <string name="ai_insufficient_dialog_title">Hết lượt miễn phí</string>
-    <string name="ai_insufficient_dialog_body">Bạn cần %1$d token để hỏi AI tiếp. Số dư hiện tại: %2$d token. Nạp thêm để tiếp tục.</string>
-    <string name="ai_insufficient_dialog_topup">Nạp token</string>
-    <string name="ai_insufficient_dialog_cancel">Để sau</string>
-    <string name="ai_balance_hint">%1$d token</string>
-    <string name="ai_topup_coming_soon">Tính năng nạp token sẽ sớm có mặt.</string>
     <string name="ai_reading_cung_picker_label">Chọn cung để luận giải</string>
-    <string name="ai_reading_request_btn_for_cung">Luận giải cung %1$s</string>
-    <string name="ai_reading_refresh_btn_for_cung">Tải lại cung %1$s</string>
     <string name="ai_reading_request_btn_for_cung_free">Hỏi AI miễn phí cung %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung_free">Hỏi AI miễn phí (tải lại %1$s)</string>
-    <string name="ai_reading_request_btn_for_cung_paid">Hỏi AI cung %1$s (%2$d token)</string>
-    <string name="ai_reading_refresh_btn_for_cung_paid">Tải lại cung %1$s (%2$d token)</string>
     <string name="chart_ai_request_btn_free">Hỏi AI miễn phí</string>
-    <string name="chart_ai_request_btn_paid">Hỏi AI (%1$d token)</string>
     <string name="ai_reading_loading_cung">Đang hỏi AI về cung %1$s…</string>
     <string name="ai_reading_hint_single_cung">Mỗi lần chọn 1 cung — câu trả lời sẽ sâu hơn so với hỏi cả lá số.</string>
-    <string name="login_title">Tử Vi AnhNN</string>
-    <string name="login_subtitle">Đăng nhập để lưu lá số và mở khóa luận giải AI.</string>
-    <string name="login_google_btn">Đăng nhập với Google</string>
-    <string name="login_disclaimer">Bằng cách đăng nhập, bạn đồng ý với điều khoản sử dụng và chính sách bảo mật.</string>
-    <string name="login_error_generic">Đăng nhập thất bại: %1$s</string>
-    <string name="login_error_unknown">Đăng nhập thất bại. Vui lòng thử lại.</string>
     <string name="browser_error_unknown">Lỗi trình duyệt không xác định</string>
     <string name="browser_default_title">Trình duyệt</string>
 
@@ -331,4 +307,7 @@
     <!-- AI reading screen -->
     <string name="chart_open_ai_reading_btn">Xem luận giải AI</string>
     <string name="ai_reading_hint">Nhấn nút phía trên để AI luận giải lá số của bạn dựa trên dữ liệu sao và cung.</string>
+    <string name="ai_reading_used_btn">Đã dùng hết lượt AI</string>
+    <string name="ai_already_used_hint">Mỗi thiết bị chỉ được hỏi AI miễn phí 1 lần — và bạn đã dùng rồi.</string>
+    <string name="error_ai_already_used">Bạn đã dùng hết lượt hỏi AI miễn phí trên thiết bị này.</string>
 </resources>

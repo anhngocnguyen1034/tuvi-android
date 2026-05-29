@@ -22,6 +22,7 @@ class UserPreferencesRepository(context: Context) {
         private val KEY_LOCALE = stringPreferencesKey("app_locale")
         private val KEY_NOTIF_HOLIDAY = booleanPreferencesKey("notif_holiday")
         private val KEY_NOTIF_LUNAR = booleanPreferencesKey("notif_lunar")
+        private val KEY_AI_USED = booleanPreferencesKey("ai_used")
 
         const val LOCALE_VI = "vi"
         const val LOCALE_EN = "en"
@@ -63,5 +64,15 @@ class UserPreferencesRepository(context: Context) {
 
     suspend fun setNotifLunar(enabled: Boolean) {
         dataStore.edit { it[KEY_NOTIF_LUNAR] = enabled }
+    }
+
+    val aiUsedFlow: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[KEY_AI_USED] ?: false
+    }
+
+    suspend fun isAiUsed(): Boolean = aiUsedFlow.first()
+
+    suspend fun markAiUsed() {
+        dataStore.edit { it[KEY_AI_USED] = true }
     }
 }

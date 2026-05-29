@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
@@ -28,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,8 +41,6 @@ import androidx.compose.ui.unit.sp
 import com.example.tuvi.R
 import com.example.tuvi.domain.model.CungSlug
 import com.example.tuvi.presentation.screens.AiReadingSection
-import com.example.tuvi.ui.components.tokenAnnotated
-import com.example.tuvi.ui.components.tokenInlineContent
 import com.example.tuvi.ui.theme.BeVietnamProFamily
 import com.example.tuvi.ui.theme.ChartDeepBg
 import com.example.tuvi.ui.theme.ChartGold
@@ -57,28 +53,21 @@ import com.example.tuvi.ui.theme.TuViTheme
 /**
  * Màn riêng để xem luận giải lá số bằng AI cho TỪNG CUNG.
  *
- * - Người dùng chọn 1 cung trong 12 cung → bấm "Luận giải cung X".
- * - Reading được cache theo cung trong [aiReadings]; chuyển cung khác mà đã có cache → hiển thị ngay,
- *   chưa có → hiển thị nút yêu cầu.
+ * Mỗi thiết bị chỉ được hỏi AI 1 lần (flag lưu DataStore). Khi đã dùng:
+ * - Nút request bị disable
+ * - Hiện text giải thích đã dùng hết lượt
  */
 @Composable
 fun AiReadingScreen(
     selectedCung: CungSlug?,
     aiReadings: Map<CungSlug, String>,
     loading: Boolean,
+    aiUsed: Boolean,
     onSelectCung: (CungSlug) -> Unit,
     onRequest: () -> Unit,
     onBack: () -> Unit,
-    tokens: Int? = null,
-    freeQuestions: Int? = null,
-    aiQuestionCost: Int? = null,
-    showInsufficientDialog: Boolean = false,
-    onDismissInsufficientDialog: () -> Unit = {},
-    onTopUp: () -> Unit = {},
 ) {
     val currentReading = selectedCung?.let(aiReadings::get)
-    val canAfford = (freeQuestions ?: 0) > 0 ||
-        (aiQuestionCost?.let { (tokens ?: 0) >= it } ?: true)
 
     Column(
         modifier = Modifier
@@ -99,30 +88,11 @@ fun AiReadingScreen(
                 onSelect = onSelectCung,
             )
 
-            if (tokens != null || freeQuestions != null) {
-                Text(
-                    text = tokenAnnotated(
-                        stringResource(
-                            R.string.ai_balance_hint,
-                            tokens ?: 0,
-                            freeQuestions ?: 0,
-                        )
-                    ),
-                    inlineContent = tokenInlineContent(sizeSp = 13.sp),
-                    color = ChartGoldDim,
-                    fontSize = 12.sp,
-                    fontFamily = BeVietnamProFamily,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                )
-            }
-
             ActionPanel(
                 selectedCung = selectedCung,
                 hasReadingForSelected = currentReading != null,
                 loading = loading,
-                canAfford = canAfford,
-                hasFreeQuestion = (freeQuestions ?: 0) > 0,
-                aiQuestionCost = aiQuestionCost,
+                aiUsed = aiUsed,
                 onRequest = onRequest,
             )
 
@@ -134,7 +104,8 @@ fun AiReadingScreen(
             } else if (!loading) {
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    text = stringResource(R.string.ai_reading_hint_single_cung),
+                    text = if (aiUsed) stringResource(R.string.ai_already_used_hint)
+                    else stringResource(R.string.ai_reading_hint_single_cung),
                     color = ChartIvoryDim,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -146,49 +117,6 @@ fun AiReadingScreen(
             }
         }
     }
-
-    if (showInsufficientDialog) {
-        InsufficientTokensDialog(
-            cost = aiQuestionCost ?: 0,
-            tokens = tokens ?: 0,
-            onDismiss = onDismissInsufficientDialog,
-            onTopUp = onTopUp,
-        )
-    }
-}
-
-@Composable
-private fun InsufficientTokensDialog(
-    cost: Int,
-    tokens: Int,
-    onDismiss: () -> Unit,
-    onTopUp: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.ai_insufficient_dialog_title)) },
-        text = {
-            Text(
-                text = tokenAnnotated(
-                    stringResource(R.string.ai_insufficient_dialog_body, cost, tokens)
-                ),
-                inlineContent = tokenInlineContent(),
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onDismiss(); onTopUp() }) {
-                Text(
-                    text = tokenAnnotated(stringResource(R.string.ai_insufficient_dialog_topup)),
-                    inlineContent = tokenInlineContent(),
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.ai_insufficient_dialog_cancel))
-            }
-        },
-    )
 }
 
 @Composable
@@ -271,9 +199,7 @@ private fun ActionPanel(
     selectedCung: CungSlug?,
     hasReadingForSelected: Boolean,
     loading: Boolean,
-    canAfford: Boolean,
-    hasFreeQuestion: Boolean,
-    aiQuestionCost: Int?,
+    aiUsed: Boolean,
     onRequest: () -> Unit,
 ) {
     Column(
@@ -283,21 +209,17 @@ private fun ActionPanel(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val cungName = selectedCung?.displayName
-        val cost = aiQuestionCost ?: 20
         val btnText = when {
-            cungName == null ->
-                if (hasFreeQuestion) stringResource(R.string.chart_ai_request_btn_free)
-                else stringResource(R.string.chart_ai_request_btn_paid, cost)
-            hasReadingForSelected ->
-                if (hasFreeQuestion) stringResource(R.string.ai_reading_refresh_btn_for_cung_free, cungName)
-                else stringResource(R.string.ai_reading_refresh_btn_for_cung_paid, cungName, cost)
-            else ->
-                if (hasFreeQuestion) stringResource(R.string.ai_reading_request_btn_for_cung_free, cungName)
-                else stringResource(R.string.ai_reading_request_btn_for_cung_paid, cungName, cost)
+            aiUsed -> stringResource(R.string.ai_reading_used_btn)
+            cungName == null -> stringResource(R.string.chart_ai_request_btn_free)
+            hasReadingForSelected -> stringResource(
+                R.string.ai_reading_refresh_btn_for_cung_free, cungName
+            )
+            else -> stringResource(R.string.ai_reading_request_btn_for_cung_free, cungName)
         }
         Button(
             onClick = onRequest,
-            enabled = !loading && selectedCung != null && canAfford,
+            enabled = !loading && selectedCung != null && !aiUsed,
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 48.dp),
@@ -315,8 +237,7 @@ private fun ActionPanel(
             border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
         ) {
             Text(
-                text = tokenAnnotated(btnText),
-                inlineContent = tokenInlineContent(sizeSp = 16.sp),
+                text = btnText,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
                 fontFamily = BeVietnamProFamily,
@@ -352,6 +273,7 @@ private fun AiReadingScreenEmptyPreview() {
             selectedCung = null,
             aiReadings = emptyMap(),
             loading = false,
+            aiUsed = false,
             onSelectCung = {},
             onRequest = {},
             onBack = {},
@@ -359,31 +281,15 @@ private fun AiReadingScreenEmptyPreview() {
     }
 }
 
-@Preview(name = "AI reading loading - dark", showBackground = true)
+@Preview(name = "AI reading used - dark", showBackground = true)
 @Composable
-private fun AiReadingScreenLoadingPreview() {
+private fun AiReadingScreenUsedPreview() {
     TuViTheme(darkTheme = true) {
         AiReadingScreen(
-            selectedCung = CungSlug.MENH,
+            selectedCung = null,
             aiReadings = emptyMap(),
-            loading = true,
-            onSelectCung = {},
-            onRequest = {},
-            onBack = {},
-        )
-    }
-}
-
-@Preview(name = "AI reading content - dark", showBackground = true)
-@Composable
-private fun AiReadingScreenContentPreview() {
-    TuViTheme(darkTheme = true) {
-        AiReadingScreen(
-            selectedCung = CungSlug.MENH,
-            aiReadings = mapOf(
-                CungSlug.MENH to "Mẫu luận giải: cung Mệnh vượng, đại vận hiện tại thuận lợi cho sự nghiệp.",
-            ),
             loading = false,
+            aiUsed = true,
             onSelectCung = {},
             onRequest = {},
             onBack = {},

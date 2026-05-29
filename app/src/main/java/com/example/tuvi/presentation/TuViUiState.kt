@@ -20,7 +20,7 @@ sealed interface TuViError {
         val AiNoInput = Res(R.string.error_ai_no_input)
         val AiNoChart = Res(R.string.error_ai_no_chart)
         val AiNoCung = Res(R.string.error_ai_no_cung)
-        val AiInsufficientTokens = Res(R.string.error_ai_insufficient_tokens)
+        val AiAlreadyUsed = Res(R.string.error_ai_already_used)
     }
 }
 

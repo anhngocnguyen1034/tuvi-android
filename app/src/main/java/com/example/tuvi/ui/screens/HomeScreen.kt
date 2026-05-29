@@ -47,9 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tuvi.domain.model.AuthUser
 import com.example.tuvi.presentation.screens.BaguaDecoration
-import com.example.tuvi.ui.components.AccountProfileCard
 import com.example.tuvi.ui.theme.HomeBgGradientBottom
 import com.example.tuvi.ui.theme.HomeBgGradientTop
 import com.example.tuvi.ui.theme.HomeCardGradientEnd
@@ -74,7 +72,6 @@ fun HomeScreen(
     onOpenBrowser: () -> Unit = {},
     onOpenCalendar: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
-    authUser: AuthUser? = null,
 ) {
     val homeBg = remember {
         Brush.verticalGradient(listOf(HomeBgGradientTop, TuViNavy, HomeBgGradientBottom))
@@ -130,22 +127,22 @@ fun HomeScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(4.dp))
 
-            AccountProfileCard(
-                user = authUser,
-                trailing = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_settings),
-                            contentDescription = stringResource(R.string.content_desc_settings),
-                            tint = TuViGold
-                        )
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                IconButton(onClick = onOpenSettings) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_settings),
+                        contentDescription = stringResource(R.string.content_desc_settings),
+                        tint = TuViGold
+                    )
                 }
-            )
+            }
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(16.dp))
 
             // ── Bát Quái xoay ──
             BaguaDecoration(
