@@ -53,7 +53,7 @@ class TuViViewModel(
     private val _selectedCung = MutableStateFlow<CungSlug?>(null)
     val selectedCung: StateFlow<CungSlug?> = _selectedCung.asStateFlow()
 
-    /** Mỗi thiết bị chỉ được gọi AI 1 lần — flag lưu trong DataStore. */
+    /** Mỗi thiết bị chỉ được gọi AI 1 lần — định danh theo ANDROID_ID, lưu trong DataStore. */
     val aiUsed: StateFlow<Boolean> = userPrefs.aiUsedFlow
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 

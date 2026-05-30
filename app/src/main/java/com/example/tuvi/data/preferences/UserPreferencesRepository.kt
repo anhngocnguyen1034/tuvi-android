@@ -1,6 +1,7 @@
 package com.example.tuvi.data.preferences
 
 import android.content.Context
+import android.provider.Settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -15,7 +16,15 @@ private val Context.userPrefsDataStore: DataStore<Preferences> by preferencesDat
 
 class UserPreferencesRepository(context: Context) {
 
-    private val dataStore = context.applicationContext.userPrefsDataStore
+    private val appContext = context.applicationContext
+    private val dataStore = appContext.userPrefsDataStore
+
+    /**
+     * ANDROID_ID — định danh thiết bị (scoped theo signing key từ API 26), sống qua gỡ-cài-lại.
+     * Lưu ý: client thuần vẫn reset được bằng factory reset / clear-data và giả mạo được trên máy root.
+     */
+    private val currentDeviceId: String =
+        Settings.Secure.getString(appContext.contentResolver, Settings.Secure.ANDROID_ID).orEmpty()
 
     companion object {
         private val KEY_THEME_DARK = booleanPreferencesKey("theme_dark")
@@ -23,6 +32,7 @@ class UserPreferencesRepository(context: Context) {
         private val KEY_NOTIF_HOLIDAY = booleanPreferencesKey("notif_holiday")
         private val KEY_NOTIF_LUNAR = booleanPreferencesKey("notif_lunar")
         private val KEY_AI_USED = booleanPreferencesKey("ai_used")
+        private val KEY_AI_USED_DEVICE = stringPreferencesKey("ai_used_device_id")
 
         const val LOCALE_VI = "vi"
         const val LOCALE_EN = "en"
@@ -66,13 +76,25 @@ class UserPreferencesRepository(context: Context) {
         dataStore.edit { it[KEY_NOTIF_LUNAR] = enabled }
     }
 
+    /**
+     * "Đã dùng AI" = đã có device id lưu và khớp với thiết bị hiện tại.
+     * Fallback: cờ boolean cũ (`ai_used`) từ bản trước → coi như đã dùng trên thiết bị này.
+     */
     val aiUsedFlow: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[KEY_AI_USED] ?: false
+        val usedDevice = prefs[KEY_AI_USED_DEVICE]
+        when {
+            !usedDevice.isNullOrEmpty() -> usedDevice == currentDeviceId
+            prefs[KEY_AI_USED] == true -> true   // legacy
+            else -> false
+        }
     }
 
     suspend fun isAiUsed(): Boolean = aiUsedFlow.first()
 
     suspend fun markAiUsed() {
-        dataStore.edit { it[KEY_AI_USED] = true }
+        dataStore.edit {
+            it[KEY_AI_USED_DEVICE] = currentDeviceId
+            it[KEY_AI_USED] = true   // giữ tương thích ngược
+        }
     }
 }
