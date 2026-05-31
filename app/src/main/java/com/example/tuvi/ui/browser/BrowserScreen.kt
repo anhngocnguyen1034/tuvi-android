@@ -61,9 +61,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -516,12 +518,29 @@ private fun googleSearchQueryForDisplay(url: String): String? {
 }
 
 /**
+ * Trang chủ Google (google.com, không có path/query) → coi như trang trống để
+ * thanh địa chỉ hiện placeholder, gõ tìm kiếm được ngay mà không phải xoá text.
+ */
+private fun isGoogleHome(url: String): Boolean = try {
+    val uri = Uri.parse(url.trim())
+    val host = uri.host?.lowercase()
+    if (host == null || !host.matches(Regex("^(www\\.)?google\\.[a-z.]{2,}$", RegexOption.IGNORE_CASE))) {
+        false
+    } else {
+        (uri.path.isNullOrEmpty() || uri.path == "/") && uri.query.isNullOrEmpty()
+    }
+} catch (_: Exception) {
+    false
+}
+
+/**
  * Hiển thị thanh địa chỉ không có `http://` / `https://` (giống Chrome).
  * Trang tìm Google → chỉ hiện nội dung ô tìm (tham số `q`).
  * Các trang khác: host + path + query (đã bỏ scheme); bỏ `www.` ở đầu tên miền.
  */
 private fun displayUrl(url: String): String {
     if (url.isBlank() || url == "about:blank") return ""
+    if (isGoogleHome(url)) return ""
     googleSearchQueryForDisplay(url)?.let { return it }
     val t = url.trim()
     val withoutScheme = when {
@@ -545,7 +564,7 @@ private fun AddressBar(
     onNavigate: (String) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    var editText  by remember { mutableStateOf(displayUrl(url)) }
+    var field     by remember { mutableStateOf(TextFieldValue(displayUrl(url))) }
 
     val bg       = if (isIncognito) IncognitoBg   else TuViNavy
     val cardBg   = if (isIncognito) IncognitoCard else TuViNavyCard
@@ -553,8 +572,9 @@ private fun AddressBar(
     val textCol  = if (isIncognito) IncognitoEmphasis else TuViIvory
     val hintCol  = if (isIncognito) IncognitoMuted  else TuViIvoryDim
 
+    // Khi URL đổi do điều hướng (không phải đang gõ) → đồng bộ lại text hiển thị.
     androidx.compose.runtime.LaunchedEffect(url) {
-        editText = displayUrl(url)
+        if (!isFocused) field = TextFieldValue(displayUrl(url))
     }
 
     Row(
@@ -564,10 +584,9 @@ private fun AddressBar(
             .padding(horizontal = 4.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val shown = if (isFocused) editText else displayUrl(url)
         BasicTextField(
-            value = shown,
-            onValueChange = { if (enabled) editText = it },
+            value = field,
+            onValueChange = { if (enabled) field = it },
             readOnly = !enabled,
             singleLine = true,
             textStyle = TextStyle(
@@ -578,23 +597,25 @@ private fun AddressBar(
             ),
             cursorBrush = SolidColor(focused),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-            keyboardActions = KeyboardActions(onGo = { onNavigate(editText) }),
+            keyboardActions = KeyboardActions(onGo = { onNavigate(field.text) }),
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(10.dp))
                 .background(cardBg)
                 .padding(horizontal = 12.dp, vertical = 7.dp),
-            // Khi focus: hiện full URL, select all để dễ gõ đè
+            // Khi focus: hiện full URL và bôi đen toàn bộ để gõ đè ngay (giống Chrome).
             interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }.also { src ->
                 androidx.compose.runtime.LaunchedEffect(src) {
                     src.interactions.collect { interaction ->
                         when (interaction) {
                             is androidx.compose.foundation.interaction.FocusInteraction.Focus -> {
-                                editText = displayUrl(url)
+                                val full = displayUrl(url)
+                                field = TextFieldValue(full, selection = TextRange(0, full.length))
                                 isFocused = true
                             }
                             is androidx.compose.foundation.interaction.FocusInteraction.Unfocus -> {
                                 isFocused = false
+                                field = TextFieldValue(displayUrl(url))
                             }
                         }
                     }
@@ -602,7 +623,7 @@ private fun AddressBar(
             },
             decorationBox = { inner ->
                 Box(contentAlignment = Alignment.CenterStart) {
-                    if (shown.isEmpty()) {
+                    if (field.text.isEmpty()) {
                         Text(
                             stringResource(R.string.browser_search_placeholder),
                             color = hintCol,
