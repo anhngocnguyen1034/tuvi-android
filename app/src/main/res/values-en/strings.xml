@@ -1,6 +1,6 @@
 <resources>
     <!-- App -->
-    <string name="app_name">TuVi</string>
+    <string name="app_name">Tử vi Daily</string>
 
     <!-- Common buttons -->
     <string name="btn_cancel">Cancel</string>
@@ -33,10 +33,10 @@
 
     <!-- HomeScreen -->
     <string name="home_app_title">TỬ VI</string>
-    <string name="home_app_subtitle">BY ANHNN</string>
+    <string name="home_app_subtitle">Tử vi Daily</string>
     <string name="home_tuvi_title">Tử Vi Chart</string>
     <string name="home_tuvi_desc">View your personal chart by birth date</string>
-    <string name="home_saved_title">Saved\nCharts</string>
+    <string name="home_saved_title">Saved\nLists</string>
     <string name="home_saved_desc">View &amp; manage</string>
     <string name="home_browser_title">Web Browser</string>
     <string name="home_browser_desc">Browse web &amp; documents</string>
@@ -60,7 +60,7 @@
     <string name="input_label_birth_time">BIRTH TIME</string>
     <string name="input_hour_label">Hour</string>
     <string name="input_minute_label">Minute</string>
-    <string name="input_earthly_branch_hour">Earthly Branch Hour</string>
+    <string name="input_earthly_branch_hour">Zodiac Hour Branch</string>
     <string name="input_label_gender">GENDER</string>
     <string name="input_gender_male">Male</string>
     <string name="input_gender_female">Female</string>
@@ -87,7 +87,7 @@
     <string name="chart_ai_refresh_btn">Refresh AI interpretation</string>
     <string name="chart_ai_reading_title">AI interpretation</string>
     <string name="chart_ai_reading_empty">The server returned no interpretation text.</string>
-    <string name="chart_footer">Tử Vi By AnhNN</string>
+    <string name="chart_footer">Tử vi Daily</string>
     <string name="chart_center_title">TỬ VI CHART</string>
     <string name="chart_label_name">Full name</string>
     <string name="chart_label_gender">Gender</string>
@@ -98,12 +98,12 @@
     <string name="chart_label_year">Year</string>
     <string name="chart_label_month">Month</string>
     <string name="chart_label_day">Day</string>
-    <string name="chart_label_menh">Menh</string>
-    <string name="chart_label_ban_menh">Ban Menh</string>
-    <string name="chart_label_cuc">Cuc</string>
-    <string name="chart_label_menh_chu">Menh Chu</string>
-    <string name="chart_label_than_chu">Than Chu</string>
-    <string name="chart_label_sinh_khac">Sinh/Khac</string>
+    <string name="chart_label_menh">Destiny Palace</string>
+    <string name="chart_label_ban_menh">Life Element</string>
+    <string name="chart_label_cuc">Element Bureau</string>
+    <string name="chart_label_menh_chu">Destiny Master</string>
+    <string name="chart_label_than_chu">Body Master</string>
+    <string name="chart_label_sinh_khac">Generation &amp; Restriction</string>
     <string name="chart_month_n">Month %1$d</string>
     <string name="chart_month">Month</string>
 
@@ -128,7 +128,7 @@
     <!-- LichScreen (Lunar-Solar Calendar) -->
     <string name="calendar_screen_title">LUNAR-SOLAR CALENDAR</string>
     <string name="calendar_month_year">Month %1$d, Year %2$d</string>
-    <string name="calendar_your_events">Your events</string>
+    <string name="calendar_your_events">My Events</string>
     <string name="calendar_cd_add_event">Add event</string>
     <string name="calendar_label_day">Day</string>
     <string name="calendar_label_lunar_month">Lunar Month</string>
@@ -212,13 +212,13 @@
     <string name="save_chart_group_other">Other</string>
 
     <!-- LichScreen additional -->
-    <string name="calendar_label_truc">Truc</string>
+    <string name="calendar_label_truc">Duty Officer</string>
     <string name="calendar_truc_good">Good</string>
     <string name="calendar_truc_bad">Bad</string>
-    <string name="calendar_hoang_dao">Hoang Dao</string>
-    <string name="calendar_hac_dao">Hac Dao</string>
-    <string name="calendar_luc_nham_label">Luc Nham</string>
-    <string name="calendar_hoang_dao_hours_label">Hoang Dao Hours</string>
+    <string name="calendar_hoang_dao">Auspicious</string>
+    <string name="calendar_hac_dao">Inauspicious</string>
+    <string name="calendar_luc_nham_label">Da Liu Ren</string>
+    <string name="calendar_hoang_dao_hours_label">Auspicious Hours</string>
     <string name="calendar_day_sun">Sun</string>
     <string name="calendar_day_mon">Mon</string>
     <string name="calendar_day_tue">Tue</string>
@@ -236,18 +236,18 @@
     <string name="input_minute_item">%1$s min</string>
 
     <!-- InputScreen zodiac hours -->
-    <string name="input_zodiac_ty">Ty (23h–01h)</string>
-    <string name="input_zodiac_suu">Suu (01h–03h)</string>
-    <string name="input_zodiac_dan">Dan (03h–05h)</string>
-    <string name="input_zodiac_mao">Mao (05h–07h)</string>
-    <string name="input_zodiac_thin">Thin (07h–09h)</string>
-    <string name="input_zodiac_ty2">Ty (09h–11h)</string>
-    <string name="input_zodiac_ngo">Ngo (11h–13h)</string>
-    <string name="input_zodiac_mui">Mui (13h–15h)</string>
-    <string name="input_zodiac_than">Than (15h–17h)</string>
-    <string name="input_zodiac_dau">Dau (17h–19h)</string>
-    <string name="input_zodiac_tuat">Tuat (19h–21h)</string>
-    <string name="input_zodiac_hoi">Hoi (21h–23h)</string>
+    <string name="input_zodiac_ty">Zi (Rat - 11 PM to 1 AM)</string>
+    <string name="input_zodiac_suu">Chou (Ox - 1 AM to 3 AM)</string>
+    <string name="input_zodiac_dan">Yin (Tiger - 3 AM to 5 AM)</string>
+    <string name="input_zodiac_mao">Mao (Rabbit - 5 AM to 7 AM)</string>
+    <string name="input_zodiac_thin">Chen (Dragon - 7 AM to 9 AM)</string>
+    <string name="input_zodiac_ty2">Si (Snake - 9 AM to 11 AM)</string>
+    <string name="input_zodiac_ngo">Wu (Horse - 11 AM to 1 PM)</string>
+    <string name="input_zodiac_mui">Wei (Goat - 1 PM to 3 PM)</string>
+    <string name="input_zodiac_than">Shen (Monkey - 3 PM to 5 PM)</string>
+    <string name="input_zodiac_dau">You (Rooster - 5 PM to 7 PM)</string>
+    <string name="input_zodiac_tuat">Xu (Dog - 7 PM to 9 PM)</string>
+    <string name="input_zodiac_hoi">Hai (Pig - 9 PM to 11 PM)</string>
 
     <!-- LichScreen lunar label -->
     <string name="calendar_lunar_prefix">Lunar: %1$s</string>
@@ -266,13 +266,13 @@
     <string name="error_ai_interpret_503">AI interpretation is not available (HTTP 503). Configure the Gemini API key on the server or try again later.</string>
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
-    <string name="error_ai_no_cung">Pick a palace before asking AI.</string>
-    <string name="ai_reading_cung_picker_label">Pick a palace to interpret</string>
-    <string name="ai_reading_request_btn_for_cung_free">Ask AI free — %1$s palace</string>
-    <string name="ai_reading_refresh_btn_for_cung_free">Ask AI free (refresh %1$s)</string>
+    <string name="error_ai_no_cung">Please select a palace before asking AI.</string>
+    <string name="ai_reading_cung_picker_label">Select a palace to interpret</string>
+    <string name="ai_reading_request_btn_for_cung_free">Ask AI free — %1$s Palace</string>
+    <string name="ai_reading_refresh_btn_for_cung_free">Ask AI free (Refresh %1$s)</string>
+    <string name="ai_reading_loading_cung">Asking AI about the %1$s Palace…</string>
+    <string name="ai_reading_hint_single_cung">Select one palace at a time — the analysis will be much deeper than a general chart reading.</string>
     <string name="chart_ai_request_btn_free">Ask AI free</string>
-    <string name="ai_reading_loading_cung">Asking AI about the %1$s palace…</string>
-    <string name="ai_reading_hint_single_cung">Pick one palace at a time — the answer goes deeper than asking about the whole chart.</string>
     <string name="browser_error_unknown">Unknown error</string>
     <string name="browser_default_title">Browser</string>
 
@@ -282,8 +282,7 @@
     <string name="toast_chart_unsaved">Chart unsaved</string>
     <string name="toast_chart_unsave_failed">Could not unsave: %1$s</string>
     <string name="toast_chart_open_failed">Could not open chart</string>
-    <string name="rate_dialog_title">Enjoying TuVi?</string>
-    <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
+    <string name="rate_dialog_title">Enjoying Tử vi Daily?</string>    <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
     <string name="rate_dialog_confirm">Rate now</string>
     <string name="rate_dialog_dismiss">Maybe later</string>
 
