@@ -266,4 +266,5 @@
     <string name="ai_reading_used_btn">设备免额已用尽</string>
     <string name="ai_already_used_hint">每台独立设备均可免费体验一次 AI 详批服务 — 您的设备当前已使用过该免费额度。</string>
     <string name="error_ai_already_used">您已使用过该设备上仅有的一次免费 AI 详批特权。</string>
+    <string name="splash_tagline">紫微斗数解读</string>
 </resources>

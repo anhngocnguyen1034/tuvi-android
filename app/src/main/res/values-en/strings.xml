@@ -292,4 +292,5 @@
     <string name="ai_reading_used_btn">AI quota used</string>
     <string name="ai_already_used_hint">Each device gets one free AI reading — and you\'ve already used it.</string>
     <string name="error_ai_already_used">You\'ve used the only free AI question on this device.</string>
+    <string name="splash_tagline">Tử Vi astrology readings</string>
 </resources>

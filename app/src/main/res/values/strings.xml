@@ -282,4 +282,5 @@
     <string name="browser_ctx_open_link">Mở link này</string>
     <string name="browser_ctx_open_new_tab">Mở trong tab mới</string>
     <string name="browser_ctx_download_image">Tải ảnh xuống</string>
+    <string name="splash_tagline">Luận giải lá số tử vi</string>
 </resources>

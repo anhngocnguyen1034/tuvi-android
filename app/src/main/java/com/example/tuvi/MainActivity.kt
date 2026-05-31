@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.ui.screens.LanguagePickerScreen
+import com.example.tuvi.ui.screens.SplashScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
@@ -111,8 +112,17 @@ fun TuViApp(isDark: Boolean = true) {
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
-            startDestination = "home"
+            startDestination = "splash"
         ) {
+        composable("splash") {
+            SplashScreen(
+                onFinish = {
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                }
+            )
+        }
         composable("home") {
             val activity = context as Activity
             val showAdThen: (() -> Unit) -> Unit = { action ->
