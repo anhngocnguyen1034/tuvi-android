@@ -179,7 +179,7 @@ fun SettingsScreen(
             )
             PrivacyPolicyRow(onClick = onOpenPrivacy)
             AboutActionRow(
-                iconRes = R.drawable.ic_rate_app,
+                iconRes = R.drawable.ic_favorite,
                 title = stringResource(R.string.settings_rate_title),
                 desc = stringResource( R.string.settings_rate_desc),
                 onClick = onRateApp
@@ -508,7 +508,7 @@ private fun AboutActionRow(
 @Composable
 private fun PrivacyPolicyRow(onClick: () -> Unit) {
     AboutActionRow(
-        iconRes = R.drawable.ic_privacy_policy,
+        iconRes = R.drawable.ic_rate_app,
         title = stringResource(R.string.settings_privacy_title),
         desc = stringResource(R.string.settings_privacy_desc),
         onClick = onClick
