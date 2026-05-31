@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -37,8 +38,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -56,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -139,7 +139,7 @@ fun BrowserScreen(
             viewModel.showBookmarkOverlay -> viewModel.closeBookmarks()
             viewModel.showTabSwitcher     -> viewModel.closeTabSwitcher()
             activeTab?.canGoBack == true  -> viewModel.goBack()
-            else                          -> viewModel.openTabSwitcher()
+            else                          -> onBack()   // hết lịch sử ⇒ về Home
         }
     }
 
@@ -163,11 +163,11 @@ fun BrowserScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 4.dp, vertical = 4.dp),
+                                .padding(horizontal = 4.dp, vertical = 2.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (!keyboardOpen) {
-                                IconButton(onClick = onBack) {
+                                IconButton(onClick = onBack, modifier = Modifier.size(40.dp)) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_home),
                                         contentDescription = stringResource(R.string.browser_cd_home),
@@ -187,14 +187,17 @@ fun BrowserScreen(
                             )
                             if (!keyboardOpen) {
                                 if (!isIncognito) {
-                                    IconButton(onClick = {
-                                        val added = viewModel.toggleBookmark()
-                                        scope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                if (added) bookmarkAdded else bookmarkRemoved
-                                            )
-                                        }
-                                    }) {
+                                    IconButton(
+                                        onClick = {
+                                            val added = viewModel.toggleBookmark()
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    if (added) bookmarkAdded else bookmarkRemoved
+                                                )
+                                            }
+                                        },
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
                                         Icon(
                                             painter = painterResource(R.drawable.ic_favorite),
                                             contentDescription = stringResource(R.string.browser_cd_bookmark),
@@ -547,7 +550,6 @@ private fun AddressBar(
     val bg       = if (isIncognito) IncognitoBg   else TuViNavy
     val cardBg   = if (isIncognito) IncognitoCard else TuViNavyCard
     val focused  = if (isIncognito) IncognitoEmphasis else TuViGold
-    val unfocus  = if (isIncognito) IncognitoDivider  else TuViDivider
     val textCol  = if (isIncognito) IncognitoEmphasis else TuViIvory
     val hintCol  = if (isIncognito) IncognitoMuted  else TuViIvoryDim
 
@@ -562,38 +564,26 @@ private fun AddressBar(
             .padding(horizontal = 4.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Incognito indicator icon
-        if (isIncognito) {
-            Text(
-                text = stringResource(R.string.browser_incognito_icon),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-        }
-        OutlinedTextField(
-            value = if (isFocused) editText else displayUrl(url),
+        val shown = if (isFocused) editText else displayUrl(url)
+        BasicTextField(
+            value = shown,
             onValueChange = { if (enabled) editText = it },
             readOnly = !enabled,
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(10.dp),
+            singleLine = true,
             textStyle = TextStyle(
                 fontSize = 13.sp,
                 color = textCol,
                 // Unfocused: căn giữa giống Chrome
                 textAlign = if (isFocused) TextAlign.Start else TextAlign.Center
             ),
-            placeholder = { Text(stringResource(R.string.browser_search_placeholder), color = hintCol, fontSize = 13.sp,
-                modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
-            singleLine = true,
+            cursorBrush = SolidColor(focused),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
             keyboardActions = KeyboardActions(onGo = { onNavigate(editText) }),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = focused,
-                unfocusedBorderColor = unfocus.copy(alpha = 0.4f),
-                focusedContainerColor = cardBg,
-                unfocusedContainerColor = cardBg,
-                cursorColor = focused
-            ),
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(10.dp))
+                .background(cardBg)
+                .padding(horizontal = 12.dp, vertical = 7.dp),
             // Khi focus: hiện full URL, select all để dễ gõ đè
             interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }.also { src ->
                 androidx.compose.runtime.LaunchedEffect(src) {
@@ -608,6 +598,20 @@ private fun AddressBar(
                             }
                         }
                     }
+                }
+            },
+            decorationBox = { inner ->
+                Box(contentAlignment = Alignment.CenterStart) {
+                    if (shown.isEmpty()) {
+                        Text(
+                            stringResource(R.string.browser_search_placeholder),
+                            color = hintCol,
+                            fontSize = 13.sp,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    inner()
                 }
             }
         )
