@@ -115,10 +115,13 @@ fun TuViApp(isDark: Boolean = true) {
             startDestination = "splash"
         ) {
         composable("splash") {
+            val activity = context as Activity
             SplashScreen(
                 onFinish = {
-                    navController.navigate("home") {
-                        popUpTo("splash") { inclusive = true }
+                    InterstitialAdManager.showThen(activity) {
+                        navController.navigate("home") {
+                            popUpTo("splash") { inclusive = true }
+                        }
                     }
                 }
             )
