@@ -155,7 +155,7 @@ fun HistoryScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.Default.ArrowBack,
+                            painter = painterResource(R.drawable.ic_back),
                             contentDescription = stringResource(R.string.settings_back),
                             tint = TuViGold
                         )
@@ -293,7 +293,7 @@ private fun HistoryItem(
                 modifier = Modifier.size(32.dp)
             ) {
                 Icon(
-                    Icons.Default.MoreVert,
+                    painter = painterResource(R.drawable.ic_more),
                     contentDescription = null,
                     tint = TuViIvoryDim,
                     modifier = Modifier.size(18.dp)

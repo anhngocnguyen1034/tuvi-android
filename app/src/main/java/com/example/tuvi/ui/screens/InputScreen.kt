@@ -877,7 +877,7 @@ fun InputScreen(
             if (onBack != null) {
                 androidx.compose.material3.IconButton(onClick = onBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        painter = painterResource(R.drawable.ic_back),
                         contentDescription = stringResource(R.string.settings_back),
                         tint = TuViGold,
                     )

@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -98,7 +99,7 @@ fun ThemSuKienSheet(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         notifGranted = granted
-        nhacNho = true   // bật nhắc dù user từ chối (vẫn lưu, chỉ không có alarm)
+        nhacNho = granted   // chỉ bật khi được cấp quyền
         notifPermPrefs.edit().putBoolean("asked", true).apply()
         if (!granted) {
             val act = context as? Activity
@@ -181,24 +182,15 @@ fun ThemSuKienSheet(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Icon(
-                        Icons.Default.Notifications,
+                        painter = painterResource(R.drawable.ic_notification),
                         contentDescription = null,
                         tint = if (nhacNho) TuViGold else TuViIvoryDim,
                     )
-                    Column {
-                        Text(
-                            stringResource(R.string.add_event_reminder),
-                            color = if (nhacNho) TuViIvory else TuViIvoryDim,
-                            fontSize = 14.sp,
-                        )
-                        if (nhacNho && !notifGranted) {
-                            Text(
-                                stringResource(R.string.add_event_notif_denied),
-                                color = TuViRedLight,
-                                fontSize = 11.sp,
-                            )
-                        }
-                    }
+                    Text(
+                        stringResource(R.string.add_event_reminder),
+                        color = if (nhacNho) TuViIvory else TuViIvoryDim,
+                        fontSize = 14.sp,
+                    )
                 }
                 Switch(
                     checked = nhacNho,

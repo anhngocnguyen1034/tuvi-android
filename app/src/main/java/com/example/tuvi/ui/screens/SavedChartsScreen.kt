@@ -110,15 +110,15 @@ fun SavedChartsScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.Default.ArrowBack,
+                            painter = painterResource(R.drawable.ic_back),
                             contentDescription = stringResource(R.string.settings_back),
                             tint = TuViGold
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
                 )
             )
         },
@@ -136,7 +136,7 @@ fun SavedChartsScreen(
                 placeholder = { Text(stringResource(R.string.saved_search_placeholder), color = TuViIvoryDim) },
                 leadingIcon = {
                     Icon(
-                        Icons.Default.Search,
+                        painter = painterResource(R.drawable.ic_search),
                         contentDescription = null,
                         tint = TuViGold
                     )
@@ -145,7 +145,7 @@ fun SavedChartsScreen(
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.setSearchQuery("") }) {
                             Icon(
-                                Icons.Default.Clear,
+                                painter = painterResource(R.drawable.ic_close),
                                 contentDescription = stringResource(R.string.saved_cd_clear_search),
                                 tint = TuViIvoryDim
                             )
@@ -273,7 +273,7 @@ private fun SwipeToDismissChartItem(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Icon(
-                    Icons.Default.Delete,
+                    painter = painterResource(R.drawable.ic_trash),
                     contentDescription = stringResource(R.string.saved_cd_delete),
                     tint = Color.White,
                     modifier = Modifier.padding(end = 24.dp)
@@ -358,7 +358,7 @@ private fun SavedChartCard(chart: SavedChart, onClick: () -> Unit) {
             }
 
             Icon(
-                imageVector = Icons.Default.Person,
+                painter = painterResource(R.drawable.ic_person),
                 contentDescription = null,
                 tint = TuViGold.copy(alpha = 0.4f),
                 modifier = Modifier.size(20.dp)

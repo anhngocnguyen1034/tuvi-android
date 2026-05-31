@@ -121,7 +121,7 @@ fun TabSwitcherOverlay(
                         }
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.btn_close), tint = TuViIvoryDim)
+                        Icon(painter=painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.btn_close), tint = TuViIvoryDim)
                     }
                 }
 
@@ -196,7 +196,7 @@ fun TabSwitcherOverlay(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Icon(painter = painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(20.dp))
                             Text(
                                 if (showIncognitoList) stringResource(R.string.tab_switcher_new_incognito) else stringResource(R.string.tab_switcher_new_tab),
                                 fontWeight = FontWeight.Bold, fontSize = 14.sp
@@ -309,7 +309,7 @@ private fun TabCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        Icons.Default.Close,
+                        painter=painterResource(R.drawable.ic_close),
                         contentDescription = stringResource(R.string.tab_cd_close),
                         tint = if (isIncognito) IncognitoMuted else TuViIvoryDim,
                         modifier = Modifier.size(14.dp)

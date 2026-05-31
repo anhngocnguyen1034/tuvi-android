@@ -169,7 +169,7 @@ fun BrowserScreen(
                             if (!keyboardOpen) {
                                 IconButton(onClick = onBack) {
                                     Icon(
-                                        Icons.Default.Home,
+                                        painter = painterResource(R.drawable.ic_home),
                                         contentDescription = stringResource(R.string.browser_cd_home),
                                         tint = accentColor
                                     )
@@ -196,7 +196,7 @@ fun BrowserScreen(
                                         }
                                     }) {
                                         Icon(
-                                            Icons.Default.Star,
+                                            painter = painterResource(R.drawable.ic_favorite),
                                             contentDescription = stringResource(R.string.browser_cd_bookmark),
                                             tint = if (isBookmarked) TuViGold else TuViIvoryDim.copy(alpha = 0.4f)
                                         )
@@ -213,7 +213,7 @@ fun BrowserScreen(
                         ) {
                             IconButton(onClick = onBack) {
                                 Icon(
-                                    Icons.Default.Home,
+                                    painter=painterResource(R.drawable.ic_home),
                                     contentDescription = stringResource(R.string.browser_cd_home),
                                     tint = accentColor
                                 )
@@ -237,7 +237,7 @@ fun BrowserScreen(
                                     }
                                 }) {
                                     Icon(
-                                        Icons.Default.Star,
+                                        painter = painterResource(R.drawable.ic_favorite),
                                         contentDescription = stringResource(R.string.browser_cd_bookmark),
                                         tint = if (isBookmarked) TuViGold else TuViIvoryDim.copy(alpha = 0.4f)
                                     )
@@ -659,7 +659,7 @@ private fun BrowserBottomBar(
             // ← Back
             IconButton(onClick = onBack, enabled = canGoBack, modifier = Modifier.weight(1f)) {
                 Icon(
-                    Icons.Default.ArrowBack,
+                    painter=painterResource(R.drawable.ic_back),
                     contentDescription = stringResource(R.string.browser_cd_back),
                     tint = if (canGoBack) accent else dim.copy(alpha = 0.3f),
                     modifier = Modifier.size(22.dp)
@@ -668,7 +668,7 @@ private fun BrowserBottomBar(
             // → Forward
             IconButton(onClick = onForward, enabled = canGoForward, modifier = Modifier.weight(1f)) {
                 Icon(
-                    Icons.Default.ArrowForward,
+                    painter = painterResource(R.drawable.ic_forward),
                     contentDescription = stringResource(R.string.browser_cd_forward),
                     tint = if (canGoForward) accent else dim.copy(alpha = 0.3f),
                     modifier = Modifier.size(22.dp)
@@ -697,7 +697,7 @@ private fun BrowserBottomBar(
                     modifier = Modifier.align(Alignment.Center)
                 ) {
                     Icon(
-                        Icons.Default.MoreVert,
+                        painter = painterResource(R.drawable.ic_more),
                         contentDescription = stringResource(R.string.browser_cd_more),
                         tint = accent,
                         modifier = Modifier.size(22.dp)

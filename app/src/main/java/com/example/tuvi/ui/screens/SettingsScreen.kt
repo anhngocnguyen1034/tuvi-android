@@ -181,7 +181,7 @@ fun SettingsScreen(
             AboutActionRow(
                 iconRes = R.drawable.ic_rate_app,
                 title = stringResource(R.string.settings_rate_title),
-                desc = stringResource(R.string.settings_rate_desc),
+                desc = stringResource( R.string.settings_rate_desc),
                 onClick = onRateApp
             )
             AboutActionRow(

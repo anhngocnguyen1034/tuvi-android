@@ -354,7 +354,7 @@ private fun DayDetail(
                     .background(TuViGold, CircleShape),
             ) {
                 Icon(
-                    Icons.Default.Add,
+                    painter = painterResource(R.drawable.ic_notification),
                     stringResource(R.string.calendar_cd_add_event),
                     tint = TuViNavy
                 )
@@ -516,7 +516,7 @@ private fun DayDetail(
                         ) {
                             if (sk.alarmEpoch > 0) {
                                 Icon(
-                                    Icons.Default.Notifications,
+                                    painter = painterResource(R.drawable.ic_notification),
                                     null,
                                     tint = TuViGold,
                                     modifier = Modifier.size(14.dp)

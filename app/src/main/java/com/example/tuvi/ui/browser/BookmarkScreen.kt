@@ -115,7 +115,7 @@ fun BookmarkScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Star, contentDescription = null,
+                        Icon(painter = painterResource(R.drawable.ic_favorite), contentDescription = null,
                             tint = TuViGold, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(stringResource(R.string.bookmark_screen_title), color = TuViGold, fontWeight = FontWeight.Bold)
@@ -123,7 +123,7 @@ fun BookmarkScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
+                        Icon(painter = painterResource(R.drawable.ic_back), contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -191,7 +191,7 @@ private fun SwipeableBookmarkItem(
                     .background(TuViRed.copy(alpha = 0.85f)),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.btn_delete),
+                Icon(painter = painterResource(R.drawable.ic_trash), contentDescription = stringResource(R.string.btn_delete),
                     tint = Color.White, modifier = Modifier.padding(end = 24.dp))
             }
         }
@@ -252,7 +252,7 @@ private fun BookmarkItem(
         }
 
         Icon(
-            Icons.Default.Star,
+            painter = painterResource(R.drawable.ic_favorite),
             contentDescription = null,
             tint = TuViGold.copy(alpha = 0.5f),
             modifier = Modifier.size(16.dp)
