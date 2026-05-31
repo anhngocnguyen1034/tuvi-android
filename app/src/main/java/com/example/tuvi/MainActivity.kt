@@ -9,7 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
-import com.anhnn.language.LanguageScreen
+import com.example.tuvi.ui.screens.LanguagePickerScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
@@ -164,7 +164,7 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("language") {
             val context = LocalContext.current
-            LanguageScreen(
+            LanguagePickerScreen(
                 onBack = { navController.popBackStack() },
                 onLanguageSaved = { (context as? Activity)?.recreate() }
             )

@@ -1,0 +1,269 @@
+<resources>
+    <string name="app_name">紫微 Daily</string>
+
+    <string name="btn_cancel">取消</string>
+    <string name="btn_select">选择</string>
+    <string name="btn_close">关闭</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_no">否</string>
+    <string name="btn_clear">清除</string>
+
+    <string name="settings_title">设置</string>
+    <string name="settings_back">返回</string>
+    <string name="settings_theme">外观界面</string>
+    <string name="settings_theme_dark">深色模式</string>
+    <string name="settings_theme_light">浅色模式</string>
+    <string name="settings_language">语言设置</string>
+    <string name="settings_lang_vi">Tiếng Việt</string>
+    <string name="settings_lang_en">English</string>
+    <string name="settings_language_desc">选择显示语言</string>
+    <string name="settings_dark_mode_desc">切换至深色外观</string>
+    <string name="settings_light_mode_desc">切换至浅色外观</string>
+    <string name="content_desc_settings">打开设置</string>
+    <string name="settings_footer_hint">语言更改将应用于系统标签和当前页面；部分其他页面可能需要重启应用才能完全完成语言切换。</string>
+    <string name="settings_notification_section">通知功能</string>
+    <string name="settings_notif_holiday_title">法定节假日</string>
+    <string name="settings_notif_holiday_desc">节假日到来时提醒我</string>
+    <string name="settings_notif_lunar_title">初一与十五</string>
+    <string name="settings_notif_lunar_desc">农历每月初一及十五时提醒我</string>
+
+    <string name="home_app_title">紫微斗数</string>
+    <string name="home_app_subtitle">紫微 Daily</string>
+    <string name="home_tuvi_title">紫微命盘</string>
+    <string name="home_tuvi_desc">根据出生日期查看您的个人命盘</string>
+    <string name="home_saved_title">已存\n命盘</string>
+    <string name="home_saved_desc">查看与管理</string>
+    <string name="home_browser_title">网页浏览器</string>
+    <string name="home_browser_desc">浏览网页与相关文献资料</string>
+    <string name="home_calendar_title">公农历万年历</string>
+    <string name="home_calendar_desc">快捷查看公历与农历日期</string>
+    <string name="home_btn_view_now">立即查看</string>
+
+    <string name="input_screen_title">排盘信息输入</string>
+    <string name="input_lunar_picker_title">选择农历出生日期</string>
+    <string name="input_picker_day">日</string>
+    <string name="input_picker_month">月</string>
+    <string name="input_picker_year">年</string>
+    <string name="input_view_year_dialog_title">选择流年（查看年份）</string>
+    <string name="input_solar_picker_title">选择公历出生日期</string>
+    <string name="input_label_name">姓名</string>
+    <string name="input_hint_name">请输入您的姓名…</string>
+    <string name="input_label_birthday">出生日期</string>
+    <string name="input_solar_calendar">公历（阳历）</string>
+    <string name="input_lunar_calendar">农历（阴历）</string>
+    <string name="input_label_birth_time">出生时间</string>
+    <string name="input_hour_label">时</string>
+    <string name="input_minute_label">分</string>
+    <string name="input_earthly_branch_hour">出生时辰</string>
+    <string name="input_label_gender">性别</string>
+    <string name="input_gender_male">男</string>
+    <string name="input_gender_female">女</string>
+    <string name="input_label_view_year">查看流年</string>
+    <string name="input_hint_view_year">命盘解析流年年份</string>
+    <string name="input_btn_view_chart">生成紫微命盘</string>
+
+    <string name="chart_cd_download">下载命盘盘面图</string>
+    <string name="chart_cd_unsave">取消保存命盘</string>
+    <string name="chart_cd_save">保存命盘</string>
+    <string name="chart_dialog_unsave_title">取消保存该命盘？</string>
+    <string name="chart_dialog_unsave_message">该命盘将从您的保存列表中移除。确定执行此操作吗？</string>
+    <string name="chart_btn_unsave">取消保存</string>
+    <string name="chart_download_success_title">图片保存成功</string>
+    <string name="chart_download_fail_title">图片保存失败</string>
+    <string name="chart_download_success_message">命盘盘面图已成功保存至相册 (Pictures/TuVi)。</string>
+    <string name="chart_download_fail_message">无法将图片保存至相册，请重试。</string>
+    <string name="chart_dialog_download_title">下载命盘图片？</string>
+    <string name="chart_dialog_download_message">是否需要将此命盘图下载至本地相册？</string>
+    <string name="chart_btn_download">立即下载</string>
+    <string name="chart_loading_ai">AI 正在为您深度解析命盘…</string>
+    <string name="chart_ai_request_btn">AI 盘面详批</string>
+    <string name="chart_ai_refresh_btn">重新生成 AI 解析</string>
+    <string name="chart_ai_reading_title">AI 命盘详批</string>
+    <string name="chart_ai_reading_empty">服务器未返回任何解析文本。</string>
+    <string name="chart_footer">紫微 Daily</string>
+    <string name="chart_center_title">紫微斗数命盘</string>
+    <string name="chart_label_name">姓名</string>
+    <string name="chart_label_gender">性别</string>
+    <string name="chart_label_solar_birthday">公历生日</string>
+    <string name="chart_label_lunar_birthday">农历生日</string>
+    <string name="chart_label_hour">出生时辰</string>
+    <string name="chart_label_view_year">流年年份：</string>
+    <string name="chart_label_year">年</string>
+    <string name="chart_label_month">月</string>
+    <string name="chart_label_day">日</string>
+    <string name="chart_label_menh">命宫</string>
+    <string name="chart_label_ban_menh">本命五行</string>
+    <string name="chart_label_cuc">局</string>
+    <string name="chart_label_menh_chu">命主</string>
+    <string name="chart_label_than_chu">身主</string>
+    <string name="chart_label_sinh_khac">生克关系</string>
+    <string name="chart_month_n">%1$d月</string>
+    <string name="chart_month">月份</string>
+
+    <string name="saved_screen_title">已保存的命盘</string>
+    <string name="saved_search_placeholder">按姓名搜索…</string>
+    <string name="saved_cd_clear_search">清除搜索内容</string>
+    <string name="saved_chart_count">共 %1$d 个命盘</string>
+    <string name="saved_empty_search_message">未找到匹配的命盘</string>
+    <string name="saved_empty_state_message">暂无已保存的命盘</string>
+    <string name="saved_empty_state_hint">查看命盘时，点击“保存命盘”图标即可在此处显示</string>
+    <string name="saved_delete_dialog_title">删除命盘</string>
+    <string name="saved_delete_dialog_message">确认要删除 %1$s 的命盘吗？</string>
+    <string name="saved_cd_delete">删除</string>
+
+    <string name="save_chart_dialog_title">保存命盘</string>
+    <string name="save_chart_dialog_subtitle">请选择分组进行分类管理</string>
+    <string name="save_chart_group_custom">自定义分组…</string>
+    <string name="save_chart_custom_hint">请输入新分组名称…</string>
+
+    <string name="calendar_screen_title">公农历万年历</string>
+    <string name="calendar_month_year">%2$d年%1$d月</string>
+    <string name="calendar_your_events">我的日程事记</string>
+    <string name="calendar_cd_add_event">添加新事件</string>
+    <string name="calendar_label_day">公历日</string>
+    <string name="calendar_label_lunar_month">农历月</string>
+    <string name="calendar_label_lunar_year">农历年</string>
+
+    <string name="add_event_sheet_title">添加事件 %1$d/%2$d/%3$d (%4$s)</string>
+    <string name="add_event_label_title">事件标题 *</string>
+    <string name="add_event_label_note">备注信息</string>
+    <string name="add_event_reminder">日程提醒设置</string>
+    <string name="add_event_notif_denied">通知权限已被拒绝 – 事件仍将被保存</string>
+    <string name="notif_perm_blocked_title">需要开启通知权限</string>
+    <string name="notif_perm_blocked_message">您已拒绝通知权限。请前往“系统设置”手动开启，以便我们能够及时为您推送日程事记提醒。</string>
+    <string name="notif_perm_open_settings">前往设置</string>
+    <string name="notif_perm_cancel">稍后再说</string>
+    <string name="add_event_alarm_time">闹钟提醒时间</string>
+    <string name="add_event_btn_save">保存日程事件</string>
+    <string name="add_event_remind_at">将在 %1$s:%2$s 发出提醒</string>
+
+    <string name="history_clear_all_title">清除全部历史记录？</string>
+    <string name="history_clear_all_message">此操作无法撤销，确定执行吗？</string>
+    <string name="history_btn_clear_all">清除全部</string>
+    <string name="history_screen_title">网页浏览历史</string>
+    <string name="history_cd_clear_all">清空历史</string>
+    <string name="history_empty_title">暂无浏览历史记录</string>
+    <string name="history_empty_hint">长按列表中的单条项目可进行独立删除</string>
+    <string name="history_delete_item">删除</string>
+
+    <string name="calendar_chooser_title">万年历选择器</string>
+    <string name="calendar_chooser_message">已内嵌集成了公农历万年历，点击下方进行开启：</string>
+    <string name="calendar_chooser_btn">打开公农历万年历</string>
+
+    <string name="browser_cd_home">返回首页</string>
+    <string name="browser_bookmark_added">已添加至书签收藏</string>
+    <string name="browser_bookmark_removed">已从书签收藏中移除</string>
+    <string name="browser_cd_bookmark">书签功能</string>
+    <string name="browser_cd_back">后退</string>
+    <string name="browser_cd_forward">前进</string>
+    <string name="browser_incognito_icon">无痕模式</string>
+    <string name="browser_downloading">正在下载文件： %1$s</string>
+    <string name="browser_download_error">无法下载该文件</string>
+    <string name="browser_search_placeholder">请输入搜索关键词或网页地址…</string>
+    <string name="browser_cd_more">更多操作</string>
+    <string name="browser_menu_reload">刷新页面</string>
+    <string name="browser_menu_tab_manager">标签页管理</string>
+    <string name="browser_menu_history">浏览历史</string>
+    <string name="browser_menu_bookmarks">我的书签</string>
+
+    <string name="bookmark_screen_title">书签收藏</string>
+    <string name="bookmark_edit_title">编辑书签标题</string>
+    <string name="bookmark_empty_title">暂无已收藏的书签</string>
+    <string name="bookmark_empty_hint">点击地址栏的 ★ 图标即可收藏当前网页</string>
+
+    <string name="tab_switcher_title_incognito">无痕浏览标签页</string>
+    <string name="tab_switcher_title_open">当前打开的标签页</string>
+    <string name="tab_switcher_close_all">关闭全部标签</string>
+    <string name="tab_switcher_incognito_icon">无痕模式</string>
+    <string name="tab_switcher_web_icon">普通网页</string>
+    <string name="tab_switcher_empty_incognito">暂无无痕标签页</string>
+    <string name="tab_switcher_empty">暂无打开的标签页</string>
+    <string name="tab_switcher_new_incognito">新建无痕标签</string>
+    <string name="tab_switcher_new_tab">新建标签页</string>
+    <string name="tab_cd_close">关闭此标签页</string>
+
+    <string name="image_sheet_title">图片 / 文件操作</string>
+    <string name="image_sheet_btn_download">保存至本地</string>
+
+    <string name="saved_group_all">全部命盘</string>
+
+    <string name="save_chart_group_family">家人</string>
+    <string name="save_chart_group_friends">朋友</string>
+    <string name="save_chart_group_colleagues">同事</string>
+    <string name="save_chart_group_other">其他</string>
+
+    <string name="calendar_label_truc">值日建除（十二神）</string>
+    <string name="calendar_truc_good">吉</string>
+    <string name="calendar_truc_bad">凶</string>
+    <string name="calendar_hoang_dao">黄道吉日</string>
+    <string name="calendar_hac_dao">黑道凶日</string>
+    <string name="calendar_luc_nham_label">大六壬</string>
+    <string name="calendar_hoang_dao_hours_label">今日黄道吉时</string>
+    <string name="calendar_day_sun">日</string>
+    <string name="calendar_day_mon">一</string>
+    <string name="calendar_day_tue">二</string>
+    <string name="calendar_day_wed">三</string>
+    <string name="calendar_day_thu">四</string>
+    <string name="calendar_day_fri">五</string>
+    <string name="calendar_day_sat">六</string>
+
+    <string name="settings_dark_icon">深色主题</string>
+    <string name="settings_light_icon">浅色主题</string>
+
+    <string name="input_hour_item">%1$s 点</string>
+    <string name="input_minute_item">%1$s 分</string>
+
+    <string name="input_zodiac_ty">子时 (23点–01点)</string>
+    <string name="input_zodiac_suu">丑时 (01点–03点)</string>
+    <string name="input_zodiac_dan">寅时 (03点–05点)</string>
+    <string name="input_zodiac_mao">卯时 (05点–07点)</string>
+    <string name="input_zodiac_thin">辰时 (07点–09点)</string>
+    <string name="input_zodiac_ty2">巳时 (09点–11点)</string>
+    <string name="input_zodiac_ngo">午时 (11点–13点)</string>
+    <string name="input_zodiac_mui">未时 (13点–15点)</string>
+    <string name="input_zodiac_than">申时 (15点–17点)</string>
+    <string name="input_zodiac_dau">酉时 (17点–19点)</string>
+    <string name="input_zodiac_tuat">戌时 (19点–21点)</string>
+    <string name="input_zodiac_hoi">亥时 (21点–23点)</string>
+
+    <string name="calendar_lunar_prefix">农历： %1$s</string>
+    <string name="calendar_intercalary">(闰月)</string>
+
+    <string name="notif_event_default_title">日程提醒</string>
+    <string name="notif_event_default_text">您今日有待办日程事件安排</string>
+    <string name="notif_channel_name">万年历日程提醒</string>
+    <string name="notif_channel_desc">公农历万年历中自定义日程及事记的提醒通知</string>
+
+    <string name="browser_download_desc">文件正在下载中…</string>
+    <string name="browser_tab_new_title">新标签页</string>
+    <string name="error_unknown">发生了未知错误。</string>
+    <string name="error_ai_interpret_503">AI 详批功能当前不可用 (HTTP 503)。请在服务器端正确配置 Gemini API Key 密钥，或稍后重试。</string>
+    <string name="error_ai_no_input">缺失生辰八字日期数据 — 无法发起 AI 详批服务。</string>
+    <string name="error_ai_no_chart">未成功生成或显示命盘 — 无法发起 AI 详批服务。</string>
+    <string name="error_ai_no_cung">请先在盘面上选定一个特定的宫位再行咨询 AI。</string>
+    <string name="ai_reading_cung_picker_label">请选择您想要深度剖析的宫位</string>
+    <string name="ai_reading_request_btn_for_cung_free">免费 AI 详批 — %1$s</string>
+    <string name="ai_reading_refresh_btn_for_cung_free">免费 AI 详批 (刷新 %1$s 解析)</string>
+    <string name="chart_ai_request_btn_free">免费接收 AI 详批</string>
+    <string name="ai_reading_loading_cung">正在将数据上传至 AI 以解析 %1$s…</string>
+    <string name="ai_reading_hint_single_cung">提示：每次选择单一宫位进行深度剖析，AI 返回的结论和分析契合度将远比粗略分析整张命盘要更加精细和具有参考价值。</string>
+    <string name="browser_error_unknown">未知浏览器异常</string>
+    <string name="browser_default_title">内置浏览器</string>
+
+    <string name="toast_chart_saved">已成功保存 %1$s 的命盘</string>
+    <string name="toast_chart_save_failed">保存失败： %1$s</string>
+    <string name="toast_chart_unsaved">已取消保存该命盘</string>
+    <string name="toast_chart_unsave_failed">无法取消保存： %1$s</string>
+    <string name="toast_chart_open_failed">无法打开或加载该命盘</string>
+    <string name="rate_dialog_title">喜欢 紫微 Daily 吗？</string>
+    <string name="rate_dialog_message">前往 Google Play 应用商店为我们评分，您的好评是对我们坚持优化最大的支持！</string>
+    <string name="rate_dialog_confirm">前往评分</string>
+    <string name="rate_dialog_dismiss">稍后再说</string>
+
+    <string name="chart_open_ai_reading_btn">查看 AI 详批报告结果</string>
+    <string name="ai_reading_hint">点击上方按钮，AI 将根据您的星曜分布及宫位吉凶，自动为您生成全面系统的星盘运势批导报告。</string>
+    <string name="ai_reading_used_btn">设备免额已用尽</string>
+    <string name="ai_already_used_hint">每台独立设备均可免费体验一次 AI 详批服务 — 您的设备当前已使用过该免费额度。</string>
+    <string name="error_ai_already_used">您已使用过该设备上仅有的一次免费 AI 详批特权。</string>
+</resources>
