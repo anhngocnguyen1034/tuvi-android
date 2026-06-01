@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -41,6 +43,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
+import com.example.tuvi.ads.AdNames
+import com.example.tuvi.ads.NativeAdCard
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
@@ -105,6 +109,7 @@ fun LanguagePickerScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -124,6 +129,11 @@ fun LanguagePickerScreen(
                     }
                 )
             }
+
+            NativeAdCard(
+                adName = AdNames.LANGUAGE_NATIVE,
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
     }
 }

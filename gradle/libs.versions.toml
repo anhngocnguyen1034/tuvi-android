@@ -2,6 +2,7 @@
 agp = "8.13.2"
 androidBlur = "1.0.3"
 anhnnComponentsFeedback = "1.0.1"
+anhnnComponentsExit = "1.1.0"
 anhnnLanguage = "1.0.1"
 kotlin = "2.3.21"
 ksp = "2.3.7"
@@ -36,6 +37,7 @@ android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.r
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 anhnn-components-feedback = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-feedback", version.ref = "anhnnComponentsFeedback" }
 anhnn-components-rate = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate", version.ref = "anhnnComponentsFeedback" }
+anhnn-components-exit = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-exit", version.ref = "anhnnComponentsExit" }
 anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

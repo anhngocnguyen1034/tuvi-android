@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.example.tuvi.data.preferences.UserPreferencesRepository
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.InterstitialAdManager
 import com.example.tuvi.ads.RemoteConfigManager
 import com.example.tuvi.di.AppContainer
@@ -37,6 +38,7 @@ class TuViApplication : Application() {
 
         RemoteConfigManager.init(this)
         MobileAds.initialize(this) {}
-        InterstitialAdManager.preload(this)
+        // Preload quảng cáo đầu tiên user gặp (sau splash). Các vị trí khác preload lazy.
+        InterstitialAdManager.preload(this, AdNames.SPLASH_OPEN)
     }
 }

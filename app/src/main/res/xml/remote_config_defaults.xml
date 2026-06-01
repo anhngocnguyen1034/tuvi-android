@@ -8,4 +8,13 @@
         <key>inter_min_interval_ms</key>
         <value>30000</value>
     </entry>
+    <!--
+      Map ad_name -> ad_unit_id. Để rỗng = mọi ad_name dùng test unit (theo định dạng).
+      Production: đặt JSON thật trên Firebase Remote Console, ví dụ:
+      {"chart_create":"ca-app-pub-XXX/111","ai_request":"ca-app-pub-XXX/222","language_native":"ca-app-pub-XXX/333"}
+    -->
+    <entry>
+        <key>ad_units</key>
+        <value></value>
+    </entry>
 </defaultsMap>

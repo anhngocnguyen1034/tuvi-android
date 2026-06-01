@@ -101,6 +101,7 @@ dependencies {
 
     implementation(libs.anhnn.components.feedback)
     implementation(libs.anhnn.components.rate)
+    implementation(libs.anhnn.components.exit)
     implementation(libs.android.blur)
 
     // AdMob

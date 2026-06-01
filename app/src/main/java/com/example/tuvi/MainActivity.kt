@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.InterstitialAdManager
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
@@ -50,6 +51,7 @@ import com.example.tuvi.presentation.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.AiReadingScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
+import com.example.tuvi.ui.screens.ExitAppHandler
 import com.example.tuvi.ui.screens.HomeScreen
 import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
@@ -118,7 +120,7 @@ fun TuViApp(isDark: Boolean = true) {
             val activity = context as Activity
             SplashScreen(
                 onFinish = {
-                    InterstitialAdManager.showThen(activity) {
+                    InterstitialAdManager.showThen(activity, AdNames.SPLASH_OPEN) {
                         navController.navigate("home") {
                             popUpTo("splash") { inclusive = true }
                         }
@@ -128,18 +130,24 @@ fun TuViApp(isDark: Boolean = true) {
         }
         composable("home") {
             val activity = context as Activity
-            val showAdThen: (() -> Unit) -> Unit = { action ->
-                InterstitialAdManager.showThen(activity, action)
-            }
+            ExitAppHandler(onExit = { activity.finish() })
             HomeScreen(
-                onOpenTuVi = { showAdThen { navController.navigate("input") } },
+                onOpenTuVi = {
+                    InterstitialAdManager.showThen(activity, AdNames.HOME_TUVI) {
+                        navController.navigate("input")
+                    }
+                },
                 onOpenBrowser = {
-                    showAdThen {
+                    InterstitialAdManager.showThen(activity, AdNames.HOME_BROWSER) {
                         val url = Uri.encode("https://www.google.com")
                         navController.navigate("browser?url=$url&title=Trình+Duyệt")
                     }
                 },
-                onOpenCalendar = { showAdThen { navController.navigate("lich") } },
+                onOpenCalendar = {
+                    InterstitialAdManager.showThen(activity, AdNames.HOME_CALENDAR) {
+                        navController.navigate("lich")
+                    }
+                },
                 onOpenSettings = { navController.navigate("settings") },
             )
         }
@@ -186,6 +194,7 @@ fun TuViApp(isDark: Boolean = true) {
             PrivacyPolicyScreen(onBack = { navController.popBackStack() })
         }
         composable("input") {
+            val activity = context as Activity
             InputScreen(
                 onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
                     viewModel.getTuVi(
@@ -199,12 +208,15 @@ fun TuViApp(isDark: Boolean = true) {
                         gender,
                         duongLich,
                     )
-                    navController.navigate("chart")
+                    InterstitialAdManager.showThen(activity, AdNames.CHART_CREATE) {
+                        navController.navigate("chart")
+                    }
                 },
                 onBack = { navController.popBackStack() }
             )
         }
         composable("chart") {
+            val activity = context as Activity
             val savedChartIdVm by viewModel.savedChartId.collectAsStateWithLifecycle()
             when (val state = uiState) {
                 is TuViUiState.Loading -> {
@@ -216,7 +228,11 @@ fun TuViApp(isDark: Boolean = true) {
                 is TuViUiState.Success -> {
                     TuViChartScreen(
                         data = state.data,
-                        onOpenAiReading = { navController.navigate("ai_reading") },
+                        onOpenAiReading = {
+                            InterstitialAdManager.showThen(activity, AdNames.AI_OPEN) {
+                                navController.navigate("ai_reading")
+                            }
+                        },
                         savedChartId = savedChartIdVm,
                         onBack = {
                             viewModel.resetState()
@@ -268,6 +284,7 @@ fun TuViApp(isDark: Boolean = true) {
             }
         }
         composable("ai_reading") {
+            val activity = context as Activity
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
             val aiUsed by viewModel.aiUsed.collectAsStateWithLifecycle()
@@ -279,12 +296,14 @@ fun TuViApp(isDark: Boolean = true) {
                 aiUsed = aiUsed,
                 onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
-                    viewModel.fetchAiInterpretation(
-                        cung = selectedCung,
-                        onError = { err ->
-                            Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
-                        },
-                    )
+                    InterstitialAdManager.showThen(activity, AdNames.AI_REQUEST) {
+                        viewModel.fetchAiInterpretation(
+                            cung = selectedCung,
+                            onError = { err ->
+                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
+                            },
+                        )
+                    }
                 },
                 onBack = { navController.popBackStack() },
             )

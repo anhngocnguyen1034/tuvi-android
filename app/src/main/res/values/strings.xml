@@ -261,6 +261,11 @@
     <string name="rate_dialog_confirm">Đánh giá ngay</string>
     <string name="rate_dialog_dismiss">Để sau</string>
 
+    <string name="exit_dialog_title">Thoát ứng dụng?</string>
+    <string name="exit_dialog_message">Bạn có chắc muốn thoát Tử vi Daily không?</string>
+    <string name="exit_dialog_confirm">Thoát</string>
+    <string name="exit_dialog_dismiss">Ở lại</string>
+
     <string name="chart_open_ai_reading_btn">Xem kết quả AI luận giải</string>
     <string name="ai_reading_hint">Nhấn nút phía trên để AI tự động phân tích chi tiết lá số của bạn dựa trên hệ thống các sao và cung chức năng.</string>
     <string name="ai_reading_used_btn">Đã hết lượt AI miễn phí</string>
