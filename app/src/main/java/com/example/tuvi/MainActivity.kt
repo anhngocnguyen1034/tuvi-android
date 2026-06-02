@@ -33,8 +33,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tuvi.ads.AdConsentManager
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.InterstitialAdManager
+import com.google.android.gms.ads.MobileAds
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
 import com.example.tuvi.presentation.SettingsViewModel
@@ -74,6 +76,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val app = application as TuViApplication
+
+        // Consent (UMP) trước, rồi mới khởi tạo Mobile Ads SDK; init xong mới preload.
+        AdConsentManager.gather(this) {
+            MobileAds.initialize(this) {
+                InterstitialAdManager.preload(this, AdNames.SPLASH_OPEN)
+            }
+        }
         setContent {
             val settingsVm: SettingsViewModel = viewModel(
                 factory = AndroidViewModelFactory.getInstance(application)

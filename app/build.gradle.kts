@@ -121,6 +121,7 @@ dependencies {
 
     // AdMob
     implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
 
     // Room Database
     implementation(libs.room.runtime)
