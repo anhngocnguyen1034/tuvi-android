@@ -43,6 +43,7 @@ fun ThienBanDto.toDomain(): ThienBanInfo = ThienBanInfo(
 )
 
 fun CungDto.toDomain(): CungInfo = CungInfo(
+    cungSo   = cungSo,
     cungTen  = cungTen,
     cungChu  = cungChu,
     hanhCung = hanhCung,
@@ -55,7 +56,9 @@ fun CungDto.toDomain(): CungInfo = CungInfo(
 )
 
 fun SaoDto.toDomain(): SaoInfo = SaoInfo(
+    saoId         = saoId,
     ten           = ten,
+    loai          = loai,
     dacTinh       = dac_tinh,
     nguHanh       = ngu_hanh,
     vongTrangSinh = vongTrangSinh,

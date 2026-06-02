@@ -141,15 +141,11 @@ private val phuTinhRightColumnNames = setOf(
 /** Sao phụ ép cột trái theo yêu cầu UI. */
 private val phuTinhLeftColumnNames = setOf("Đường Phù", "Thiên Mã")
 
-private fun isPhuTinhRightColumn(sao: SaoInfo): Boolean {
-    val baseName = normalizeSaoNameForColor(sao.ten)
-    return inSetIgnoreCase(phuTinhRightColumnNames, baseName)
-}
+private fun isPhuTinhRightColumn(sao: SaoInfo): Boolean =
+    saoIn(sao, phuTinhRightIds, phuTinhRightColumnNames)
 
-private fun isPhuTinhLeftColumn(sao: SaoInfo): Boolean {
-    val baseName = normalizeSaoNameForColor(sao.ten)
-    return inSetIgnoreCase(phuTinhLeftColumnNames, baseName)
-}
+private fun isPhuTinhLeftColumn(sao: SaoInfo): Boolean =
+    saoIn(sao, phuTinhLeftIds, phuTinhLeftColumnNames)
 
 // Tên 12 vị trí Vòng Tràng Sinh – dùng để lọc sao hiển thị ở footer cung
 private val vongTrangSinhNames = setOf(
@@ -193,6 +189,31 @@ private fun displayCungChuLabel(cungChu: String): String {
     }
 }
 
+// ─── Phân loại sao theo sao_id (mã ổn định, độc lập ngôn ngữ) ────────────────
+// Các bộ id tương ứng 1:1 với các bộ tên tiếng Việt ở trên (Sao.py id 1..109).
+// Sao Lưu mang đúng id gốc (vd Lưu Thiên Khôi = 59) nên cũng match được.
+private val thuyIds = setOf(8, 3, 14, 10, 9, 58, 92, 95, 80, 29, 22, 78, 81, 82, 79)
+private val hoaIds = setOf(5, 2, 56, 55, 53, 54, 77, 98, 69, 70)
+private val kimIds = setOf(4, 13, 12, 57, 60, 96, 97, 36, 30, 52, 51)
+private val mocIds = setOf(6, 61, 94, 93, 59, 101, 100, 16, 18)
+private val thoIds = setOf(1, 7, 11, 62, 27, 73, 87, 63, 64, 47, 90, 91, 17, 24, 25, 26, 19, 38, 20, 21)
+private val kimExtraIds = setOf(23)  // Bạch Hổ
+private val phuTinhRightIds = setOf(
+    108, 102, 99, 33, 15, 26, 95, 31, 25, 89, 104, 23, 17, 90, 88, 74, 21, 19, 38, 20, 37, 107, 73, 35, 91
+)
+private val phuTinhLeftIds = setOf(77, 98)  // Đường Phù, Thiên Mã
+private val hungExtraKimIds = setOf(52, 51, 36, 30, 96, 97)  // Kình/Đà/Đại-Tiểu Hao/Cô Thần/Quả Tú
+
+/**
+ * Sao thuộc nhóm? Ưu tiên match theo sao_id (độc lập ngôn ngữ); chỉ khi thiếu id
+ * (lá số cũ từ DB) mới fallback theo tên tiếng Việt.
+ */
+private fun saoIn(sao: SaoInfo, ids: Set<Int>, names: Set<String>): Boolean {
+    val id = sao.saoId
+    return if (id != null && id > 0) id in ids
+    else inSetIgnoreCase(names, normalizeSaoNameForColor(sao.ten))
+}
+
 /** Trả về màu sao theo Ngũ Hành. Ưu tiên dùng ngu_hanh từ API, fallback hardcode. */
 fun getSaoColor(sao: SaoInfo, hasTuLinh: Boolean = false): Color {
     // Ưu tiên ngu_hanh từ API nếu có
@@ -206,15 +227,14 @@ fun getSaoColor(sao: SaoInfo, hasTuLinh: Boolean = false): Color {
     }
     if (colorFromApi != null) return colorFromApi
 
-    // Fallback: tra theo tên sao (hardcode)
-    val baseName = normalizeSaoNameForColor(sao.ten)
+    // Fallback: tra theo sao_id (độc lập ngôn ngữ), rồi mới tới tên sao
     return when {
-        inSetIgnoreCase(thuySet, baseName) -> HanhThuy
-        inSetIgnoreCase(hoaSet, baseName) -> HanhHoa
-        inSetIgnoreCase(kimSet, baseName) -> HanhKim
-        inSetIgnoreCase(kimSet_extra, baseName) -> HanhKim
-        inSetIgnoreCase(mocSet, baseName) -> HanhMoc
-        inSetIgnoreCase(thoSet, baseName) -> HanhTho
+        saoIn(sao, thuyIds, thuySet) -> HanhThuy
+        saoIn(sao, hoaIds, hoaSet) -> HanhHoa
+        saoIn(sao, kimIds, kimSet) -> HanhKim
+        saoIn(sao, kimExtraIds, kimSet_extra) -> HanhKim
+        saoIn(sao, mocIds, mocSet) -> HanhMoc
+        saoIn(sao, thoIds, thoSet) -> HanhTho
         else -> ChartIvory
     }
 }
@@ -225,19 +245,12 @@ fun getSaoColor(tenSao: String): Color {
     return getSaoColor(fake)
 }
 
-/** Phân nhóm sao phụ: đặt các sao Hỏa (hung) sang cột phải. */
-private fun isHungSao(sao: SaoInfo, hasTuLinh: Boolean): Boolean {
-    val baseName = normalizeSaoNameForColor(sao.ten)
-    return inSetIgnoreCase(hoaSet, baseName) ||
-            inSetIgnoreCase(kimSet, baseName) && (
-            baseName.equals("Kình Dương", ignoreCase = true) ||
-                    baseName.equals("Đà La", ignoreCase = true) ||
-                    baseName.equals("Đại Hao", ignoreCase = true) ||
-                    baseName.equals("Tiểu Hao", ignoreCase = true) ||
-                    baseName.equals("Cô Thần", ignoreCase = true) ||
-                    baseName.equals("Quả Tú", ignoreCase = true)
-            )
-}
+/** Tên các sao Kim mang tính hung (fallback khi thiếu sao_id). */
+private val hungKimNames = setOf("Kình Dương", "Đà La", "Đại Hao", "Tiểu Hao", "Cô Thần", "Quả Tú")
+
+/** Phân nhóm sao phụ: đặt các sao Hỏa (hung) + một số sao Kim hung sang cột phải. */
+private fun isHungSao(sao: SaoInfo, hasTuLinh: Boolean): Boolean =
+    saoIn(sao, hoaIds, hoaSet) || saoIn(sao, hungExtraKimIds, hungKimNames)
 
 // ─── Lưu bitmap vào thư viện ảnh ─────────────────────────────────────────────
 private fun saveBitmapToGallery(
@@ -521,9 +534,14 @@ private val diaChiNameToIndex = mapOf(
     "Ngọ" to 7, "Mùi" to 8, "Thân" to 9, "Dậu" to 10, "Tuất" to 11, "Hợi" to 12
 )
 
-/** Tính Thiên Can của cung theo công thức từ backend (dùng khi thienCan == null). */
-private fun computeThienCanCung(cungTen: String, canNamStr: String): String? {
-    val cungSo = diaChiNameToIndex.entries.firstOrNull { cungTen.contains(it.key) }?.value ?: return null
+/**
+ * Tính Thiên Can của cung theo công thức từ backend (dùng khi thienCan == null).
+ * Ưu tiên `cungSoApi` (mã 1..12); chỉ khi thiếu mới parse tên Chi tiếng Việt.
+ */
+private fun computeThienCanCung(cungSoApi: Int?, cungTen: String, canNamStr: String): String? {
+    val cungSo = cungSoApi
+        ?: diaChiNameToIndex.entries.firstOrNull { cungTen.contains(it.key) }?.value
+        ?: return null
     val canNam = thienCanNameToIndex[canNamStr] ?: return null
     var canThangGieng = (canNam * 2 + 1) % 10
     if (canThangGieng == 0) canThangGieng = 10
@@ -547,7 +565,7 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
     val canNam = data.thienBan.canNam.orEmpty()
     val enrichedDiaBan = data.diaBan.map { cung ->
         if (cung.thienCan != null) cung
-        else cung.copy(thienCan = computeThienCanCung(cung.cungTen, canNam))
+        else cung.copy(thienCan = computeThienCanCung(cung.cungSo, cung.cungTen, canNam))
     }
 
     BoxWithConstraints(
@@ -1003,7 +1021,7 @@ fun PalaceView(cung: CungInfo) {
                 (sao.vongTrangSinh ?: 0) != 0 ||
                     vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
             }?.ten
-            val thangCung = cung.thang ?: thangTuChiCung(cung.cungTen)
+            val thangCung = cung.thang ?: thangTuChiCung(cung.cungSo, cung.cungTen)
             // Chỉ hiển thị đúng tên vị trí vòng Tràng Sinh (Đế vượng, Lâm quan, ...)
             Text(
                 text = trangSinhViTri ?: "",
@@ -1026,21 +1044,18 @@ fun PalaceView(cung: CungInfo) {
     }
 }
 
-/** Ánh xạ tên chi trong `cungTen` sang tháng âm lịch (Dần=1, ... , Sửu=12). */
-private fun thangTuChiCung(cungTen: String): Int? {
+/**
+ * Tháng âm lịch ứng với cung (Dần=1, …, Sửu=12).
+ * Ưu tiên `cungSo` (mã 1..12, Tý=1 … Hợi=12); chỉ khi thiếu mới parse tên Chi tiếng Việt.
+ */
+private fun thangTuChiCung(cungSo: Int?, cungTen: String): Int? {
+    if (cungSo != null && cungSo in 1..12) {
+        // Tý(1)→11, Sửu(2)→12, Dần(3)→1, …, Hợi(12)→10
+        return Math.floorMod(cungSo - 3, 12) + 1
+    }
     val chiToThang = mapOf(
-        "Dần" to 1,
-        "Mão" to 2,
-        "Thìn" to 3,
-        "Tỵ" to 4,
-        "Ngọ" to 5,
-        "Mùi" to 6,
-        "Thân" to 7,
-        "Dậu" to 8,
-        "Tuất" to 9,
-        "Hợi" to 10,
-        "Tý" to 11,
-        "Sửu" to 12
+        "Dần" to 1, "Mão" to 2, "Thìn" to 3, "Tỵ" to 4, "Ngọ" to 5, "Mùi" to 6,
+        "Thân" to 7, "Dậu" to 8, "Tuất" to 9, "Hợi" to 10, "Tý" to 11, "Sửu" to 12
     )
     return chiToThang.entries.firstOrNull { cungTen.contains(it.key) }?.value
 }

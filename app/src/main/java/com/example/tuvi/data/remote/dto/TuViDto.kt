@@ -93,6 +93,7 @@ data class ThienBanDto(
 
 @Serializable
 data class CungDto(
+    @SerialName("cung_so") val cungSo: Int? = null,
     @SerialName("cung_ten") val cungTen: String,
     @SerialName("cung_chu") val cungChu: String,
     @SerialName("hanh_cung") val hanhCung: String,
@@ -106,7 +107,9 @@ data class CungDto(
 
 @Serializable
 data class SaoDto(
+    @SerialName("sao_id") val saoId: Int? = null,
     val ten: String,
+    val loai: Int? = null,
     val dac_tinh: String? = "",
     val ngu_hanh: String? = null,
     @SerialName("vong_trang_sinh") val vongTrangSinh: Int? = 0,

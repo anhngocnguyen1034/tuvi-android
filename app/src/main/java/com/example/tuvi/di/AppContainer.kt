@@ -1,6 +1,7 @@
 package com.example.tuvi.di
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.tuvi.BuildConfig
 import com.example.tuvi.data.local.TuViDatabase
 import com.example.tuvi.data.preferences.UserPreferencesRepository
@@ -22,6 +23,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object AppContainer {
@@ -42,6 +44,19 @@ object AppContainer {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+            // Gửi ngôn ngữ hiện tại của app để backend trả dữ liệu đã localize
+            // (vi mặc định / zh = Hán tự). Đọc đồng bộ tại request time — luôn phản
+            // ánh lựa chọn ngôn ngữ vì app đã set AppCompatDelegate.setApplicationLocales().
+            .addInterceptor { chain ->
+                val locales = AppCompatDelegate.getApplicationLocales()
+                val tag = (if (!locales.isEmpty) locales[0] else Locale.getDefault())
+                    ?.toLanguageTag() ?: "vi"
+                chain.proceed(
+                    chain.request().newBuilder()
+                        .header("Accept-Language", tag)
+                        .build()
+                )
+            }
             .apply {
                 // Body chứa PII (tên, ngày/giờ sinh, giới tính) — chỉ log trong debug build.
                 if (BuildConfig.DEBUG) {

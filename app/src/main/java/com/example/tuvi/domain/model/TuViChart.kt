@@ -59,6 +59,8 @@ data class ThienBanInfo(
 @Immutable
 @Serializable
 data class CungInfo(
+    /** Vị trí địa bàn 1..12 (Tý=1 … Hợi=12). Mã ổn định, độc lập ngôn ngữ. */
+    val cungSo: Int? = null,
     val cungTen: String,
     val cungChu: String,
     val hanhCung: String,
@@ -73,7 +75,10 @@ data class CungInfo(
 @Immutable
 @Serializable
 data class SaoInfo(
+    /** ID gốc của sao 1..109 (Sao.py). Mã ổn định để phân loại, độc lập ngôn ngữ. */
+    val saoId: Int? = null,
     val ten: String,
+    val loai: Int? = null,
     val dacTinh: String? = "",
     val nguHanh: String? = null,   // "T"=Thủy, "H"=Hỏa, "K"=Kim, "M"=Mộc, "TH"=Thổ
     val vongTrangSinh: Int? = 0,
