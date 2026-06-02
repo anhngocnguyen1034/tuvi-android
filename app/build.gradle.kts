@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.tuvi"
+        applicationId = "com.anhnn.tuvi"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
