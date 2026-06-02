@@ -48,38 +48,64 @@
 </head>
 <body>
 <h1>Chính sách quyền riêng tư</h1>
-<p class="updated">Cập nhật lần cuối: tháng 5 năm 2026</p>
+<p class="updated">Cập nhật lần cuối: tháng 6 năm 2026</p>
 
 <p>Ứng dụng <strong>Tử Vi</strong> tôn trọng quyền riêng tư của bạn. Tài liệu này giải thích dữ liệu nào được thu thập, mục đích sử dụng, và cách chúng tôi bảo vệ thông tin của bạn.</p>
 
 <h2>1. Dữ liệu thu thập</h2>
-<p>Chúng tôi có thể thu thập các thông tin sau khi bạn sử dụng ứng dụng:</p>
 <ul>
-  <li><strong>Thông tin lá số:</strong> Họ tên, ngày/giờ sinh, giới tính — dùng để tính lá số Tử Vi. Dữ liệu này được lưu cục bộ trên thiết bị của bạn.</li>
-  <li><strong>Cài đặt ứng dụng:</strong> Giao diện (sáng/tối), ngôn ngữ, tùy chọn thông báo — lưu cục bộ bằng DataStore, không gửi ra bên ngoài.</li>
-  <li><strong>Lịch sử trình duyệt &amp; dấu trang:</strong> Lưu cục bộ trong cơ sở dữ liệu Room trên thiết bị, không đồng bộ lên đám mây.</li>
+  <li><strong>Thông tin lập lá số:</strong> Họ tên, ngày/giờ sinh, giới tính — được gửi tới máy chủ của chúng tôi để tính toán lá số Tử Vi và (khi bạn yêu cầu) tạo nội dung luận giải bằng AI. Lá số bạn lưu lại được giữ cục bộ trên thiết bị.</li>
+  <li><strong>Cài đặt ứng dụng:</strong> Giao diện (sáng/tối), ngôn ngữ, tùy chọn thông báo — lưu cục bộ trên thiết bị, không gửi ra bên ngoài.</li>
+  <li><strong>Lịch sử trình duyệt &amp; dấu trang (tính năng trình duyệt tích hợp):</strong> Lưu cục bộ trên thiết bị, không đồng bộ lên đám mây.</li>
+  <li><strong>Mã định danh quảng cáo (Advertising ID):</strong> Được Google AdMob thu thập để hiển thị quảng cáo (xem mục 4).</li>
 </ul>
 
 <h2>2. Mục đích sử dụng dữ liệu</h2>
 <ul>
-  <li>Tính toán và hiển thị lá số Tử Vi.</li>
+  <li>Tính toán và hiển thị lá số Tử Vi; tạo nội dung luận giải bằng AI khi bạn yêu cầu.</li>
   <li>Lưu trữ lá số đã tra cứu để bạn xem lại.</li>
   <li>Gửi thông báo nhắc nhở các ngày lễ, rằm, mùng 1 theo cài đặt của bạn.</li>
+  <li>Hiển thị quảng cáo để duy trì ứng dụng miễn phí.</li>
 </ul>
 
 <h2>3. Chia sẻ dữ liệu</h2>
-<p>Chúng tôi <strong>không</strong> bán, cho thuê hoặc chia sẻ thông tin cá nhân của bạn với bên thứ ba, ngoại trừ khi cần thiết để vận hành dịch vụ (ví dụ: gửi yêu cầu tính toán lên API nội bộ).</p>
+<p>Chúng tôi <strong>không</strong> bán hoặc cho thuê thông tin cá nhân của bạn. Dữ liệu chỉ được chia sẻ với:</p>
+<ul>
+  <li><strong>Máy chủ của chúng tôi</strong> — nhận thông tin sinh để tính lá số và luận giải AI; không dùng cho mục đích khác.</li>
+  <li><strong>Google (AdMob, Firebase)</strong> — theo chính sách riêng của Google, xem mục 4.</li>
+</ul>
 
-<h2>4. Lưu trữ &amp; bảo mật</h2>
-<p>Tất cả dữ liệu được lưu trữ cục bộ trên thiết bị của bạn. Kết nối đến máy chủ tính toán chỉ được thực hiện trong mạng nội bộ (local network). Chúng tôi không sử dụng dịch vụ phân tích hay quảng cáo bên thứ ba.</p>
+<h2>4. Quảng cáo &amp; dịch vụ bên thứ ba</h2>
+<p>Ứng dụng sử dụng các dịch vụ sau của Google:</p>
+<ul>
+  <li><strong>Google AdMob</strong> — hiển thị quảng cáo. AdMob có thể thu thập mã định danh quảng cáo và dữ liệu thiết bị để phục vụ quảng cáo. Với người dùng thuộc khu vực yêu cầu (ví dụ EEA/Anh), ứng dụng hiển thị hộp thoại xin sự đồng ý (Google UMP) trước khi tải quảng cáo; bạn có thể thay đổi lựa chọn bất cứ lúc nào.</li>
+  <li><strong>Firebase Remote Config</strong> — điều chỉnh cấu hình ứng dụng từ xa (ví dụ bật/tắt quảng cáo).</li>
+</ul>
+<p>Chi tiết: <a href="https://policies.google.com/privacy">Chính sách quyền riêng tư của Google</a> · <a href="https://support.google.com/admob/answer/6128543">Cách Google sử dụng dữ liệu trong AdMob</a>.</p>
 
-<h2>5. Quyền của bạn</h2>
-<p>Bạn có thể xóa toàn bộ dữ liệu đã lưu bất cứ lúc nào bằng cách gỡ cài đặt ứng dụng. Để xóa lá số đã lưu, vào <em>Cài đặt → Lá số đã lưu</em>.</p>
+<h2>5. Quyền hệ thống ứng dụng sử dụng</h2>
+<ul>
+  <li><strong>Thông báo:</strong> để nhắc các ngày lễ, rằm, mùng 1 — chỉ khi bạn bật trong cài đặt.</li>
+  <li><strong>Báo thức chính xác (exact alarm):</strong> để thông báo đúng thời điểm sự kiện bạn đã đặt.</li>
+</ul>
 
-<h2>6. Thay đổi chính sách</h2>
+<h2>6. Lưu trữ &amp; bảo mật</h2>
+<p>Lá số đã lưu, cài đặt và lịch sử trình duyệt được lưu cục bộ trên thiết bị của bạn. Thông tin sinh gửi lên máy chủ chỉ dùng để tính toán và không gắn với tài khoản nào (ứng dụng không yêu cầu đăng ký/đăng nhập).</p>
+
+<h2>7. Trẻ em</h2>
+<p>Ứng dụng không hướng tới trẻ em dưới 13 tuổi và không cố ý thu thập dữ liệu từ trẻ em.</p>
+
+<h2>8. Quyền của bạn</h2>
+<ul>
+  <li>Xóa lá số đã lưu: vào <em>Cài đặt → Lá số đã lưu</em>.</li>
+  <li>Xóa toàn bộ dữ liệu cục bộ: gỡ cài đặt ứng dụng hoặc xóa dữ liệu ứng dụng trong cài đặt hệ thống.</li>
+  <li>Thay đổi lựa chọn đồng ý quảng cáo (nếu áp dụng) hoặc yêu cầu xóa dữ liệu phía máy chủ: liên hệ email bên dưới.</li>
+</ul>
+
+<h2>9. Thay đổi chính sách</h2>
 <p>Chúng tôi có thể cập nhật tài liệu này theo thời gian. Ngày cập nhật gần nhất luôn được hiển thị ở đầu trang.</p>
 
 <hr>
-<p style="font-size:13px;color:#9A9AAA;">Nếu có câu hỏi, vui lòng liên hệ: <a href="nguyenanhcry@gmail.com">internetofthing33@gmail.com</a></p>
+<p style="font-size:13px;color:#9A9AAA;">Nếu có câu hỏi hoặc yêu cầu về dữ liệu, vui lòng liên hệ: <a href="mailto:nguyenanhcry@gmail.com">nguyenanhcry@gmail.com</a></p>
 </body>
 </html>
