@@ -26,8 +26,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +47,6 @@ import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
-import com.example.tuvi.ads.BannerAdView
 import com.example.tuvi.ads.NativeAdCard
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
@@ -60,6 +62,9 @@ import kotlinx.coroutines.launch
  * Thư viện `com.anhnn.language` mặc định hiển thị 24 ngôn ngữ và không cho lọc,
  * nên ta tự dựng UI nhưng tái dùng enum [LanguageManager.Language] (tên + cờ) và
  * [LanguageDataSource] để lưu/áp dụng locale — khớp với cơ chế attachBaseContext.
+ *
+ * Chọn ngôn ngữ chỉ đổi selection tạm (không recreate → native ad không reload);
+ * bấm nút Đồng ý trên top bar mới lưu và gọi [onLanguageSaved] để restart app.
  */
 private val SUPPORTED_LANGUAGES = listOf(
     LanguageManager.Language.VIETNAMESE,
@@ -77,6 +82,10 @@ fun LanguagePickerScreen(
     val scope = rememberCoroutineScope()
     val dataSource = remember { LanguageDataSource(context) }
     val currentCode by dataSource.languageCode.collectAsStateWithLifecycle(initialValue = "")
+    // Selection tạm — chỉ lưu khi bấm Đồng ý
+    var pendingCode by rememberSaveable { mutableStateOf<String?>(null) }
+    val selectedCode = pendingCode ?: currentCode
+    val hasChange = pendingCode != null && pendingCode != currentCode
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -97,6 +106,23 @@ fun LanguagePickerScreen(
                         )
                     }
                 },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                dataSource.setLanguageCode(pendingCode!!)
+                                onLanguageSaved()
+                            }
+                        },
+                        enabled = hasChange
+                    ) {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = stringResource(R.string.language_confirm),
+                            tint = if (hasChange) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,
@@ -114,25 +140,11 @@ fun LanguagePickerScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            BannerAdView(
-                adName = AdNames.LANGUAGE_BANNER,
-                modifier = Modifier.padding(bottom = 4.dp),
-            )
-
             SUPPORTED_LANGUAGES.forEach { lang ->
                 LanguageRowItem(
                     language = lang,
-                    selected = currentCode == lang.code,
-                    onClick = {
-                        if (currentCode != lang.code) {
-                            scope.launch {
-                                dataSource.setLanguageCode(lang.code)
-                                onLanguageSaved()
-                            }
-                        } else {
-                            onBack()
-                        }
-                    }
+                    selected = selectedCode == lang.code,
+                    onClick = { pendingCode = lang.code }
                 )
             }
 

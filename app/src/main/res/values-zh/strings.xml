@@ -18,6 +18,7 @@
     <string name="settings_lang_vi">Tiếng Việt</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">选择显示语言</string>
+    <string name="language_confirm">确认</string>
     <string name="settings_dark_mode_desc">切换至深色外观</string>
     <string name="settings_light_mode_desc">切换至浅色外观</string>
     <string name="content_desc_settings">打开设置</string>

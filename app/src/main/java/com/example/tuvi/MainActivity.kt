@@ -2,6 +2,7 @@ package com.example.tuvi
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -201,7 +202,13 @@ fun TuViApp(isDark: Boolean = true) {
             val context = LocalContext.current
             LanguagePickerScreen(
                 onBack = { navController.popBackStack() },
-                onLanguageSaved = { (context as? Activity)?.recreate() }
+                onLanguageSaved = {
+                    // Restart app từ splash để toàn bộ UI + ads load lại theo locale mới
+                    val intent = Intent(context, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    context.startActivity(intent)
+                    (context as? Activity)?.finish()
+                }
             )
         }
         composable("privacy_policy") {

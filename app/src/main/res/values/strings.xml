@@ -18,6 +18,7 @@
     <string name="settings_lang_vi">Tiếng Việt</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_language_desc">Chọn ngôn ngữ hiển thị</string>
+    <string name="language_confirm">Đồng ý</string>
     <string name="settings_dark_mode_desc">Giao diện tối</string>
     <string name="settings_light_mode_desc">Giao diện sáng</string>
     <string name="content_desc_settings">Mở cài đặt</string>

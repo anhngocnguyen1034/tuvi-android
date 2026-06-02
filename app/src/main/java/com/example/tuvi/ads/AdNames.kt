@@ -21,5 +21,4 @@ object AdNames {
 
     // Banner
     const val EXIT_BANNER = "exit_banner"          // trên cùng màn xác nhận thoát app
-    const val LANGUAGE_BANNER = "language_banner"  // trên danh sách màn chọn ngôn ngữ
 }
