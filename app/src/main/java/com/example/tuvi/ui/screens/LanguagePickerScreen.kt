@@ -44,6 +44,7 @@ import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
+import com.example.tuvi.ads.BannerAdView
 import com.example.tuvi.ads.NativeAdCard
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
@@ -113,6 +114,11 @@ fun LanguagePickerScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BannerAdView(
+                adName = AdNames.LANGUAGE_BANNER,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+
             SUPPORTED_LANGUAGES.forEach { lang ->
                 LanguageRowItem(
                     language = lang,
