@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,12 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
+}
+
+// Đọc thông tin ký release từ local.properties (KHÔNG commit creds vào git).
+val keystoreProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 kotlin {
@@ -31,17 +39,24 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("tuvi.keystore")
-            storePassword = "chinh0407"
-            keyAlias = "tuvi"
-            keyPassword = "chinh0407"
+            val storeFileName = keystoreProps.getProperty("RELEASE_STORE_FILE")
+            if (storeFileName != null) {
+                storeFile = file(storeFileName)
+                storePassword = keystoreProps.getProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = keystoreProps.getProperty("RELEASE_KEY_ALIAS")
+                keyPassword = keystoreProps.getProperty("RELEASE_KEY_PASSWORD")
+            }
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            // Chỉ ký bằng config release khi có creds (local.properties); CI không có thì để mặc định.
+            if (keystoreProps.getProperty("RELEASE_STORE_FILE") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

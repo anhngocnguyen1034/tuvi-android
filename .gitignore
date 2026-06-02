@@ -17,6 +17,10 @@ local.properties
 build/
 **/build/
 
+# Keystore ký app — KHÔNG commit (mật khẩu để trong local.properties)
+*.keystore
+*.jks
+
 # Kotlin / Android Studio
 .kotlin/
 
