@@ -32,6 +32,9 @@ object InterstitialAdManager {
     // Cooldown dùng chung toàn app: 2 interstitial bất kỳ không hiện quá sát nhau.
     @Volatile private var lastShownAt: Long = 0L
 
+    /** true nếu quảng cáo [adName] đã load sẵn (sẵn sàng show). */
+    fun isReady(adName: String): Boolean = slots[adName]?.ad != null
+
     /** Tải sẵn quảng cáo cho [adName] nếu chưa có. */
     fun preload(context: Context, adName: String) {
         if (!RemoteConfigManager.adsEnabled()) return

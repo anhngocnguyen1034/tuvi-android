@@ -50,12 +50,19 @@ import kotlinx.coroutines.delay
 
 private const val SPLASH_DURATION_MS = 1600L
 
+// Sau thời lượng tối thiểu, đợi thêm tối đa ngần này cho quảng cáo splash load xong.
+private const val MAX_AD_WAIT_MS = 4000L
+
 /**
- * Màn splash: logo + tên app trên nền gradient navy/gold, fade + scale khi xuất
- * hiện, tự gọi [onFinish] sau [SPLASH_DURATION_MS] để điều hướng vào Home.
+ * Màn splash: logo + tên app trên nền gradient navy/gold, fade + scale khi xuất hiện.
+ * Hiển thị tối thiểu [SPLASH_DURATION_MS], sau đó đợi quảng cáo sẵn sàng ([isAdReady], tối đa
+ * [MAX_AD_WAIT_MS]) rồi mới gọi [onFinish] để vào Home — tránh việc splash xong mà ad chưa kịp load.
  */
 @Composable
-fun SplashScreen(onFinish: () -> Unit) {
+fun SplashScreen(
+    onFinish: () -> Unit,
+    isAdReady: () -> Boolean = { true },
+) {
     var started by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
@@ -76,6 +83,12 @@ fun SplashScreen(onFinish: () -> Unit) {
     LaunchedEffect(Unit) {
         started = true
         delay(SPLASH_DURATION_MS)
+        // Đợi quảng cáo splash load xong (tối đa MAX_AD_WAIT_MS) rồi mới vào Home.
+        var waited = 0L
+        while (!isAdReady() && waited < MAX_AD_WAIT_MS) {
+            delay(100)
+            waited += 100
+        }
         onFinish()
     }
 

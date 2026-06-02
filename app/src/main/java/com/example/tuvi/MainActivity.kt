@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tuvi.ads.AdConsentManager
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.InterstitialAdManager
+import com.example.tuvi.ads.RemoteConfigManager
 import com.google.android.gms.ads.MobileAds
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
@@ -134,7 +135,11 @@ fun TuViApp(isDark: Boolean = true) {
                             popUpTo("splash") { inclusive = true }
                         }
                     }
-                }
+                },
+                isAdReady = {
+                    !RemoteConfigManager.adsEnabled() ||
+                        InterstitialAdManager.isReady(AdNames.SPLASH_OPEN)
+                },
             )
         }
         composable("home") {
