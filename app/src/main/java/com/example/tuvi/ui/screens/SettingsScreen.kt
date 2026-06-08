@@ -1,6 +1,16 @@
 package com.example.tuvi.ui.screens
 
+import android.Manifest
+import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,11 +42,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +64,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
@@ -63,6 +83,27 @@ import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViRed
+
+private enum class NotificationPreference {
+    Holiday,
+    Lunar,
+}
+
+private fun hasPostNotificationPermission(context: Context): Boolean {
+    return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun shouldShowPostNotificationRationale(context: Context): Boolean {
+    val activity = context as? Activity ?: return false
+    return ActivityCompat.shouldShowRequestPermissionRationale(
+        activity,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +120,137 @@ fun SettingsScreen(
         )
     )
 ) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scroll = rememberScrollState()
+    val notifPermPrefs = remember(context) {
+        context.getSharedPreferences("notif_perm_prefs", Context.MODE_PRIVATE)
+    }
+
+    var notifGranted by remember { mutableStateOf(hasPostNotificationPermission(context)) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    var pendingNotifTarget by remember { mutableStateOf<NotificationPreference?>(null) }
+    var openedNotificationSettings by remember { mutableStateOf(false) }
+
+    fun applyNotificationPreference(target: NotificationPreference, enabled: Boolean) {
+        when (target) {
+            NotificationPreference.Holiday -> viewModel.setNotifHoliday(enabled)
+            NotificationPreference.Lunar -> viewModel.setNotifLunar(enabled)
+        }
+    }
+
+    DisposableEffect(lifecycleOwner, context) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val granted = hasPostNotificationPermission(context)
+                notifGranted = granted
+                if (openedNotificationSettings) {
+                    openedNotificationSettings = false
+                    val target = pendingNotifTarget
+                    if (granted && target != null) {
+                        applyNotificationPreference(target, true)
+                    }
+                    pendingNotifTarget = null
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val permLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        notifGranted = granted
+        notifPermPrefs.edit().putBoolean("asked", true).apply()
+        val target = pendingNotifTarget
+        if (granted && target != null) {
+            applyNotificationPreference(target, true)
+            pendingNotifTarget = null
+        } else if (!granted) {
+            val rationale = shouldShowPostNotificationRationale(context)
+            if (!rationale) {
+                showSettingsDialog = true
+            } else {
+                pendingNotifTarget = null
+            }
+        }
+    }
+
+    fun dismissNotificationSettingsDialog() {
+        showSettingsDialog = false
+        pendingNotifTarget = null
+    }
+
+    fun setNotificationPreference(target: NotificationPreference, enabled: Boolean) {
+        if (!enabled) {
+            applyNotificationPreference(target, false)
+            return
+        }
+
+        if (hasPostNotificationPermission(context)) {
+            notifGranted = true
+            applyNotificationPreference(target, true)
+            return
+        }
+
+        pendingNotifTarget = target
+        val askedBefore = notifPermPrefs.getBoolean("asked", false)
+        val rationale = shouldShowPostNotificationRationale(context)
+        if (askedBefore && !rationale) {
+            showSettingsDialog = true
+            return
+        }
+
+        permLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    if (showSettingsDialog) {
+        AlertDialog(
+            onDismissRequest = ::dismissNotificationSettingsDialog,
+            containerColor = TuViNavyCard,
+            titleContentColor = TuViGold,
+            textContentColor = TuViIvory,
+            title = {
+                Text(
+                    text = stringResource(R.string.notif_perm_blocked_title),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.notif_perm_blocked_message),
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showSettingsDialog = false
+                    openedNotificationSettings = true
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(intent)
+                }) {
+                    Text(
+                        text = stringResource(R.string.notif_perm_open_settings),
+                        color = TuViGold,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = ::dismissNotificationSettingsDialog) {
+                    Text(
+                        text = stringResource(R.string.notif_perm_cancel),
+                        color = TuViIvoryDim
+                    )
+                }
+            },
+        )
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -151,14 +321,14 @@ fun SettingsScreen(
             NotificationToggleRow(
                 title = stringResource(R.string.settings_notif_holiday_title),
                 desc = stringResource(R.string.settings_notif_holiday_desc),
-                checked = state.notifHoliday,
-                onCheckedChange = { viewModel.setNotifHoliday(it) }
+                checked = state.notifHoliday && notifGranted,
+                onCheckedChange = { setNotificationPreference(NotificationPreference.Holiday, it) }
             )
             NotificationToggleRow(
                 title = stringResource(R.string.settings_notif_lunar_title),
                 desc = stringResource(R.string.settings_notif_lunar_desc),
-                checked = state.notifLunar,
-                onCheckedChange = { viewModel.setNotifLunar(it) }
+                checked = state.notifLunar && notifGranted,
+                onCheckedChange = { setNotificationPreference(NotificationPreference.Lunar, it) }
             )
 
             Text(
@@ -508,10 +678,9 @@ private fun AboutActionRow(
 @Composable
 private fun PrivacyPolicyRow(onClick: () -> Unit) {
     AboutActionRow(
-        iconRes = R.drawable.ic_rate_app,
+        iconRes = R.drawable.ic_privacy_policy,
         title = stringResource(R.string.settings_privacy_title),
         desc = stringResource(R.string.settings_privacy_desc),
         onClick = onClick
     )
 }
-
