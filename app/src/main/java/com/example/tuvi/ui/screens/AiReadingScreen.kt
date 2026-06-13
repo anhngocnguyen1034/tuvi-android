@@ -63,8 +63,10 @@ fun AiReadingScreen(
     aiReadings: Map<CungSlug, String>,
     loading: Boolean,
     aiUsed: Boolean,
+    vanHanReading: String?,
     onSelectCung: (CungSlug) -> Unit,
     onRequest: () -> Unit,
+    onRequestVanHan: () -> Unit,
     onBack: () -> Unit,
 ) {
     val currentReading = selectedCung?.let(aiReadings::get)
@@ -96,9 +98,18 @@ fun AiReadingScreen(
                 onRequest = onRequest,
             )
 
-            if (currentReading != null) {
+            VanHanPanel(
+                hasReading = vanHanReading != null,
+                loading = loading,
+                aiUsed = aiUsed,
+                onRequest = onRequestVanHan,
+            )
+
+            // 1 lượt free dùng chung cho cung hoặc vận hạn → chỉ một loại có kết quả.
+            val readingToShow = currentReading ?: vanHanReading
+            if (readingToShow != null) {
                 Spacer(Modifier.height(20.dp))
-                val bodyText = currentReading.takeIf { it.isNotBlank() }
+                val bodyText = readingToShow.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.chart_ai_reading_empty)
                 AiReadingSection(bodyText = bodyText)
             } else if (!loading) {
@@ -265,6 +276,56 @@ private fun ActionPanel(
     }
 }
 
+@Composable
+private fun VanHanPanel(
+    hasReading: Boolean,
+    loading: Boolean,
+    aiUsed: Boolean,
+    onRequest: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        val btnText = when {
+            aiUsed -> stringResource(R.string.ai_reading_used_btn)
+            hasReading -> stringResource(R.string.ai_reading_van_han_refresh_btn)
+            else -> stringResource(R.string.ai_reading_van_han_btn)
+        }
+        Button(
+            onClick = onRequest,
+            enabled = !loading && !aiUsed,
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                horizontal = 16.dp,
+                vertical = 10.dp,
+            ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ChartNavy.copy(alpha = 0.45f),
+                contentColor = ChartGold,
+                disabledContainerColor = ChartNavy.copy(alpha = 0.25f),
+                disabledContentColor = ChartGoldDim.copy(alpha = 0.45f),
+            ),
+            border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
+        ) {
+            Text(
+                text = btnText,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+                fontFamily = BeVietnamProFamily,
+                maxLines = 2,
+                softWrap = true,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
 @Preview(name = "AI reading empty - dark", showBackground = true)
 @Composable
 private fun AiReadingScreenEmptyPreview() {
@@ -274,8 +335,10 @@ private fun AiReadingScreenEmptyPreview() {
             aiReadings = emptyMap(),
             loading = false,
             aiUsed = false,
+            vanHanReading = null,
             onSelectCung = {},
             onRequest = {},
+            onRequestVanHan = {},
             onBack = {},
         )
     }
@@ -290,8 +353,10 @@ private fun AiReadingScreenUsedPreview() {
             aiReadings = emptyMap(),
             loading = false,
             aiUsed = true,
+            vanHanReading = null,
             onSelectCung = {},
             onRequest = {},
+            onRequestVanHan = {},
             onBack = {},
         )
     }

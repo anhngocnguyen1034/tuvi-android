@@ -265,6 +265,10 @@
     <string name="browser_tab_new_title">New tab</string>
     <string name="error_unknown">An unknown error occurred.</string>
     <string name="error_ai_interpret_503">AI interpretation is not available (HTTP 503). Configure the Gemini API key on the server or try again later.</string>
+    <string name="error_ai_interpret_402">You have used up your free AI question. Please unlock to continue.</string>
+    <string name="error_ai_interpret_403">Could not verify the app. Please update it from Google Play and try again.</string>
+    <string name="ai_reading_van_han_btn">Ask AI for free — this year\'s fortune</string>
+    <string name="ai_reading_van_han_refresh_btn">Ask AI for free (refresh yearly fortune)</string>
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
     <string name="error_ai_no_cung">Please select a palace before asking AI.</string>

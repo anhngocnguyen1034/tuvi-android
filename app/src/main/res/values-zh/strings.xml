@@ -240,6 +240,10 @@
     <string name="browser_tab_new_title">新标签页</string>
     <string name="error_unknown">发生了未知错误。</string>
     <string name="error_ai_interpret_503">AI 详批功能当前不可用 (HTTP 503)。请在服务器端正确配置 Gemini API Key 密钥，或稍后重试。</string>
+    <string name="error_ai_interpret_402">您的免费 AI 提问次数已用完。请解锁后继续。</string>
+    <string name="error_ai_interpret_403">无法验证应用。请从 Google Play 更新应用后重试。</string>
+    <string name="ai_reading_van_han_btn">免费问 AI — 今年运限</string>
+    <string name="ai_reading_van_han_refresh_btn">免费问 AI（刷新流年运限）</string>
     <string name="error_ai_no_input">缺失生辰八字日期数据 — 无法发起 AI 详批服务。</string>
     <string name="error_ai_no_chart">未成功生成或显示命盘 — 无法发起 AI 详批服务。</string>
     <string name="error_ai_no_cung">请先在盘面上选定一个特定的宫位再行咨询 AI。</string>

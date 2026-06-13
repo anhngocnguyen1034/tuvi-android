@@ -5,6 +5,7 @@ import com.example.tuvi.data.remote.dto.ThangLichDto
 import com.example.tuvi.data.remote.dto.InterpretResponse
 import com.example.tuvi.data.remote.dto.TuViRequest
 import com.example.tuvi.data.remote.dto.TuViResponse
+import com.example.tuvi.data.remote.dto.VanHanResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,6 +17,10 @@ interface TuViApiService {
 
     @POST("/api/interpret")
     suspend fun interpret(@Body request: TuViRequest): InterpretResponse
+
+    /** Luận giải vận hạn 1 năm (đại hạn + tiểu hạn + sao lưu của `nam_xem`). */
+    @POST("/api/interpret/van-han")
+    suspend fun interpretVanHan(@Body request: TuViRequest): VanHanResponse
 
     /** Lấy toàn bộ lịch của một tháng dương lịch. */
     @GET("/api/lich/{nam}/{thang}")

@@ -309,17 +309,29 @@ fun TuViApp(isDark: Boolean = true) {
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
             val aiUsed by viewModel.aiUsed.collectAsStateWithLifecycle()
-            val aiReadings = (uiState as? TuViUiState.Success)?.aiReadings ?: emptyMap()
+            val successState = uiState as? TuViUiState.Success
+            val aiReadings = successState?.aiReadings ?: emptyMap()
+            val vanHanReading = successState?.vanHanReading
             AiReadingScreen(
                 selectedCung = selectedCung,
                 aiReadings = aiReadings,
                 loading = aiInterpretLoading,
                 aiUsed = aiUsed,
+                vanHanReading = vanHanReading,
                 onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
                     InterstitialAdManager.showThen(activity, AdNames.AI_REQUEST) {
                         viewModel.fetchAiInterpretation(
                             cung = selectedCung,
+                            onError = { err ->
+                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
+                            },
+                        )
+                    }
+                },
+                onRequestVanHan = {
+                    InterstitialAdManager.showThen(activity, AdNames.AI_REQUEST) {
+                        viewModel.fetchVanHanInterpretation(
                             onError = { err ->
                                 Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
                             },

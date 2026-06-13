@@ -31,6 +31,15 @@ class TuViRepositoryImpl(
         )
     }
 
+    override suspend fun getTuViVanHan(input: TuViChartInput): TuViInterpretation {
+        val body = apiService.interpretVanHan(buildRequest(input))
+        val raw = body.data_la_so ?: error("Empty van-han response")
+        return TuViInterpretation(
+            chart = raw.toDomain(),
+            aiReading = body.ai_reading.orEmpty(),
+        )
+    }
+
     private fun buildRequest(input: TuViChartInput): TuViRequest {
         val gioSinh = ((input.gio + 1) / 2) % 12 + 1
         return TuViRequest(

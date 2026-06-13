@@ -10,4 +10,7 @@ interface TuViRepository {
 
     /** POST /api/interpret cho 1 cung — chart trong `data_la_so`, text trong `ai_reading`. */
     suspend fun getTuViInterpretation(input: TuViChartInput, cung: CungSlug): TuViInterpretation
+
+    /** POST /api/interpret/van-han — luận vận hạn năm `input.namXem`. */
+    suspend fun getTuViVanHan(input: TuViChartInput): TuViInterpretation
 }

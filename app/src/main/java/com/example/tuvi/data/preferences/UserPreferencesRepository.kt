@@ -11,6 +11,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import java.util.UUID
 
 private val Context.userPrefsDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
@@ -26,6 +28,20 @@ class UserPreferencesRepository(context: Context) {
     private val currentDeviceId: String =
         Settings.Secure.getString(appContext.contentResolver, Settings.Secure.ANDROID_ID).orEmpty()
 
+    /**
+     * Device id gửi lên backend qua header X-Device-Id (khoá tính lượt AI miễn phí).
+     * Ưu tiên ANDROID_ID; nếu rỗng (hiếm) → UUID sinh & lưu bền trong DataStore.
+     * runBlocking chỉ chạy ở nhánh fallback hiếm gặp, đọc DataStore rất nhanh.
+     */
+    val deviceId: String = currentDeviceId.ifBlank {
+        runBlocking {
+            dataStore.data.first()[KEY_DEVICE_ID]
+                ?: UUID.randomUUID().toString().also { id ->
+                    dataStore.edit { it[KEY_DEVICE_ID] = id }
+                }
+        }
+    }
+
     companion object {
         private val KEY_THEME_DARK = booleanPreferencesKey("theme_dark")
         private val KEY_LOCALE = stringPreferencesKey("app_locale")
@@ -33,6 +49,7 @@ class UserPreferencesRepository(context: Context) {
         private val KEY_NOTIF_LUNAR = booleanPreferencesKey("notif_lunar")
         private val KEY_AI_USED = booleanPreferencesKey("ai_used")
         private val KEY_AI_USED_DEVICE = stringPreferencesKey("ai_used_device_id")
+        private val KEY_DEVICE_ID = stringPreferencesKey("device_id")
 
         const val LOCALE_VI = "vi"
         const val LOCALE_EN = "en"

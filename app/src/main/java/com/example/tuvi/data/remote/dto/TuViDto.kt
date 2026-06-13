@@ -62,6 +62,15 @@ data class InterpretResponse(
     @SerialName("ai_reading") val ai_reading: String? = null,
 )
 
+/** Response from POST /api/interpret/van-han (luận giải vận hạn 1 năm). */
+@Serializable
+data class VanHanResponse(
+    val status: String? = null,
+    @SerialName("nam_xem") val nam_xem: Int? = null,
+    @SerialName("data_la_so") val data_la_so: TuViResponse? = null,
+    @SerialName("ai_reading") val ai_reading: String? = null,
+)
+
 @Serializable
 data class ThienBanDto(
     val ten: String,

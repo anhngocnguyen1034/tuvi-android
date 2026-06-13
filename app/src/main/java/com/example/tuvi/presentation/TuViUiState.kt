@@ -17,6 +17,8 @@ sealed interface TuViError {
     companion object {
         val Unknown = Res(R.string.error_unknown)
         val AiUnavailable = Res(R.string.error_ai_interpret_503)
+        val AiQuotaExhausted = Res(R.string.error_ai_interpret_402)
+        val AiForbidden = Res(R.string.error_ai_interpret_403)
         val AiNoInput = Res(R.string.error_ai_no_input)
         val AiNoChart = Res(R.string.error_ai_no_chart)
         val AiNoCung = Res(R.string.error_ai_no_cung)
@@ -34,6 +36,8 @@ sealed interface TuViUiState {
         val data: TuViChart,
         /** Cache luận giải theo từng cung sau khi gọi `/api/interpret`. */
         val aiReadings: Map<CungSlug, String> = emptyMap(),
+        /** Luận giải vận hạn năm sau khi gọi `/api/interpret/van-han`. */
+        val vanHanReading: String? = null,
     ) : TuViUiState
 
     @Immutable

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.tuvi.BuildConfig
 import com.example.tuvi.data.local.TuViDatabase
 import com.example.tuvi.data.preferences.UserPreferencesRepository
+import com.example.tuvi.data.remote.AiGateInterceptor
+import com.example.tuvi.data.remote.PlayIntegrityProvider
 import com.example.tuvi.data.remote.TuViApiService
 import com.example.tuvi.data.repository.SavedChartRepositoryImpl
 import com.example.tuvi.data.repository.TuViRepositoryImpl
@@ -15,6 +17,7 @@ import com.example.tuvi.domain.usecase.GetChartsByGroupUseCase
 import com.example.tuvi.domain.usecase.GetSavedChartByIdUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
 import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
+import com.example.tuvi.domain.usecase.GetTuViVanHanUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
 import com.example.tuvi.domain.usecase.SearchSavedChartsUseCase
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -30,6 +33,14 @@ object AppContainer {
 
     private const val BASE_URL = "http://160.250.181.238:8000"
 //    private const val BASE_URL = "http://192.168.1.17:8000"
+
+    /**
+     * Số project Google Cloud đã link Play Console (cho Play Integrity Classic).
+     * TODO: ĐIỀN số thật trước khi phát hành. Để 0 = tắt Integrity (chỉ gửi X-Device-Id),
+     * phù hợp dev/local khi backend cũng tắt PLAY_INTEGRITY_ENABLED.
+     */
+    private const val CLOUD_PROJECT_NUMBER = 0L
+
     lateinit var app: android.app.Application
         private set
 
@@ -38,12 +49,26 @@ object AppContainer {
         coerceInputValues = true
     }
 
+    /** Play Integrity provider — chỉ tạo khi đã cấu hình Cloud Project Number. */
+    private val playIntegrityProvider: PlayIntegrityProvider? by lazy {
+        if (CLOUD_PROJECT_NUMBER > 0L) PlayIntegrityProvider(app, CLOUD_PROJECT_NUMBER) else null
+    }
+
+    /** Gắn X-Device-Id + X-Integrity-Token cho riêng endpoint AI. */
+    private val aiGateInterceptor by lazy {
+        AiGateInterceptor(
+            deviceIdProvider = { userPreferencesRepository.deviceId },
+            integrityProvider = playIntegrityProvider,
+        )
+    }
+
     /** Default OkHttp read timeout is 10s; `/api/interpret` (Gemini) often needs much longer. */
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(aiGateInterceptor)
             // Gửi ngôn ngữ hiện tại của app để backend trả dữ liệu đã localize
             // (vi mặc định / zh = Hán tự). Đọc đồng bộ tại request time — luôn phản
             // ánh lựa chọn ngôn ngữ vì app đã set AppCompatDelegate.setApplicationLocales().
@@ -81,6 +106,7 @@ object AppContainer {
 
     val getTuViChartUseCase by lazy { GetTuViChartUseCase(repository) }
     val getTuViInterpretUseCase by lazy { GetTuViInterpretUseCase(repository) }
+    val getTuViVanHanUseCase by lazy { GetTuViVanHanUseCase(repository) }
 
     private lateinit var database: TuViDatabase
     lateinit var userPreferencesRepository: UserPreferencesRepository

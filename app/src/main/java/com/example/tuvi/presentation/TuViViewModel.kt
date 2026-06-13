@@ -14,7 +14,9 @@ import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.usecase.DeleteSavedChartUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
 import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
+import com.example.tuvi.domain.usecase.GetTuViVanHanUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
+import retrofit2.HttpException
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 class TuViViewModel(
     private val getTuViChart: GetTuViChartUseCase,
     private val getTuViInterpret: GetTuViInterpretUseCase,
+    private val getTuViVanHan: GetTuViVanHanUseCase,
     private val saveChartUseCase: SaveChartUseCase,
     private val deleteChartUseCase: DeleteSavedChartUseCase,
     private val json: Json,
@@ -131,8 +134,57 @@ class TuViViewModel(
         }
     }
 
-    private fun mapThrowable(t: Throwable): TuViError =
-        t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
+    /**
+     * POST /api/interpret/van-han — luận vận hạn năm `input.namXem`; cache vào
+     * [TuViUiState.Success.vanHanReading]. Cũng tính 1 lượt AI miễn phí/thiết bị.
+     */
+    fun fetchVanHanInterpretation(
+        onError: (TuViError) -> Unit,
+    ) {
+        val input = _lastInput.value
+        if (input == null) {
+            onError(TuViError.AiNoInput)
+            return
+        }
+        val success = _uiState.value as? TuViUiState.Success
+        if (success == null) {
+            onError(TuViError.AiNoChart)
+            return
+        }
+        viewModelScope.launch {
+            if (userPrefs.isAiUsed()) {
+                onError(TuViError.AiAlreadyUsed)
+                return@launch
+            }
+            _aiInterpretLoading.value = true
+            try {
+                getTuViVanHan(input)
+                    .onSuccess { interpretation ->
+                        val base = _uiState.value as? TuViUiState.Success ?: return@onSuccess
+                        _uiState.value = base.copy(
+                            data = interpretation.chart,
+                            vanHanReading = interpretation.aiReading,
+                        )
+                        userPrefs.markAiUsed()
+                    }
+                    .onFailure { onError(mapThrowable(it)) }
+            } finally {
+                _aiInterpretLoading.value = false
+            }
+        }
+    }
+
+    /** Map lỗi mạng → TuViError; nhận diện mã HTTP từ backend (402/403/503). */
+    private fun mapThrowable(t: Throwable): TuViError = when {
+        t is HttpException -> when (t.code()) {
+            402 -> TuViError.AiQuotaExhausted
+            403 -> TuViError.AiForbidden
+            503 -> TuViError.AiUnavailable
+            else -> t.message?.let { TuViError.Raw(it) } ?: TuViError.Unknown
+        }
+        t.message != null -> TuViError.Raw(t.message!!)
+        else -> TuViError.Unknown
+    }
 
     private fun mapFailureToUi(t: Throwable) {
         _uiState.value = TuViUiState.Error(mapThrowable(t))
@@ -210,6 +262,7 @@ class TuViViewModel(
                 TuViViewModel(
                     AppContainer.getTuViChartUseCase,
                     AppContainer.getTuViInterpretUseCase,
+                    AppContainer.getTuViVanHanUseCase,
                     AppContainer.saveChartUseCase,
                     AppContainer.deleteSavedChartUseCase,
                     AppContainer.appJson,

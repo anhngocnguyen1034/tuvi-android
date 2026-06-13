@@ -32,6 +32,7 @@ googleid = "1.1.1"
 coroutinesPlayServices = "1.9.0"
 playServicesAds = "23.6.0"
 userMessagingPlatform = "3.1.0"
+playIntegrity = "1.4.0"
 
 [libraries]
 android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
@@ -82,6 +83,9 @@ kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "ko
 # AdMob
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
+
+# Play Integrity (xác thực app thật cho các endpoint AI)
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -123,6 +123,9 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
 
+    // Play Integrity (bảo vệ endpoint AI)
+    implementation(libs.play.integrity)
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

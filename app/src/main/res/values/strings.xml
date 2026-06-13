@@ -240,6 +240,10 @@
     <string name="browser_tab_new_title">Thẻ mới</string>
     <string name="error_unknown">Đã xảy ra lỗi không xác định.</string>
     <string name="error_ai_interpret_503">Tính năng AI luận giải hiện không khả dụng (HTTP 503). Vui lòng cấu hình Gemini API Key trên máy chủ hoặc thử lại sau.</string>
+    <string name="error_ai_interpret_402">Bạn đã dùng hết lượt hỏi AI miễn phí. Vui lòng mở khoá để tiếp tục.</string>
+    <string name="error_ai_interpret_403">Không xác thực được ứng dụng. Vui lòng cập nhật app từ CH Play và thử lại.</string>
+    <string name="ai_reading_van_han_btn">Hỏi AI miễn phí — vận hạn năm nay</string>
+    <string name="ai_reading_van_han_refresh_btn">Hỏi AI miễn phí (làm mới vận hạn năm)</string>
     <string name="error_ai_no_input">Thiếu dữ liệu ngày sinh — không thể yêu cầu AI luận giải.</string>
     <string name="error_ai_no_chart">Chưa có lá số nào được hiển thị — không thể yêu cầu AI luận giải.</string>
     <string name="error_ai_no_cung">Vui lòng chọn một cung trước khi hỏi AI.</string>
