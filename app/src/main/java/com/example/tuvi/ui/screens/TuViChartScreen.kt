@@ -62,6 +62,9 @@ import com.example.tuvi.domain.model.TuViChart
 import java.io.File
 import java.io.FileOutputStream
 import java.text.Normalizer
+import android.app.Activity
+import com.anhnn.ads.Ads
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.R
 import com.example.tuvi.ui.screens.SaveChartDialog
 import com.example.tuvi.ui.theme.BeVietnamProFamily
@@ -401,14 +404,18 @@ fun TuViChartScreen(
                         TextButton(
                             onClick = {
                                 showDownloadConfirmDialog = false
-                                scope.launch {
-                                    val ok = saveBitmapToGallery(
-                                        context = context,
-                                        bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap(),
-                                        name = "chart"
-                                    )
-                                    downloadSuccess = ok
-                                    showDownloadDialog = true
+                                // Hiện interstitial trước; tải xong ad (hoặc bị cooldown/chưa sẵn)
+                                // thì mới lưu ảnh — callback luôn chạy nên tải không bao giờ bị chặn.
+                                Ads.showInterstitial(context as Activity, AdNames.CHART_DOWNLOAD) {
+                                    scope.launch {
+                                        val ok = saveBitmapToGallery(
+                                            context = context,
+                                            bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap(),
+                                            name = "chart"
+                                        )
+                                        downloadSuccess = ok
+                                        showDownloadDialog = true
+                                    }
                                 }
                             }
                         ) {

@@ -3,7 +3,11 @@ package com.example.tuvi
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import com.anhnn.ads.AdFormat
+import com.anhnn.ads.Ads
+import com.anhnn.ads.AdsConfig
 import com.example.tuvi.data.preferences.UserPreferencesRepository
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.RemoteConfigManager
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.ui.theme.TuViComposeColors
@@ -34,7 +38,25 @@ class TuViApplication : Application() {
         AppContainer.init(this)
 
         RemoteConfigManager.init(this)
-        // MobileAds.initialize + preload được dời sang MainActivity, chạy SAU khi thu thập
-        // consent (UMP) — theo luồng chuẩn của Google: consent trước, init ads sau.
+
+        // Cấu hình module ads: bơm dữ liệu app (Remote Config) vào, module không phụ thuộc Firebase.
+        // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.
+        Ads.init(
+            AdsConfig(
+                adsEnabled = { RemoteConfigManager.adsEnabled() },
+                adUnitId = { name ->
+                    when (AdNames.formatOf(name)) {
+                        AdFormat.INTERSTITIAL -> RemoteConfigManager.interAdUnitId(name)
+                        AdFormat.NATIVE -> RemoteConfigManager.nativeAdUnitId(name)
+                        AdFormat.BANNER -> RemoteConfigManager.bannerAdUnitId(name)
+                        null -> ""
+                    }
+                },
+                adFormat = { name -> AdNames.formatOf(name) },
+                interCooldownMs = { RemoteConfigManager.interMinIntervalMs() },
+            )
+        )
+        // Consent (UMP) + MobileAds.initialize chạy ở MainActivity qua Ads.start — theo luồng
+        // chuẩn của Google: consent trước, init ads sau.
     }
 }

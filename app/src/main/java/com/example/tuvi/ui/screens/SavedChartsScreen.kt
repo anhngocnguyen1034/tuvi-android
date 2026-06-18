@@ -53,6 +53,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -64,7 +65,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.anhnn.ads.BannerAd
 import com.example.tuvi.R
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.ui.theme.LoraFontFamily
@@ -203,24 +206,34 @@ fun SavedChartsScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
-            if (charts.isEmpty()) {
-                EmptyState(
-                    hasSearch = searchQuery.isNotBlank() || selectedGroup != allGroupLabel
-                )
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(charts, key = { it.id }) { chart ->
-                        SwipeToDismissChartItem(
-                            chart = chart,
-                            onDelete = { viewModel.delete(chart.id) },
-                            onClick = { onOpenChart(chart) }
-                        )
+            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                if (charts.isEmpty()) {
+                    EmptyState(
+                        hasSearch = searchQuery.isNotBlank() || selectedGroup != allGroupLabel
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(charts, key = { it.id }) { chart ->
+                            SwipeToDismissChartItem(
+                                chart = chart,
+                                onDelete = { viewModel.delete(chart.id) },
+                                onClick = { onOpenChart(chart) }
+                            )
+                        }
                     }
                 }
             }
+
+            // Banner đáy nằm TRONG content, cùng nền TuViNavy với cả màn → không tạo
+            // đường lệch màu như Scaffold.bottomBar (vốn là surface riêng).
+            BannerAd(
+                adName = AdNames.SAVED_BANNER,
+                modifier = Modifier.navigationBarsPadding()
+            )
         }
     }
 }

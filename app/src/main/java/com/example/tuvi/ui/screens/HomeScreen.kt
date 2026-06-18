@@ -47,6 +47,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.anhnn.ads.BannerAd
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.presentation.screens.BaguaDecoration
 import com.example.tuvi.ui.theme.HomeBgGradientBottom
 import com.example.tuvi.ui.theme.HomeBgGradientTop
@@ -120,9 +122,11 @@ fun HomeScreen(
                 )
         )
 
-        Column(
+        Column(modifier = Modifier.fillMaxSize()) {
+          Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -205,6 +209,11 @@ fun HomeScreen(
                 onClick = onOpenCalendar,
                 icon  = painterResource(R.drawable.ic_calendar)
             )
+          }
+
+          // Banner đáy nằm TRONG content (chung nền homeBg), phần trên co giãn (weight) nên
+          // banner ghim đáy mà không cần Scaffold.bottomBar → cả màn đồng bộ, không lệch màu.
+          BannerAd(adName = AdNames.HOME_BANNER)
         }
 
     }

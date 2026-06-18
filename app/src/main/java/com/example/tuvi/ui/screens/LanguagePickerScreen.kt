@@ -47,7 +47,7 @@ import com.anhnn.language.LanguageDataSource
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
-import com.example.tuvi.ads.NativeAdCard
+import com.anhnn.ads.NativeAd
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
@@ -148,7 +148,7 @@ fun LanguagePickerScreen(
                 )
             }
 
-            NativeAdCard(
+            NativeAd(
                 adName = AdNames.LANGUAGE_NATIVE,
                 modifier = Modifier.padding(top = 4.dp),
             )

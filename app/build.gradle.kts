@@ -119,7 +119,9 @@ dependencies {
     implementation(libs.anhnn.components.exit)
     implementation(libs.android.blur)
 
-    // AdMob
+    // AdMob — quản lý qua module anhnn-components-ads (đã api-expose play-services-ads + UMP).
+    // Giữ 2 dòng dưới để chắc chắn có sẵn SDK (cùng version, vô hại nếu trùng transitive).
+    implementation(libs.anhnn.components.ads)
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
 

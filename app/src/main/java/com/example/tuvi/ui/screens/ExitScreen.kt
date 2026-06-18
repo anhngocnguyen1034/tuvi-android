@@ -9,9 +9,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.graphics.drawable.toBitmap
 import com.anhnn.exit.ExitAppHandler as LibExitAppHandler
 import com.example.tuvi.R
+import com.anhnn.ads.BannerAd
+import com.anhnn.ads.NativeAd
 import com.example.tuvi.ads.AdNames
-import com.example.tuvi.ads.BannerAdView
-import com.example.tuvi.ads.NativeAdCard
 
 /**
  * Wrapper mỏng quanh [com.anhnn.exit.ExitAppHandler] (thư viện `anhnn-components-exit`):
@@ -42,7 +42,7 @@ fun ExitAppHandler(onExit: () -> Unit) {
         message = stringResource(R.string.exit_dialog_message),
         confirmText = stringResource(R.string.exit_dialog_confirm),
         dismissText = stringResource(R.string.exit_dialog_dismiss),
-        topContent = { BannerAdView(adName = AdNames.EXIT_BANNER) },
-        adContent = { NativeAdCard(adName = AdNames.EXIT_NATIVE) },
+        topContent = { BannerAd(adName = AdNames.EXIT_BANNER) },
+        adContent = { NativeAd(adName = AdNames.EXIT_NATIVE) },
     )
 }
