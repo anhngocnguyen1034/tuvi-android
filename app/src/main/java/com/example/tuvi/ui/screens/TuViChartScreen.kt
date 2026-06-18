@@ -64,7 +64,9 @@ import java.io.FileOutputStream
 import java.text.Normalizer
 import android.app.Activity
 import com.anhnn.ads.Ads
+import com.anhnn.analytics.Analytics
 import com.example.tuvi.ads.AdNames
+import com.example.tuvi.analytics.Events
 import com.example.tuvi.R
 import com.example.tuvi.ui.screens.SaveChartDialog
 import com.example.tuvi.ui.theme.BeVietnamProFamily
@@ -415,6 +417,10 @@ fun TuViChartScreen(
                                         )
                                         downloadSuccess = ok
                                         showDownloadDialog = true
+                                        Analytics.logEvent(
+                                            Events.CHART_DOWNLOAD,
+                                            mapOf(Events.P_SUCCESS to ok)
+                                        )
                                     }
                                 }
                             }

@@ -125,6 +125,9 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
 
+    // Analytics (event tracking) — module api-expose firebase-analytics.
+    implementation(libs.anhnn.components.analytics)
+
     // Play Integrity (bảo vệ endpoint AI)
     implementation(libs.play.integrity)
 

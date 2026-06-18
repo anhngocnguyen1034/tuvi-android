@@ -4,6 +4,7 @@ androidBlur = "1.0.3"
 anhnnComponentsFeedback = "1.0.1"
 anhnnComponentsExit = "1.1.0"
 anhnnComponentsAds = "1.2.0"
+anhnnComponentsAnalytics = "1.3.0"
 anhnnLanguage = "1.0.1"
 kotlin = "2.3.21"
 ksp = "2.3.7"
@@ -42,6 +43,7 @@ anhnn-components-feedback = { module = "com.github.anhngocnguyen1034.anhnn-compo
 anhnn-components-rate = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate", version.ref = "anhnnComponentsFeedback" }
 anhnn-components-exit = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-exit", version.ref = "anhnnComponentsExit" }
 anhnn-components-ads = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-ads", version.ref = "anhnnComponentsAds" }
+anhnn-components-analytics = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-analytics", version.ref = "anhnnComponentsAnalytics" }
 anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

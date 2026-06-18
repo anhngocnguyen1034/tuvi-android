@@ -35,8 +35,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anhnn.ads.Ads
+import com.anhnn.analytics.Analytics
+import com.anhnn.analytics.TrackScreenViews
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.RemoteConfigManager
+import com.example.tuvi.analytics.Events
 import com.example.tuvi.presentation.SavedChartsViewModel
 import com.example.tuvi.presentation.SettingsUiState
 import com.example.tuvi.presentation.SettingsViewModel
@@ -118,6 +121,8 @@ fun TuViApp(isDark: Boolean = true) {
     }
 
     Box(Modifier.fillMaxSize()) {
+        // Tự bắn screen_view mỗi khi đổi màn.
+        TrackScreenViews(navController)
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
@@ -225,6 +230,15 @@ fun TuViApp(isDark: Boolean = true) {
             LaunchedEffect(Unit) { Ads.preload(context, AdNames.CHART_CREATE) }
             InputScreen(
                 onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
+                    Analytics.logEvent(
+                        Events.CHART_CREATE_SUBMIT,
+                        mapOf(
+                            Events.P_GENDER to gender,
+                            Events.P_LICH_TYPE to if (duongLich) "duong" else "am",
+                            Events.P_VIEW_YEAR to viewYear,
+                            Events.P_HAS_NAME to name.isNotBlank(),
+                        )
+                    )
                     viewModel.getTuVi(
                         name,
                         day,
@@ -271,6 +285,7 @@ fun TuViApp(isDark: Boolean = true) {
                             viewModel.saveChart(nhom) { result ->
                                 result
                                     .onSuccess { _ ->
+                                        Analytics.logEvent(Events.CHART_SAVE)
                                         Toast.makeText(
                                             context,
                                             context.getString(R.string.toast_chart_saved, lastInput?.ten.orEmpty()),
@@ -292,6 +307,7 @@ fun TuViApp(isDark: Boolean = true) {
                             viewModel.deleteChart(id) { result ->
                                 result
                                     .onSuccess {
+                                        Analytics.logEvent(Events.CHART_UNSAVE)
                                         Toast.makeText(context, context.getString(R.string.toast_chart_unsaved), Toast.LENGTH_SHORT).show()
                                         onResult(true)
                                     }

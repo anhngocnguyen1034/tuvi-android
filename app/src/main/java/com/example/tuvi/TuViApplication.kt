@@ -6,6 +6,7 @@ import androidx.core.os.LocaleListCompat
 import com.anhnn.ads.AdFormat
 import com.anhnn.ads.Ads
 import com.anhnn.ads.AdsConfig
+import com.anhnn.analytics.Analytics
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.RemoteConfigManager
@@ -38,6 +39,9 @@ class TuViApplication : Application() {
         AppContainer.init(this)
 
         RemoteConfigManager.init(this)
+
+        // Analytics: Firebase Analytics (đã có google-services.json). Event cụ thể khai báo ở Events.
+        Analytics.init(this)
 
         // Cấu hình module ads: bơm dữ liệu app (Remote Config) vào, module không phụ thuộc Firebase.
         // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.

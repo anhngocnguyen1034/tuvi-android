@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.anhnn.analytics.Analytics
+import com.example.tuvi.analytics.Events
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.domain.model.CungSlug
@@ -84,8 +86,24 @@ class TuViViewModel(
         viewModelScope.launch {
             _uiState.value = TuViUiState.Loading
             getTuViChart(input)
-                .onSuccess { _uiState.value = TuViUiState.Success(it) }
-                .onFailure { mapFailureToUi(it) }
+                .onSuccess {
+                    _uiState.value = TuViUiState.Success(it)
+                    Analytics.logEvent(
+                        Events.CHART_VIEW_SUCCESS,
+                        mapOf(
+                            Events.P_GENDER to gioiTinh,
+                            Events.P_LICH_TYPE to if (duongLich) "duong" else "am",
+                            Events.P_VIEW_YEAR to namXem,
+                        )
+                    )
+                }
+                .onFailure {
+                    mapFailureToUi(it)
+                    Analytics.logEvent(
+                        Events.CHART_VIEW_ERROR,
+                        mapOf(Events.P_ERROR to (it::class.simpleName ?: "unknown"))
+                    )
+                }
         }
     }
 

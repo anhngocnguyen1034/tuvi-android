@@ -71,6 +71,24 @@ URL navigation between browser sub-screens uses `savedStateHandle["pendingUrl"]`
 
 `AlarmHelper` schedules `AlarmManager.setExactAndAllowWhileIdle` for `SuKienEntity` events (falls back to `am.set` if exact alarm permission is missing on API 31+). `SuKienReceiver` fires the notification; `BootReceiver` reschedules all active alarms after device reboot.
 
+### Advertising (AdMob)
+
+The ad **engine** lives in the external module `com.anhnn.ads` (`anhnn-components-ads`, JitPack). The app only holds two ad files in `ads/`:
+
+- **`AdNames`** — placement constants + `formatOf(name): AdFormat?` registry (the app declares which placement is interstitial/native/banner).
+- **`RemoteConfigManager`** — Firebase Remote Config: `adsEnabled()`, `interMinIntervalMs()`, and per-format ad-unit resolution from the `ad_units` JSON (falls back to Google **test** unit IDs when a placement isn't configured).
+
+Wiring (do not reintroduce a local ad manager — it was deliberately removed):
+
+1. `TuViApplication.onCreate` → `RemoteConfigManager.init()` then `Ads.init(AdsConfig(...))`, injecting `adsEnabled` / `adUnitId` / `adFormat` / `interCooldownMs` from `RemoteConfigManager` + `AdNames` (the module is Firebase-agnostic — all app config flows through `AdsConfig`).
+2. `MainActivity.onCreate` → `Ads.start(this) { Ads.preload(...) }` (UMP consent + `MobileAds.initialize`, then preload). Each NavHost destination calls `Ads.preload(context, ...)` in a `LaunchedEffect` to prime the placements it will show.
+3. Interstitials: `Ads.showInterstitial(activity, AdNames.X) { next() }` — the callback **always runs** (even when skipped by the global ~30s cooldown or not yet loaded), so navigation/actions are never blocked.
+4. Native/banner: `NativeAd(adName)` / `BannerAd(adName)` composables (cache-first → instant; banners load inline). Native is theme-aware via `MaterialTheme.colorScheme`.
+
+**Banner placement convention**: put `BannerAd` *inside* screen content (content area takes `Modifier.weight(1f)`, banner pinned below) rather than `Scaffold.bottomBar` — so it shares the screen background and avoids a color seam.
+
+New production placements must be added to the `ad_units` JSON in Firebase Remote Config; otherwise they serve test ads.
+
 ## Tech Stack
 
 - **Min SDK**: 24 | **Target SDK**: 36
@@ -79,6 +97,9 @@ URL navigation between browser sub-screens uses `savedStateHandle["pendingUrl"]`
 - **Networking**: Retrofit 2.11.0 + OkHttp 4.12.0 (BODY-level logging interceptor)
 - **Serialization**: `kotlinx-serialization-json` 1.7.3
 - **Local DB**: Room (via `TuViDatabase`) | **Preferences**: DataStore
+- **Ads / Remote**: AdMob (`play-services-ads`) + UMP consent + Firebase Remote Config, driven through the `anhnn-components-ads` module
+- **Analytics**: Firebase Analytics via the `anhnn-components-analytics` module. `Analytics.init()` in `TuViApplication`, `TrackScreenViews(navController)` in `MainActivity` (auto `screen_view`), app-specific event names in `analytics/Events.kt`. **Never log birth data (name/date/time)** — only enum/boolean params.
+- **Shared libraries** (JitPack, `com.github.anhngocnguyen1034.*`): `anhnn-components-{feedback,rate,exit,ads,analytics}` + `anhnn-language`. These are ad-/app-agnostic Compose modules consumed via the version catalog — edits to them happen in the separate `anhnn-components` repo, published by tag (no `includeBuild`).
 
 ## Coding Standards (Anhnn Ecosystem)
 
