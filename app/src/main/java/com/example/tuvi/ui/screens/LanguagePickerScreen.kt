@@ -43,7 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.anhnn.analytics.Analytics
 import com.anhnn.language.LanguageDataSource
+import com.example.tuvi.analytics.Events
 import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
@@ -110,6 +112,10 @@ fun LanguagePickerScreen(
                     IconButton(
                         onClick = {
                             scope.launch {
+                                Analytics.logEvent(
+                                    Events.LANGUAGE_CHANGE,
+                                    mapOf(Events.P_LANGUAGE to pendingCode!!)
+                                )
                                 dataSource.setLanguageCode(pendingCode!!)
                                 onLanguageSaved()
                             }

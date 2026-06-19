@@ -277,4 +277,15 @@
     <string name="ai_already_used_hint">每台独立设备均可免费体验一次 AI 详批服务 — 您的设备当前已使用过该免费额度。</string>
     <string name="error_ai_already_used">您已使用过该设备上仅有的一次免费 AI 详批特权。</string>
     <string name="splash_tagline">紫微斗数解读</string>
+
+    <!-- 介绍页 / onboarding -->
+    <string name="intro_skip">跳过</string>
+    <string name="intro_next">继续</string>
+    <string name="intro_start">开始使用</string>
+    <string name="intro_1_title">紫微命盘</string>
+    <string name="intro_1_desc">根据出生日期与时辰，精准排盘并解读十二宫命盘。</string>
+    <string name="intro_2_title">历法与运势</string>
+    <string name="intro_2_desc">查看阴阳历、吉凶日，以及每年的运势详批。</string>
+    <string name="intro_3_title">更多功能</string>
+    <string name="intro_3_desc">保存命盘、内置浏览器以及更多实用功能。</string>
 </resources>

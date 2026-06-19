@@ -13,11 +13,13 @@ import com.anhnn.language.LanguageManager
 import com.example.tuvi.ui.screens.LanguagePickerScreen
 import com.example.tuvi.ui.screens.SplashScreen
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -58,6 +60,7 @@ import com.example.tuvi.ui.screens.AiReadingScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.ExitAppHandler
 import com.example.tuvi.ui.screens.HomeScreen
+import com.example.tuvi.ui.screens.IntroScreen
 import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
 import com.anhnn.feedback.FeedbackScreen
@@ -95,14 +98,14 @@ class MainActivity : ComponentActivity() {
                 )
             )
             TuViTheme(darkTheme = settingsState.themeDark) {
-                TuViApp(isDark = settingsState.themeDark)
+                TuViApp(isDark = settingsState.themeDark, onboardingDone = app.initialOnboardingDone)
             }
         }
     }
 }
 
 @androidx.compose.runtime.Composable
-fun TuViApp(isDark: Boolean = true) {
+fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
     val navController = rememberNavController()
     val viewModel: TuViViewModel = viewModel(factory = TuViViewModel.Factory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -132,6 +135,13 @@ fun TuViApp(isDark: Boolean = true) {
             val activity = context as Activity
             SplashScreen(
                 onFinish = {
+                    // Lần đầu: vào intro trước Home (không chèn quảng cáo trước intro).
+                    if (!onboardingDone) {
+                        navController.navigate("intro") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                        return@SplashScreen
+                    }
                     Ads.showInterstitial(activity, AdNames.SPLASH_OPEN) {
                         navController.navigate("home") {
                             popUpTo("splash") { inclusive = true }
@@ -142,6 +152,20 @@ fun TuViApp(isDark: Boolean = true) {
                     !RemoteConfigManager.adsEnabled() ||
                         Ads.isInterstitialReady(AdNames.SPLASH_OPEN)
                 },
+            )
+        }
+        composable("intro") {
+            val scope = rememberCoroutineScope()
+            val prefs = (context.applicationContext as TuViApplication).userPreferencesRepository
+            IntroScreen(
+                onFinish = {
+                    scope.launch {
+                        prefs.setOnboardingDone()
+                        navController.navigate("home") {
+                            popUpTo("intro") { inclusive = true }
+                        }
+                    }
+                }
             )
         }
         composable("home") {
@@ -157,17 +181,20 @@ fun TuViApp(isDark: Boolean = true) {
             ExitAppHandler(onExit = { activity.finish() })
             HomeScreen(
                 onOpenTuVi = {
+                    Analytics.logEvent(Events.HOME_TILE_CLICK, mapOf(Events.P_TILE to "tuvi"))
                     Ads.showInterstitial(activity,AdNames.HOME_TUVI) {
                         navController.navigate("input")
                     }
                 },
                 onOpenBrowser = {
+                    Analytics.logEvent(Events.HOME_TILE_CLICK, mapOf(Events.P_TILE to "browser"))
                     Ads.showInterstitial(activity,AdNames.HOME_BROWSER) {
                         val url = Uri.encode("https://www.google.com")
                         navController.navigate("browser?url=$url&title=Trình+Duyệt")
                     }
                 },
                 onOpenCalendar = {
+                    Analytics.logEvent(Events.HOME_TILE_CLICK, mapOf(Events.P_TILE to "calendar"))
                     Ads.showInterstitial(activity,AdNames.HOME_CALENDAR) {
                         navController.navigate("lich")
                     }
@@ -230,15 +257,6 @@ fun TuViApp(isDark: Boolean = true) {
             LaunchedEffect(Unit) { Ads.preload(context, AdNames.CHART_CREATE) }
             InputScreen(
                 onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
-                    Analytics.logEvent(
-                        Events.CHART_CREATE_SUBMIT,
-                        mapOf(
-                            Events.P_GENDER to gender,
-                            Events.P_LICH_TYPE to if (duongLich) "duong" else "am",
-                            Events.P_VIEW_YEAR to viewYear,
-                            Events.P_HAS_NAME to name.isNotBlank(),
-                        )
-                    )
                     viewModel.getTuVi(
                         name,
                         day,

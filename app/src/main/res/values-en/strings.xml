@@ -303,4 +303,15 @@
     <string name="ai_already_used_hint">Each device gets one free AI reading — and you\'ve already used it.</string>
     <string name="error_ai_already_used">You\'ve used the only free AI question on this device.</string>
     <string name="splash_tagline">Tử Vi astrology readings</string>
+
+    <!-- Intro / onboarding -->
+    <string name="intro_skip">Skip</string>
+    <string name="intro_next">Next</string>
+    <string name="intro_start">Get started</string>
+    <string name="intro_1_title">Tử Vi chart</string>
+    <string name="intro_1_desc">Build and interpret an accurate 12-palace chart from your birth date and time.</string>
+    <string name="intro_2_title">Calendar &amp; fortune</string>
+    <string name="intro_2_desc">View the lunar-solar calendar, auspicious days and yearly fortune readings.</string>
+    <string name="intro_3_title">More tools</string>
+    <string name="intro_3_desc">Save charts, a built-in browser and many other handy features.</string>
 </resources>

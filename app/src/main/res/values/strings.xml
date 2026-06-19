@@ -293,4 +293,15 @@
     <string name="browser_ctx_open_new_tab">Mở trong tab mới</string>
     <string name="browser_ctx_download_image">Tải ảnh xuống</string>
     <string name="splash_tagline">Luận giải lá số tử vi</string>
+
+    <!-- Màn giới thiệu (intro/onboarding) -->
+    <string name="intro_skip">Bỏ qua</string>
+    <string name="intro_next">Tiếp tục</string>
+    <string name="intro_start">Bắt đầu</string>
+    <string name="intro_1_title">Lá số tử vi</string>
+    <string name="intro_1_desc">Lập và luận giải lá số 12 cung chính xác theo ngày giờ sinh.</string>
+    <string name="intro_2_title">Lịch &amp; vận hạn</string>
+    <string name="intro_2_desc">Xem lịch âm dương, ngày tốt xấu và luận giải vận hạn từng năm.</string>
+    <string name="intro_3_title">Nhiều tiện ích</string>
+    <string name="intro_3_desc">Lưu lá số, trình duyệt tích hợp và nhiều tính năng hữu ích khác.</string>
 </resources>

@@ -50,6 +50,7 @@ class UserPreferencesRepository(context: Context) {
         private val KEY_AI_USED = booleanPreferencesKey("ai_used")
         private val KEY_AI_USED_DEVICE = stringPreferencesKey("ai_used_device_id")
         private val KEY_DEVICE_ID = stringPreferencesKey("device_id")
+        private val KEY_ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
 
         const val LOCALE_VI = "vi"
         const val LOCALE_EN = "en"
@@ -75,6 +76,13 @@ class UserPreferencesRepository(context: Context) {
             prefs[KEY_THEME_DARK] ?: true,
             prefs[KEY_LOCALE] ?: LOCALE_VI
         )
+    }
+
+    /** Đã xem màn giới thiệu chưa — chỉ hiện intro ở lần mở app đầu tiên. */
+    suspend fun isOnboardingDone(): Boolean = dataStore.data.first()[KEY_ONBOARDING_DONE] ?: false
+
+    suspend fun setOnboardingDone() {
+        dataStore.edit { it[KEY_ONBOARDING_DONE] = true }
     }
 
     suspend fun setThemeDark(isDark: Boolean) {

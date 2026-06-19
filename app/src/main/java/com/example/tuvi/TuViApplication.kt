@@ -23,6 +23,10 @@ class TuViApplication : Application() {
     var initialDark: Boolean = true
         private set
 
+    /** Đã xem intro chưa — đọc 1 lần lúc khởi động để chọn màn bắt đầu (splash → intro/home). */
+    var initialOnboardingDone: Boolean = false
+        private set
+
     override fun onCreate() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(this)
@@ -32,6 +36,7 @@ class TuViApplication : Application() {
                 if (dark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(localeTag))
+            initialOnboardingDone = userPreferencesRepository.isOnboardingDone()
             dark
         }
         initialDark = savedDark

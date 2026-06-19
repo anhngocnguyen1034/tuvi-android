@@ -88,14 +88,6 @@ class TuViViewModel(
             getTuViChart(input)
                 .onSuccess {
                     _uiState.value = TuViUiState.Success(it)
-                    Analytics.logEvent(
-                        Events.CHART_VIEW_SUCCESS,
-                        mapOf(
-                            Events.P_GENDER to gioiTinh,
-                            Events.P_LICH_TYPE to if (duongLich) "duong" else "am",
-                            Events.P_VIEW_YEAR to namXem,
-                        )
-                    )
                 }
                 .onFailure {
                     mapFailureToUi(it)

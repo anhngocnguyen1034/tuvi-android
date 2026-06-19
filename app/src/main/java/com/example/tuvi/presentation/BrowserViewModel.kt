@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.anhnn.analytics.Analytics
+import com.example.tuvi.analytics.Events
 import com.example.tuvi.data.local.BookmarkDao
 import com.example.tuvi.data.local.BookmarkItemEntity
 import com.example.tuvi.data.local.HistoryDao
@@ -328,7 +330,21 @@ class BrowserViewModel(
     // ── Navigation commands ───────────────────────────────────────────────────
 
     fun navigateTo(rawInput: String) {
-        val url = rawInput.trim().toFullUrl()
+        val input = rawInput.trim()
+        val url = input.toFullUrl()
+        // Search vs URL: cùng heuristic với toFullUrl() — không có dấu chấm hoặc có khoảng trắng → tìm kiếm
+        val isSearch = url.startsWith(GOOGLE_SEARCH_PREFIX)
+        // Không tracking nội dung trên tab ẩn danh (giống cách bỏ qua lịch sử)
+        if (activeTab?.isIncognito != true) {
+            Analytics.logEvent(
+                Events.BROWSER_NAVIGATE,
+                buildMap {
+                    put(Events.P_NAV_TYPE, if (isSearch) "search" else "url")
+                    if (isSearch) put(Events.P_SEARCH_QUERY, input.take(100))
+                    put(Events.P_NAV_URL, url.take(100))
+                }
+            )
+        }
         // Dùng pendingLoadUrl (state-based) thay vì SharedFlow để tránh mất lệnh
         // khi WebView chưa kịp resume collecting (ví dụ: vừa quay từ HistoryScreen)
         updateTab(activeTabId) { it.copy(url = url, pendingLoadUrl = url, error = null) }
@@ -391,10 +407,12 @@ class BrowserViewModel(
         if (matches(ipRegex)) return "http://$this"
         // Domain có dấu chấm, không có khoảng trắng → https
         return if (contains(".") && !contains(" ")) "https://$this"
-        else "https://www.google.com/search?q=${android.net.Uri.encode(this)}"
+        else "$GOOGLE_SEARCH_PREFIX${android.net.Uri.encode(this)}"
     }
 
     companion object {
+        private const val GOOGLE_SEARCH_PREFIX = "https://www.google.com/search?q="
+
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
