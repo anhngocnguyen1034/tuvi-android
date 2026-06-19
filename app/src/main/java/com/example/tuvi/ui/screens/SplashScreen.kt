@@ -324,7 +324,7 @@ fun SplashScreen(
                 .graphicsLayer { this.alpha = alpha },
             color = TuViGold,
             trackColor = TuViGoldDark.copy(alpha = 0.25f),
-            strokeCap = StrokeCap.Round
+            strokeCap = StrokeCap.Butt
         )
     }
 }

@@ -78,22 +78,6 @@ fun IntroScreen(onFinish: () -> Unit) {
             .background(Brush.verticalGradient(listOf(TuViNavyLight, TuViNavy)))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Nút Bỏ qua góc trên phải
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = onFinish) {
-                    Text(
-                        text = stringResource(R.string.intro_skip),
-                        color = TuViIvoryDim,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
