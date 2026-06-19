@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -103,7 +105,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(homeBg)
             .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
         // Ánh sáng nền phía sau Bát Quái
         Box(
@@ -211,9 +212,9 @@ fun HomeScreen(
             )
           }
 
-          // Banner đáy nằm TRONG content (chung nền homeBg), phần trên co giãn (weight) nên
-          // banner ghim đáy mà không cần Scaffold.bottomBar → cả màn đồng bộ, không lệch màu.
-          BannerAd(adName = AdNames.HOME_BANNER)
+          // Banner ghim đáy + Spacer chiếm đúng khoảng nav bar → banner không bị che.
+          BannerAd(adName = AdNames.HOME_BANNER, modifier = Modifier.fillMaxWidth())
+          Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
 
     }

@@ -53,7 +53,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -228,12 +230,8 @@ fun SavedChartsScreen(
                 }
             }
 
-            // Banner đáy nằm TRONG content, cùng nền TuViNavy với cả màn → không tạo
-            // đường lệch màu như Scaffold.bottomBar (vốn là surface riêng).
-            BannerAd(
-                adName = AdNames.SAVED_BANNER,
-                modifier = Modifier.navigationBarsPadding()
-            )
+            BannerAd(adName = AdNames.SAVED_BANNER, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
 }
