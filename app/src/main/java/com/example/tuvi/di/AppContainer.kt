@@ -31,14 +31,8 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://160.250.181.238:8000"
-//    private const val BASE_URL = "http://192.168.1.17:8000"
-
-    /**
-     * Số project Google Cloud đã link Play Console (cho Play Integrity Classic).
-     * TODO: ĐIỀN số thật trước khi phát hành. Để 0 = tắt Integrity (chỉ gửi X-Device-Id),
-     * phù hợp dev/local khi backend cũng tắt PLAY_INTEGRITY_ENABLED.
-     */
+//    private const val BASE_URL = "http://160.250.181.238:8000"
+    private const val BASE_URL = "http://192.168.0.100:8000"
     private const val CLOUD_PROJECT_NUMBER = 0L
 
     lateinit var app: android.app.Application
