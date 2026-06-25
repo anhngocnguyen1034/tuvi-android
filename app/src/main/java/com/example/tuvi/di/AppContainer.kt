@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-//    private const val BASE_URL = "http://160.250.181.238:8000"
     private const val BASE_URL = "http://192.168.0.100:8000"
     private const val CLOUD_PROJECT_NUMBER = 0L
 
@@ -63,9 +62,6 @@ object AppContainer {
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(aiGateInterceptor)
-            // Gửi ngôn ngữ hiện tại của app để backend trả dữ liệu đã localize
-            // (vi mặc định / zh = Hán tự). Đọc đồng bộ tại request time — luôn phản
-            // ánh lựa chọn ngôn ngữ vì app đã set AppCompatDelegate.setApplicationLocales().
             .addInterceptor { chain ->
                 val locales = AppCompatDelegate.getApplicationLocales()
                 val tag = (if (!locales.isEmpty) locales[0] else Locale.getDefault())
