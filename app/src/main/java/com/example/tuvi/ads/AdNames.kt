@@ -12,6 +12,7 @@ import com.anhnn.ads.AdFormat
 object AdNames {
     // Interstitial
     const val SPLASH_OPEN = "splash_open"      // sau splash -> Home
+    const val INTRO_DONE = "intro_done"        // sau intro (lần đầu) -> Home
     const val HOME_TUVI = "home_tuvi"          // Home -> màn nhập liệu
     const val HOME_BROWSER = "home_browser"    // Home -> trình duyệt
     const val HOME_CALENDAR = "home_calendar"  // Home -> lịch
@@ -31,7 +32,7 @@ object AdNames {
 
     /** Định dạng của từng vị trí — module ads dựa vào đây để nạp/cache đúng kiểu. */
     fun formatOf(adName: String): AdFormat? = when (adName) {
-        SPLASH_OPEN, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR,
+        SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR,
         CHART_CREATE, AI_OPEN, AI_REQUEST, CHART_DOWNLOAD -> AdFormat.INTERSTITIAL
         LANGUAGE_NATIVE, EXIT_NATIVE -> AdFormat.NATIVE
         EXIT_BANNER, SAVED_BANNER, HOME_BANNER -> AdFormat.BANNER

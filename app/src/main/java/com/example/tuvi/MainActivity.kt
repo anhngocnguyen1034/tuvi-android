@@ -155,14 +155,18 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
             )
         }
         composable("intro") {
+            val activity = context as Activity
             val scope = rememberCoroutineScope()
             val prefs = (context.applicationContext as TuViApplication).userPreferencesRepository
+            LaunchedEffect(Unit) { Ads.preload(context, AdNames.INTRO_DONE) }
             IntroScreen(
                 onFinish = {
                     scope.launch {
                         prefs.setOnboardingDone()
-                        navController.navigate("home") {
-                            popUpTo("intro") { inclusive = true }
+                        Ads.showInterstitial(activity, AdNames.INTRO_DONE) {
+                            navController.navigate("home") {
+                                popUpTo("intro") { inclusive = true }
+                            }
                         }
                     }
                 }
