@@ -158,7 +158,9 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
             val activity = context as Activity
             val scope = rememberCoroutineScope()
             val prefs = (context.applicationContext as TuViApplication).userPreferencesRepository
-            LaunchedEffect(Unit) { Ads.preload(context, AdNames.INTRO_DONE) }
+            LaunchedEffect(Unit) {
+                Ads.preload(context, AdNames.INTRO_DONE, AdNames.INTRO_BANNER)
+            }
             IntroScreen(
                 onFinish = {
                     scope.launch {

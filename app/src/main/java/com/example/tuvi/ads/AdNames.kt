@@ -29,13 +29,14 @@ object AdNames {
     const val EXIT_BANNER = "exit_banner"          // trên cùng màn xác nhận thoát app
     const val SAVED_BANNER = "saved_banner"        // dưới cùng màn Lá số đã lưu
     const val HOME_BANNER = "home_banner"          // dưới cùng màn Home
+    const val INTRO_BANNER = "intro_banner"        // dưới cùng màn intro (onboarding)
 
     /** Định dạng của từng vị trí — module ads dựa vào đây để nạp/cache đúng kiểu. */
     fun formatOf(adName: String): AdFormat? = when (adName) {
         SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR,
         CHART_CREATE, AI_OPEN, AI_REQUEST, CHART_DOWNLOAD -> AdFormat.INTERSTITIAL
         LANGUAGE_NATIVE, EXIT_NATIVE -> AdFormat.NATIVE
-        EXIT_BANNER, SAVED_BANNER, HOME_BANNER -> AdFormat.BANNER
+        EXIT_BANNER, SAVED_BANNER, HOME_BANNER, INTRO_BANNER -> AdFormat.BANNER
         else -> null
     }
 }

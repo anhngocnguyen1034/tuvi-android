@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -39,7 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.anhnn.ads.BannerAd
 import com.example.tuvi.R
+import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
@@ -78,63 +83,72 @@ fun IntroScreen(onFinish: () -> Unit) {
             .background(Brush.verticalGradient(listOf(TuViNavyLight, TuViNavy)))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            HorizontalPager(
-                state = pagerState,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
-            ) { page ->
-                IntroPageContent(INTRO_PAGES[page])
-            }
-
-            // Chỉ báo trang
-            Row(
-                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(INTRO_PAGES.size) { index ->
-                    val selected = pagerState.currentPage == index
-                    val width by animateDpAsState(if (selected) 22.dp else 8.dp, label = "dotWidth")
-                    val color by animateColorAsState(
-                        if (selected) TuViGold else TuViIvoryDim.copy(alpha = 0.4f),
-                        label = "dotColor"
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) { page ->
+                    IntroPageContent(INTRO_PAGES[page])
+                }
+
+                // Chỉ báo trang
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(INTRO_PAGES.size) { index ->
+                        val selected = pagerState.currentPage == index
+                        val width by animateDpAsState(if (selected) 22.dp else 8.dp, label = "dotWidth")
+                        val color by animateColorAsState(
+                            if (selected) TuViGold else TuViIvoryDim.copy(alpha = 0.4f),
+                            label = "dotColor"
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .height(8.dp)
+                                .width(width)
+                                .clip(CircleShape)
+                                .background(color)
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        if (isLast) onFinish()
+                        else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 16.dp)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = TuViGold,
+                        contentColor = TuViNavy
                     )
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .height(8.dp)
-                            .width(width)
-                            .clip(CircleShape)
-                            .background(color)
+                ) {
+                    Text(
+                        text = stringResource(if (isLast) R.string.intro_start else R.string.intro_next),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
 
-            Button(
-                onClick = {
-                    if (isLast) onFinish()
-                    else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 36.dp)
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = TuViGold,
-                    contentColor = TuViNavy
-                )
-            ) {
-                Text(
-                    text = stringResource(if (isLast) R.string.intro_start else R.string.intro_next),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            BannerAd(adName = AdNames.INTRO_BANNER, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
 }
