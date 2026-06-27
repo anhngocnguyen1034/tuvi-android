@@ -182,7 +182,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                 Ads.preload(
                     context,
                     AdNames.EXIT_NATIVE, AdNames.EXIT_BANNER,
-                    AdNames.HOME_TUVI, AdNames.HOME_BROWSER, AdNames.HOME_CALENDAR,
+                    AdNames.HOME_TUVI, AdNames.HOME_BROWSER, AdNames.HOME_CALENDAR, AdNames.HOME_QUOTES,
                 )
             }
             ExitAppHandler(onExit = { activity.finish() })
@@ -208,7 +208,9 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                 },
                 onOpenQuotes = {
                     Analytics.logEvent(Events.HOME_TILE_CLICK, mapOf(Events.P_TILE to "quotes"))
-                    navController.navigate("quotes")
+                    Ads.showInterstitial(activity, AdNames.HOME_QUOTES) {
+                        navController.navigate("quotes")
+                    }
                 },
                 onOpenSettings = { navController.navigate("settings") },
             )

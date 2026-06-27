@@ -16,6 +16,7 @@ object AdNames {
     const val HOME_TUVI = "home_tuvi"          // Home -> màn nhập liệu
     const val HOME_BROWSER = "home_browser"    // Home -> trình duyệt
     const val HOME_CALENDAR = "home_calendar"  // Home -> lịch
+    const val HOME_QUOTES = "home_quotes"      // Home -> danh ngôn
     const val CHART_CREATE = "chart_create"    // bấm tạo lá số -> biểu đồ
     const val AI_OPEN = "ai_open"              // bấm "Xem kết quả AI luận giải" -> màn hỏi AI
     const val AI_REQUEST = "ai_request"        // bấm "Hỏi AI miễn phí"
@@ -33,7 +34,7 @@ object AdNames {
 
     /** Định dạng của từng vị trí — module ads dựa vào đây để nạp/cache đúng kiểu. */
     fun formatOf(adName: String): AdFormat? = when (adName) {
-        SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR,
+        SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR, HOME_QUOTES,
         CHART_CREATE, AI_OPEN, AI_REQUEST, CHART_DOWNLOAD -> AdFormat.INTERSTITIAL
         LANGUAGE_NATIVE, EXIT_NATIVE -> AdFormat.NATIVE
         EXIT_BANNER, SAVED_BANNER, HOME_BANNER, INTRO_BANNER -> AdFormat.BANNER
