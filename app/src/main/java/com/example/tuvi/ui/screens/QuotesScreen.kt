@@ -1,7 +1,9 @@
 package com.example.tuvi.ui.screens
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,10 +28,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -44,6 +49,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +79,10 @@ import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyCard
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViTheme
+import com.example.tuvi.widget.QuoteWidgetController
+import com.example.tuvi.widget.QuoteWidgetPinner
+import com.example.tuvi.widget.QuoteWidgetSize
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -82,6 +92,37 @@ fun QuotesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var spotlightQuote by remember { mutableStateOf<Quote?>(null) }
+    val appContext = LocalContext.current.applicationContext
+    val scope = rememberCoroutineScope()
+    var showSizeDialog by remember { mutableStateOf(false) }
+
+    val onSetWidget: (Quote) -> Unit = { quote ->
+        scope.launch {
+            QuoteWidgetController.setWidgetQuote(appContext, quote.id)
+            Toast.makeText(
+                appContext,
+                appContext.getString(R.string.quotes_set_widget_done),
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
+    if (showSizeDialog) {
+        WidgetSizeDialog(
+            onDismiss = { showSizeDialog = false },
+            onPick = { size ->
+                showSizeDialog = false
+                val ok = QuoteWidgetPinner.pin(appContext, size)
+                if (!ok) {
+                    Toast.makeText(
+                        appContext,
+                        appContext.getString(R.string.quote_widget_unsupported),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+            },
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -90,7 +131,7 @@ fun QuotesScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
-        QuotesTopBar(onBack = onBack)
+        QuotesTopBar(onBack = onBack, onAddWidget = { showSizeDialog = true })
 
         when (val state = uiState) {
             QuotesUiState.Loading -> {
@@ -129,6 +170,7 @@ fun QuotesScreen(
                             quote = hero,
                             isDaily = spotlightQuote == null,
                             onShare = { shareQuote(context, it) },
+                            onSetWidget = onSetWidget,
                             onRandom = {
                                 viewModel.randomQuote()?.let { spotlightQuote = it }
                             },
@@ -139,8 +181,6 @@ fun QuotesScreen(
                         QuotesSearchBar(
                             query = state.searchQuery,
                             onQueryChange = viewModel::setSearchQuery,
-                            resultCount = state.displayed.size,
-                            totalCount = state.totalCount,
                         )
                     }
 
@@ -191,6 +231,7 @@ fun QuotesScreen(
                                 quote = quote,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                                 onShare = { shareQuote(context, it) },
+                                onSetWidget = onSetWidget,
                             )
                         }
                     }
@@ -201,7 +242,7 @@ fun QuotesScreen(
 }
 
 @Composable
-private fun QuotesTopBar(onBack: () -> Unit) {
+private fun QuotesTopBar(onBack: () -> Unit, onAddWidget: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,7 +270,57 @@ private fun QuotesTopBar(onBack: () -> Unit) {
                 fontSize = 12.sp,
             )
         }
+        IconButton(onClick = onAddWidget) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.quote_widget_add),
+                tint = TuViGold,
+            )
+        }
     }
+}
+
+@Composable
+private fun WidgetSizeDialog(
+    onDismiss: () -> Unit,
+    onPick: (QuoteWidgetSize) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = TuViNavyCard,
+        title = {
+            Text(
+                text = stringResource(R.string.quote_widget_choose_size),
+                color = TuViGold,
+                fontWeight = FontWeight.Bold,
+            )
+        },
+        text = {
+            Column {
+                WidgetSizeOption(R.string.quote_widget_size_small) { onPick(QuoteWidgetSize.SMALL) }
+                WidgetSizeOption(R.string.quote_widget_size_medium) { onPick(QuoteWidgetSize.MEDIUM) }
+                WidgetSizeOption(R.string.quote_widget_size_large) { onPick(QuoteWidgetSize.LARGE) }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim)
+            }
+        },
+    )
+}
+
+@Composable
+private fun WidgetSizeOption(labelRes: Int, onClick: () -> Unit) {
+    Text(
+        text = stringResource(labelRes),
+        color = TuViIvory,
+        fontSize = 16.sp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 14.dp, horizontal = 4.dp),
+    )
 }
 
 @Composable
@@ -237,6 +328,7 @@ private fun DailyQuoteCard(
     quote: Quote,
     isDaily: Boolean,
     onShare: (Quote) -> Unit,
+    onSetWidget: (Quote) -> Unit,
     onRandom: () -> Unit,
 ) {
     Box(
@@ -280,6 +372,14 @@ private fun DailyQuoteCard(
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = stringResource(R.string.quotes_random),
+                            tint = TuViGold,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                    IconButton(onClick = { onSetWidget(quote) }, modifier = Modifier.size(36.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = stringResource(R.string.quotes_set_widget),
                             tint = TuViGold,
                             modifier = Modifier.size(20.dp),
                         )
@@ -339,48 +439,41 @@ private fun DailyQuoteCard(
 private fun QuotesSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    resultCount: Int,
-    totalCount: Int,
 ) {
-    Column(
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(stringResource(R.string.quotes_search_hint), color = TuViIvoryDim.copy(alpha = 0.6f))
-            },
-            leadingIcon = {
-                Icon(Icons.Default.Search, contentDescription = null, tint = TuViGold)
-            },
-            trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = { onQueryChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.btn_clear), tint = TuViIvoryDim)
-                    }
+        placeholder = {
+            Text(
+                stringResource(R.string.quotes_search_hint),
+                color = TuViIvoryDim.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        leadingIcon = {
+            Icon(Icons.Default.Search, contentDescription = null, tint = TuViGold)
+        },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.btn_clear), tint = TuViIvoryDim)
                 }
-            },
-            singleLine = true,
-            shape = RoundedCornerShape(14.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = TuViIvory,
-                unfocusedTextColor = TuViIvory,
-                focusedBorderColor = TuViGold,
-                unfocusedBorderColor = TuViIvoryDim.copy(alpha = 0.35f),
-                cursorColor = TuViGold,
-            ),
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = stringResource(R.string.quotes_result_count, resultCount, totalCount),
-            color = TuViIvoryDim,
-            fontSize = 12.sp,
-        )
-    }
+            }
+        },
+        singleLine = true,
+        shape = RoundedCornerShape(14.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = TuViIvory,
+            unfocusedTextColor = TuViIvory,
+            focusedBorderColor = TuViGold,
+            unfocusedBorderColor = TuViIvoryDim.copy(alpha = 0.35f),
+            cursorColor = TuViGold,
+        ),
+    )
 }
 
 @Composable
@@ -420,6 +513,7 @@ private fun QuoteListItem(
     quote: Quote,
     modifier: Modifier = Modifier,
     onShare: (Quote) -> Unit,
+    onSetWidget: (Quote) -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -449,6 +543,17 @@ private fun QuoteListItem(
                     fontSize = 13.sp,
                     modifier = Modifier.weight(1f),
                 )
+                IconButton(
+                    onClick = { onSetWidget(quote) },
+                    modifier = Modifier.size(32.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = stringResource(R.string.quotes_set_widget),
+                        tint = TuViGold.copy(alpha = 0.85f),
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
                 IconButton(
                     onClick = { onShare(quote) },
                     modifier = Modifier.size(32.dp),
@@ -537,6 +642,7 @@ private fun QuoteListItemLightPreview() {
             ),
             isDaily = true,
             onShare = {},
+            onSetWidget = {},
             onRandom = {},
         )
     }
