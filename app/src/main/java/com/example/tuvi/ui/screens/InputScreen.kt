@@ -49,30 +49,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import com.example.tuvi.R
 
-// ── Palette shortcuts ──────────────────────────────────────────────────
 private fun inputScreenBgBrush() = Brush.verticalGradient(listOf(TuViNavy, InputBgGradientBottom))
 private val CardBorder = Brush.linearGradient(listOf(TuViGold, TuViGoldDark, TuViGold))
 
-// ── Helpers ────────────────────────────────────────────────────────────
 
-@Composable
-private fun GoldDivider() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = TuViDivider, thickness = 1.dp)
-        Text(
-            text = "  —  ",
-            color = TuViGold.copy(alpha = 0.7f),
-            fontSize = 12.sp,
-            letterSpacing = 2.sp
-        )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = TuViDivider, thickness = 1.dp)
-    }
-}
 
 @Composable
 private fun SectionCard(content: @Composable ColumnScope.() -> Unit) {
@@ -582,16 +562,10 @@ fun InputScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 32.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 76.dp, bottom = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
-            // Spacer chừa chỗ cho top bar (back + title) overlay phía trên.
-            Spacer(modifier = Modifier.height(48.dp))
-            GoldDivider()
-
-            // ── Họ và Tên ──
             SectionCard {
                 FieldLabel(stringResource(R.string.input_label_name))
                 OutlinedTextField(
@@ -834,8 +808,6 @@ fun InputScreen(
                     )
                 }
             }
-
-            GoldDivider()
 
             Button(
                 onClick = {
