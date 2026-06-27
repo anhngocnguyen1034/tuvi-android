@@ -39,7 +39,23 @@
     <string name="home_browser_desc">Duyệt web &amp; tài liệu</string>
     <string name="home_calendar_title">Lịch Âm Dương</string>
     <string name="home_calendar_desc">Xem nhanh lịch âm và lịch dương</string>
+    <string name="home_quotes_title">Châm Ngôn</string>
+    <string name="home_quotes_desc">Hơn 8.000 câu danh ngôn &amp; châm ngôn</string>
     <string name="home_btn_view_now">Xem ngay</string>
+
+    <!-- QuotesScreen -->
+    <string name="quotes_screen_title">Châm Ngôn</string>
+    <string name="quotes_screen_subtitle">Danh ngôn &amp; triết lý cuộc sống</string>
+    <string name="quotes_daily_label">Châm ngôn hôm nay</string>
+    <string name="quotes_random_label">Câu ngẫu nhiên</string>
+    <string name="quotes_random">Xem câu khác</string>
+    <string name="quotes_share">Chia sẻ</string>
+    <string name="quotes_search_hint">Tìm theo nội dung, tác giả, từ khóa…</string>
+    <string name="quotes_result_count">Hiển thị %1$d / %2$d câu</string>
+    <string name="quotes_category_all">Tất cả</string>
+    <string name="quotes_empty">Không tìm thấy câu nào phù hợp.</string>
+    <string name="quotes_retry">Thử lại</string>
+    <string name="quotes_unknown_author">Khuyết danh</string>
 
     <string name="input_screen_title">Thông Tin Lá Số</string>
     <string name="input_lunar_picker_title">CHỌN NGÀY SINH ÂM LỊCH</string>

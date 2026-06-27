@@ -26,7 +26,7 @@ object Events {
     // Tham số
     const val P_SUCCESS = "success"         // boolean
     const val P_ERROR = "error_reason"      // tên loại lỗi
-    const val P_TILE = "tile"               // "tuvi" | "browser" | "calendar"
+    const val P_TILE = "tile"               // "tuvi" | "browser" | "calendar" | "quotes"
     const val P_LANGUAGE = "language"       // mã locale: "vi" | "en" | "zh" ...
 
     // Tham số trình duyệt

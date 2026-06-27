@@ -39,7 +39,22 @@
     <string name="home_browser_desc">浏览网页与相关文献资料</string>
     <string name="home_calendar_title">公农历万年历</string>
     <string name="home_calendar_desc">快捷查看公历与农历日期</string>
+    <string name="home_quotes_title">名言警句</string>
+    <string name="home_quotes_desc">8000+ 条励志名言与人生格言</string>
     <string name="home_btn_view_now">立即查看</string>
+
+    <string name="quotes_screen_title">名言警句</string>
+    <string name="quotes_screen_subtitle">励志名言与人生智慧</string>
+    <string name="quotes_daily_label">今日名言</string>
+    <string name="quotes_random_label">随机一句</string>
+    <string name="quotes_random">换一句</string>
+    <string name="quotes_share">分享</string>
+    <string name="quotes_search_hint">按内容、作者、关键词搜索…</string>
+    <string name="quotes_result_count">显示 %1$d / %2$d 条</string>
+    <string name="quotes_category_all">全部</string>
+    <string name="quotes_empty">未找到匹配的名言。</string>
+    <string name="quotes_retry">重试</string>
+    <string name="quotes_unknown_author">佚名</string>
 
     <string name="input_screen_title">排盘信息输入</string>
     <string name="input_lunar_picker_title">选择农历出生日期</string>

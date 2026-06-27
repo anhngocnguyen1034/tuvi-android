@@ -43,7 +43,23 @@
     <string name="home_browser_desc">Browse web &amp; documents</string>
     <string name="home_calendar_title">Lunar / Solar Calendar</string>
     <string name="home_calendar_desc">Quick view lunar and solar calendar</string>
+    <string name="home_quotes_title">Quotes</string>
+    <string name="home_quotes_desc">8,000+ proverbs &amp; inspirational quotes</string>
     <string name="home_btn_view_now">View now</string>
+
+    <!-- QuotesScreen -->
+    <string name="quotes_screen_title">Quotes</string>
+    <string name="quotes_screen_subtitle">Proverbs &amp; life wisdom</string>
+    <string name="quotes_daily_label">Quote of the day</string>
+    <string name="quotes_random_label">Random quote</string>
+    <string name="quotes_random">Another quote</string>
+    <string name="quotes_share">Share</string>
+    <string name="quotes_search_hint">Search by text, author, keyword…</string>
+    <string name="quotes_result_count">Showing %1$d / %2$d quotes</string>
+    <string name="quotes_category_all">All</string>
+    <string name="quotes_empty">No matching quotes found.</string>
+    <string name="quotes_retry">Retry</string>
+    <string name="quotes_unknown_author">Unknown</string>
 
     <!-- InputScreen -->
     <string name="input_screen_title">Chart Information</string>

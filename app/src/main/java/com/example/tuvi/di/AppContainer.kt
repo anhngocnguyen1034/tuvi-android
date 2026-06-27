@@ -8,10 +8,12 @@ import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.data.remote.AiGateInterceptor
 import com.example.tuvi.data.remote.PlayIntegrityProvider
 import com.example.tuvi.data.remote.TuViApiService
+import com.example.tuvi.data.repository.QuoteRepositoryImpl
 import com.example.tuvi.data.repository.SavedChartRepositoryImpl
 import com.example.tuvi.data.repository.TuViRepositoryImpl
 import com.example.tuvi.domain.usecase.DeleteSavedChartUseCase
 import com.example.tuvi.domain.usecase.GetAllGroupsUseCase
+import com.example.tuvi.domain.usecase.GetQuotesUseCase
 import com.example.tuvi.domain.usecase.GetAllSavedChartsUseCase
 import com.example.tuvi.domain.usecase.GetChartsByGroupUseCase
 import com.example.tuvi.domain.usecase.GetSavedChartByIdUseCase
@@ -124,6 +126,9 @@ object AppContainer {
     val saveChartUseCase by lazy { SaveChartUseCase(savedChartRepository) }
     val deleteSavedChartUseCase by lazy { DeleteSavedChartUseCase(savedChartRepository) }
     val getSavedChartByIdUseCase by lazy { GetSavedChartByIdUseCase(savedChartRepository) }
+
+    private val quoteRepository by lazy { QuoteRepositoryImpl(app, json) }
+    val getQuotesUseCase by lazy { GetQuotesUseCase(quoteRepository) }
 
     /** Serializer dùng chung để encode/decode TuViChart và TuViChartInput khi lưu DB */
     val appJson: Json get() = json

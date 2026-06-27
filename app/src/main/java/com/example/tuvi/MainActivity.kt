@@ -67,6 +67,7 @@ import com.anhnn.feedback.FeedbackScreen
 import com.anhnn.rate.RateDialog
 import com.anhnn.rate.requestInAppReview
 import com.example.tuvi.ui.screens.PrivacyPolicyScreen
+import com.example.tuvi.ui.screens.QuotesScreen
 import com.example.tuvi.ui.screens.SettingsScreen
 import com.example.tuvi.ui.theme.TuViTheme
 import android.net.Uri
@@ -205,8 +206,15 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                         navController.navigate("lich")
                     }
                 },
+                onOpenQuotes = {
+                    Analytics.logEvent(Events.HOME_TILE_CLICK, mapOf(Events.P_TILE to "quotes"))
+                    navController.navigate("quotes")
+                },
                 onOpenSettings = { navController.navigate("settings") },
             )
+        }
+        composable("quotes") {
+            QuotesScreen(onBack = { navController.popBackStack() })
         }
         composable("calendar_chooser") {
             CalendarChooserScreen(

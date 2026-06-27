@@ -75,6 +75,7 @@ fun HomeScreen(
     onOpenTuVi: () -> Unit,
     onOpenBrowser: () -> Unit = {},
     onOpenCalendar: () -> Unit = {},
+    onOpenQuotes: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
 ) {
     val homeBg = remember {
@@ -209,6 +210,17 @@ fun HomeScreen(
                 description = stringResource(R.string.home_calendar_desc),
                 onClick = onOpenCalendar,
                 icon  = painterResource(R.drawable.ic_calendar)
+            )
+
+            Spacer(Modifier.height(14.dp))
+
+            SecondaryFeatureCard(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(R.string.home_quotes_title),
+                description = stringResource(R.string.home_quotes_desc),
+                onClick = onOpenQuotes,
+                icon = painterResource(R.drawable.ic_quote),
+                iconTint = Color(0xFFFBBF24),
             )
           }
 
