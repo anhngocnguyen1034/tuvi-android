@@ -2,6 +2,19 @@
     <!-- App -->
     <string name="app_name">Tử vi Daily</string>
 
+    <string name="quote_widget_description">Shows a daily quote. Tap to see another one.</string>
+    <string name="quote_widget_label_small">Quotes (Small)</string>
+    <string name="quote_widget_label_medium">Quotes (Medium)</string>
+    <string name="quote_widget_label_large">Quotes (Large)</string>
+    <string name="quote_widget_add">Add widget to home screen</string>
+    <string name="quote_widget_choose_size">Choose widget size</string>
+    <string name="quote_widget_size_small">Small (2×2)</string>
+    <string name="quote_widget_size_medium">Medium (4×2)</string>
+    <string name="quote_widget_size_large">Large (4×4)</string>
+    <string name="quote_widget_unsupported">Your launcher doesn\'t support pinning widgets. Long-press the home screen and pick Widgets.</string>
+    <string name="quotes_set_widget">Set as widget</string>
+    <string name="quotes_set_widget_done">This quote is now on your widget</string>
+
     <!-- Common buttons -->
     <string name="btn_cancel">Cancel</string>
     <string name="btn_select">Select</string>

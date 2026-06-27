@@ -8,6 +8,7 @@ anhnnComponentsAnalytics = "1.3.0"
 anhnnLanguage = "1.0.1"
 kotlin = "2.3.21"
 ksp = "2.3.7"
+glance = "1.1.1"
 room = "2.7.0"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -45,6 +46,8 @@ anhnn-components-exit = { module = "com.github.anhngocnguyen1034.anhnn-component
 anhnn-components-ads = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-ads", version.ref = "anhnnComponentsAds" }
 anhnn-components-analytics = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-analytics", version.ref = "anhnnComponentsAnalytics" }
 anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">Tử vi Daily</string>
 
+    <string name="quote_widget_description">Hiển thị một câu danh ngôn mỗi ngày. Chạm để đổi câu khác.</string>
+    <string name="quote_widget_label_small">Danh ngôn (Nhỏ)</string>
+    <string name="quote_widget_label_medium">Danh ngôn (Vừa)</string>
+    <string name="quote_widget_label_large">Danh ngôn (Lớn)</string>
+    <string name="quote_widget_add">Thêm widget ra màn hình</string>
+    <string name="quote_widget_choose_size">Chọn kích thước widget</string>
+    <string name="quote_widget_size_small">Nhỏ (2×2)</string>
+    <string name="quote_widget_size_medium">Vừa (4×2)</string>
+    <string name="quote_widget_size_large">Lớn (4×4)</string>
+    <string name="quote_widget_unsupported">Màn hình chính không hỗ trợ ghim widget. Hãy nhấn giữ màn hình rồi chọn Widgets.</string>
+    <string name="quotes_set_widget">Đặt làm widget</string>
+    <string name="quotes_set_widget_done">Đã đặt câu này làm widget</string>
+
     <string name="btn_cancel">Hủy</string>
     <string name="btn_select">Chọn</string>
     <string name="btn_close">Đóng</string>

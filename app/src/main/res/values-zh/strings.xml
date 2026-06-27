@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">紫微 Daily</string>
 
+    <string name="quote_widget_description">每天显示一句名言。点击可切换下一句。</string>
+    <string name="quote_widget_label_small">名言（小）</string>
+    <string name="quote_widget_label_medium">名言（中）</string>
+    <string name="quote_widget_label_large">名言（大）</string>
+    <string name="quote_widget_add">添加小组件到主屏幕</string>
+    <string name="quote_widget_choose_size">选择小组件尺寸</string>
+    <string name="quote_widget_size_small">小 (2×2)</string>
+    <string name="quote_widget_size_medium">中 (4×2)</string>
+    <string name="quote_widget_size_large">大 (4×4)</string>
+    <string name="quote_widget_unsupported">当前桌面不支持固定小组件。请长按主屏幕并选择“小组件”。</string>
+    <string name="quotes_set_widget">设为小组件</string>
+    <string name="quotes_set_widget_done">已将该名言设为小组件</string>
+
     <string name="btn_cancel">取消</string>
     <string name="btn_select">选择</string>
     <string name="btn_close">关闭</string>
