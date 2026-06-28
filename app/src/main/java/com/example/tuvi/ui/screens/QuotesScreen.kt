@@ -1,6 +1,5 @@
 package com.example.tuvi.ui.screens
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +31,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -159,7 +157,6 @@ fun QuotesScreen(
             }
 
             is QuotesUiState.Success -> {
-                val context = LocalContext.current
                 val hero = spotlightQuote ?: state.dailyQuote
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -169,7 +166,6 @@ fun QuotesScreen(
                         DailyQuoteCard(
                             quote = hero,
                             isDaily = spotlightQuote == null,
-                            onShare = { shareQuote(context, it) },
                             onSetWidget = onSetWidget,
                             onRandom = {
                                 viewModel.randomQuote()?.let { spotlightQuote = it }
@@ -230,7 +226,6 @@ fun QuotesScreen(
                             QuoteListItem(
                                 quote = quote,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                                onShare = { shareQuote(context, it) },
                                 onSetWidget = onSetWidget,
                             )
                         }
@@ -327,7 +322,6 @@ private fun WidgetSizeOption(labelRes: Int, onClick: () -> Unit) {
 private fun DailyQuoteCard(
     quote: Quote,
     isDaily: Boolean,
-    onShare: (Quote) -> Unit,
     onSetWidget: (Quote) -> Unit,
     onRandom: () -> Unit,
 ) {
@@ -380,14 +374,6 @@ private fun DailyQuoteCard(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = stringResource(R.string.quotes_set_widget),
-                            tint = TuViGold,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                    IconButton(onClick = { onShare(quote) }, modifier = Modifier.size(36.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(R.string.quotes_share),
                             tint = TuViGold,
                             modifier = Modifier.size(20.dp),
                         )
@@ -512,7 +498,6 @@ private fun CategoryChip(
 private fun QuoteListItem(
     quote: Quote,
     modifier: Modifier = Modifier,
-    onShare: (Quote) -> Unit,
     onSetWidget: (Quote) -> Unit = {},
 ) {
     Box(
@@ -554,17 +539,6 @@ private fun QuoteListItem(
                         modifier = Modifier.size(18.dp),
                     )
                 }
-                IconButton(
-                    onClick = { onShare(quote) },
-                    modifier = Modifier.size(32.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(R.string.quotes_share),
-                        tint = TuViIvoryDim,
-                        modifier = Modifier.size(18.dp),
-                    )
-                }
             }
 
             if (quote.tuKhoa.isNotEmpty()) {
@@ -596,21 +570,6 @@ private fun formatAuthor(author: String?): String {
     return if (name != null) "— $name" else "— $fallback"
 }
 
-private fun shareQuote(context: android.content.Context, quote: Quote) {
-    val author = quote.tacGia?.takeIf { it.isNotBlank() }
-        ?: context.getString(R.string.quotes_unknown_author)
-    val text = buildString {
-        append('"').append(quote.noiDung).append('"')
-        append('\n').append('—').append(' ').append(author)
-        quote.tiengAnh?.let { append("\n\n").append(it) }
-    }
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, text)
-    }
-    context.startActivity(Intent.createChooser(intent, context.getString(R.string.quotes_share)))
-}
-
 @Preview(name = "Quote card – Dark", showBackground = true)
 @Composable
 private fun QuoteListItemDarkPreview() {
@@ -623,7 +582,6 @@ private fun QuoteListItemDarkPreview() {
                 tacGia = "Rabindranath Tagore",
                 tuKhoa = listOf("Đơn giản", "Hạnh phúc"),
             ),
-            onShare = {},
         )
     }
 }
@@ -641,7 +599,6 @@ private fun QuoteListItemLightPreview() {
                 tuKhoa = listOf("Đơn giản", "Hạnh phúc"),
             ),
             isDaily = true,
-            onShare = {},
             onSetWidget = {},
             onRandom = {},
         )
