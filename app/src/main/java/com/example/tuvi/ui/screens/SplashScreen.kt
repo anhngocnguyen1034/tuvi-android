@@ -244,8 +244,6 @@ fun SplashScreen(
                         )
                     )
                 }
-
-                // Logo app đầy đủ (bản playstore), bo tròn + viền vàng.
                 Image(
                     painter = painterResource(R.drawable.splash_logo),
                     contentDescription = null,
