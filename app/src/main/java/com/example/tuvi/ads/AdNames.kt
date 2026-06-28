@@ -32,12 +32,16 @@ object AdNames {
     const val HOME_BANNER = "home_banner"          // dưới cùng màn Home
     const val INTRO_BANNER = "intro_banner"        // dưới cùng màn intro (onboarding)
 
+    // App Open
+    const val APP_OPEN_RESUME = "app_open_resume"  // quay lại app từ background (return-to-app)
+
     /** Định dạng của từng vị trí — module ads dựa vào đây để nạp/cache đúng kiểu. */
     fun formatOf(adName: String): AdFormat? = when (adName) {
         SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR, HOME_QUOTES,
         CHART_CREATE, AI_OPEN, AI_REQUEST, CHART_DOWNLOAD -> AdFormat.INTERSTITIAL
         LANGUAGE_NATIVE, EXIT_NATIVE -> AdFormat.NATIVE
         EXIT_BANNER, SAVED_BANNER, HOME_BANNER, INTRO_BANNER -> AdFormat.BANNER
+        APP_OPEN_RESUME -> AdFormat.APP_OPEN
         else -> null
     }
 }

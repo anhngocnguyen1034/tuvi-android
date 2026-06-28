@@ -183,6 +183,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                     context,
                     AdNames.EXIT_NATIVE, AdNames.EXIT_BANNER,
                     AdNames.HOME_TUVI, AdNames.HOME_BROWSER, AdNames.HOME_CALENDAR, AdNames.HOME_QUOTES,
+                    AdNames.APP_OPEN_RESUME,
                 )
             }
             ExitAppHandler(onExit = { activity.finish() })

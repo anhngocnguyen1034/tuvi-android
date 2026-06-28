@@ -58,6 +58,7 @@ class TuViApplication : Application() {
                         AdFormat.INTERSTITIAL -> RemoteConfigManager.interAdUnitId(name)
                         AdFormat.NATIVE -> RemoteConfigManager.nativeAdUnitId(name)
                         AdFormat.BANNER -> RemoteConfigManager.bannerAdUnitId(name)
+                        AdFormat.APP_OPEN -> RemoteConfigManager.appOpenAdUnitId(name)
                         null -> ""
                     }
                 },
@@ -65,6 +66,11 @@ class TuViApplication : Application() {
                 interCooldownMs = { RemoteConfigManager.interMinIntervalMs() },
             )
         )
+
+        // Quảng cáo return-to-app: tự hiện App Open khi quay lại app từ background (bỏ qua lần mở
+        // đầu tiên). App Open được preload ở MainActivity sau khi SDK init qua Ads.start.
+        Ads.setupAppOpen(this, AdNames.APP_OPEN_RESUME)
+
         // Consent (UMP) + MobileAds.initialize chạy ở MainActivity qua Ads.start — theo luồng
         // chuẩn của Google: consent trước, init ads sau.
     }

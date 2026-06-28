@@ -23,6 +23,7 @@ object RemoteConfigManager {
     private const val TEST_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
     private const val TEST_NATIVE_UNIT_ID = "ca-app-pub-3940256099942544/2247696110"
     private const val TEST_BANNER_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
+    private const val TEST_APP_OPEN_UNIT_ID = "ca-app-pub-3940256099942544/9257395921"
 
     private val config by lazy { Firebase.remoteConfig }
 
@@ -61,6 +62,9 @@ object RemoteConfigManager {
 
     /** Ad unit cho banner theo [adName]; fallback về test unit nếu chưa cấu hình. */
     fun bannerAdUnitId(adName: String): String = adUnitId(adName) ?: TEST_BANNER_UNIT_ID
+
+    /** Ad unit cho App Open theo [adName]; fallback về test unit nếu chưa cấu hình. */
+    fun appOpenAdUnitId(adName: String): String = adUnitId(adName) ?: TEST_APP_OPEN_UNIT_ID
 
     /** Tra ad unit id theo tên từ JSON [KEY_AD_UNITS]; null nếu không có/để rỗng. */
     private fun adUnitId(adName: String): String? {
