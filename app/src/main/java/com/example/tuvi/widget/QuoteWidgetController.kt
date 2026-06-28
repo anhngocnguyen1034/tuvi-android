@@ -17,21 +17,17 @@ object QuoteWidgetController {
     }
 
     /**
-     * Gửi broadcast cập nhật trực tiếp tới từng receiver (mỗi cỡ widget là một provider riêng).
-     * Cách này đáng tin cậy hơn `updateAll()` của Glance khi nhiều provider dùng chung một lớp widget.
+     * Gửi broadcast cập nhật trực tiếp tới receiver — đáng tin cậy hơn `updateAll()` của Glance.
      */
     private fun refreshAll(context: Context) {
         val app = context.applicationContext
-        val manager = AppWidgetManager.getInstance(app)
-        QuoteWidgetSize.entries.forEach { size ->
-            val ids = manager.getAppWidgetIds(ComponentName(app, size.receiver))
-            if (ids.isNotEmpty()) {
-                val intent = Intent(app, size.receiver).apply {
-                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-                }
-                app.sendBroadcast(intent)
-            }
+        val provider = ComponentName(app, QuoteWidgetReceiver::class.java)
+        val ids = AppWidgetManager.getInstance(app).getAppWidgetIds(provider)
+        if (ids.isEmpty()) return
+        val intent = Intent(app, QuoteWidgetReceiver::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
         }
+        app.sendBroadcast(intent)
     }
 }

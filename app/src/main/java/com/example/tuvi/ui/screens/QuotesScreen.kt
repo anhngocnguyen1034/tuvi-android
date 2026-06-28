@@ -2,7 +2,6 @@ package com.example.tuvi.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -79,7 +77,6 @@ import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViTheme
 import com.example.tuvi.widget.QuoteWidgetController
 import com.example.tuvi.widget.QuoteWidgetPinner
-import com.example.tuvi.widget.QuoteWidgetSize
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -92,7 +89,17 @@ fun QuotesScreen(
     var spotlightQuote by remember { mutableStateOf<Quote?>(null) }
     val appContext = LocalContext.current.applicationContext
     val scope = rememberCoroutineScope()
-    var showSizeDialog by remember { mutableStateOf(false) }
+
+    val onAddWidget: () -> Unit = {
+        val ok = QuoteWidgetPinner.pin(appContext)
+        if (!ok) {
+            Toast.makeText(
+                appContext,
+                appContext.getString(R.string.quote_widget_unsupported),
+                Toast.LENGTH_LONG,
+            ).show()
+        }
+    }
 
     val onSetWidget: (Quote) -> Unit = { quote ->
         // Cập nhật luôn thẻ "Quote of the day" trên đầu màn cho khớp với widget.
@@ -107,23 +114,6 @@ fun QuotesScreen(
         }
     }
 
-    if (showSizeDialog) {
-        WidgetSizeDialog(
-            onDismiss = { showSizeDialog = false },
-            onPick = { size ->
-                showSizeDialog = false
-                val ok = QuoteWidgetPinner.pin(appContext, size)
-                if (!ok) {
-                    Toast.makeText(
-                        appContext,
-                        appContext.getString(R.string.quote_widget_unsupported),
-                        Toast.LENGTH_LONG,
-                    ).show()
-                }
-            },
-        )
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -131,7 +121,7 @@ fun QuotesScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
-        QuotesTopBar(onBack = onBack, onAddWidget = { showSizeDialog = true })
+        QuotesTopBar(onBack = onBack, onAddWidget = onAddWidget)
 
         when (val state = uiState) {
             QuotesUiState.Loading -> {
@@ -275,49 +265,6 @@ private fun QuotesTopBar(onBack: () -> Unit, onAddWidget: () -> Unit) {
             )
         }
     }
-}
-
-@Composable
-private fun WidgetSizeDialog(
-    onDismiss: () -> Unit,
-    onPick: (QuoteWidgetSize) -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = TuViNavyCard,
-        title = {
-            Text(
-                text = stringResource(R.string.quote_widget_choose_size),
-                color = TuViGold,
-                fontWeight = FontWeight.Bold,
-            )
-        },
-        text = {
-            Column {
-                WidgetSizeOption(R.string.quote_widget_size_small) { onPick(QuoteWidgetSize.SMALL) }
-                WidgetSizeOption(R.string.quote_widget_size_medium) { onPick(QuoteWidgetSize.MEDIUM) }
-                WidgetSizeOption(R.string.quote_widget_size_large) { onPick(QuoteWidgetSize.LARGE) }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim)
-            }
-        },
-    )
-}
-
-@Composable
-private fun WidgetSizeOption(labelRes: Int, onClick: () -> Unit) {
-    Text(
-        text = stringResource(labelRes),
-        color = TuViIvory,
-        fontSize = 16.sp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 14.dp, horizontal = 4.dp),
-    )
 }
 
 @Composable
