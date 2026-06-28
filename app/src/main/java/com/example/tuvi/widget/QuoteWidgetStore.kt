@@ -15,7 +15,8 @@ object QuoteWidgetStore {
         prefs(context).getInt(KEY_QUOTE_ID, RANDOM)
 
     fun setQuoteId(context: Context, quoteId: Int) {
-        prefs(context).edit().putInt(KEY_QUOTE_ID, quoteId).apply()
+        // commit() (đồng bộ) để chắc chắn giá trị đã lưu trước khi widget render lại đọc ra.
+        prefs(context).edit().putInt(KEY_QUOTE_ID, quoteId).commit()
     }
 
     private fun prefs(context: Context) =
