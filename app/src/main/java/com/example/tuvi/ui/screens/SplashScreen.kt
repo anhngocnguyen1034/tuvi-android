@@ -184,7 +184,6 @@ fun SplashScreen(
                 .scale(scale)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                // Vầng sáng vàng tỏa sau logo, độ sáng "thở" theo glowPulse.
                 Box(
                     modifier = Modifier
                         .size(216.dp)
@@ -196,8 +195,6 @@ fun SplashScreen(
                             CircleShape
                         )
                 )
-
-                // Vòng địa bàn ngoài: nét đứt + 12 chấm tượng trưng 12 Cung, quay chậm.
                 Canvas(
                     modifier = Modifier
                         .size(180.dp)
@@ -227,7 +224,6 @@ fun SplashScreen(
                     }
                 }
 
-                // Vòng trong mảnh hơn, quay ngược chiều nhanh hơn một chút.
                 Canvas(
                     modifier = Modifier
                         .size(150.dp)
@@ -270,7 +266,6 @@ fun SplashScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Hoa văn ngăn cách: gạch mờ dần — sao ✦ — gạch mờ dần.
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
