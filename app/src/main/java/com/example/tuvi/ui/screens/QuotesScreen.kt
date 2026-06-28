@@ -95,6 +95,8 @@ fun QuotesScreen(
     var showSizeDialog by remember { mutableStateOf(false) }
 
     val onSetWidget: (Quote) -> Unit = { quote ->
+        // Cập nhật luôn thẻ "Quote of the day" trên đầu màn cho khớp với widget.
+        spotlightQuote = quote
         scope.launch {
             QuoteWidgetController.setWidgetQuote(appContext, quote.id)
             Toast.makeText(
