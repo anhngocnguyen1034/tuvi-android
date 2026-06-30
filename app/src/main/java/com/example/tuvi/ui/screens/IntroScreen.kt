@@ -1,5 +1,6 @@
 package com.example.tuvi.ui.screens
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,16 +56,17 @@ import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViTheme
 import kotlinx.coroutines.launch
 
-/** Một trang giới thiệu: chỗ ảnh để trống (chưa có asset) + tiêu đề + mô tả. */
+/** Một trang giới thiệu: ảnh minh hoạ + tiêu đề + mô tả. */
 private data class IntroPage(
+    @DrawableRes val image: Int,
     @StringRes val title: Int,
     @StringRes val desc: Int,
 )
 
 private val INTRO_PAGES = listOf(
-    IntroPage(R.string.intro_1_title, R.string.intro_1_desc),
-    IntroPage(R.string.intro_2_title, R.string.intro_2_desc),
-    IntroPage(R.string.intro_3_title, R.string.intro_3_desc),
+    IntroPage(R.drawable.intro_chart, R.string.intro_1_title, R.string.intro_1_desc),
+    IntroPage(R.drawable.intro_calendar, R.string.intro_2_title, R.string.intro_2_desc),
+    IntroPage(R.drawable.intro_ai, R.string.intro_3_title, R.string.intro_3_desc),
 )
 
 /**
@@ -162,7 +166,7 @@ private fun IntroPageContent(page: IntroPage) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        IntroImageSlot()
+        IntroImageSlot(page.image)
 
         Spacer(Modifier.height(40.dp))
 
@@ -186,9 +190,9 @@ private fun IntroPageContent(page: IntroPage) {
     }
 }
 
-/** Chỗ đặt ảnh minh hoạ — hiện để TRỐNG (chưa có asset). Đặt Image() vào đây khi có ảnh. */
+/** Chỗ đặt ảnh minh hoạ cho mỗi trang giới thiệu. */
 @Composable
-private fun IntroImageSlot() {
+private fun IntroImageSlot(@DrawableRes image: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth(0.8f)
@@ -198,8 +202,13 @@ private fun IntroImageSlot() {
             .border(1.dp, TuViGold.copy(alpha = 0.25f), RoundedCornerShape(24.dp)),
         contentAlignment = Alignment.Center
     ) {
-        // Placeholder rỗng: 1 sao mờ cho đỡ trống, thay bằng Image khi có asset.
-        Text(text = "✦", color = TuViGold.copy(alpha = 0.30f), fontSize = 48.sp)
+        Image(
+            painter = painterResource(image),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth(0.78f)
+                .aspectRatio(1f)
+        )
     }
 }
 

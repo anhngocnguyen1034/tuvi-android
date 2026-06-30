@@ -1,0 +1,68 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+
+    <!-- Hào quang nền -->
+    <path
+        android:pathData="M128,128m-104,0a104,104 0,1 1,208 0a104,104 0,1 1,-208 0Z"
+        android:fillColor="#D4A843"
+        android:fillAlpha="0.06" />
+
+    <!-- Khung ngoài lá số (12 cung) -->
+    <path
+        android:pathData="M40,28 L216,28 Q228,28 228,40 L228,216 Q228,228 216,228 L40,228 Q28,228 28,216 L28,40 Q28,28 40,28 Z"
+        android:strokeColor="#F5CB6A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round" />
+
+    <!-- Lưới 4x4 -->
+    <path
+        android:pathData="M78,28 L78,228 M128,28 L128,228 M178,28 L178,228 M28,78 L228,78 M28,128 L228,128 M28,178 L228,178"
+        android:strokeColor="#D4A843"
+        android:strokeWidth="1.5"
+        android:strokeAlpha="0.55" />
+
+    <!-- Thiên Bàn: viền ô giữa 2x2 -->
+    <path
+        android:pathData="M78,78 L178,78 L178,178 L78,178 Z"
+        android:strokeColor="#F5CB6A"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+
+    <!-- Sao trung tâm (sparkle lớn) -->
+    <path
+        android:pathData="M128,92 C128,108 120,116 104,128 C120,140 128,148 128,164 C128,148 136,140 152,128 C136,116 128,108 128,92 Z"
+        android:fillColor="#F5CB6A" />
+
+    <!-- Các sao trong các cung -->
+    <path
+        android:pathData="M53,53 C53,60 50,63 43,66 C50,69 53,72 53,79 C53,72 56,69 63,66 C56,63 53,60 53,53 Z"
+        android:fillColor="#D4A843" />
+    <path
+        android:pathData="M203,53 C203,60 200,63 193,66 C200,69 203,72 203,79 C203,72 206,69 213,66 C206,63 203,60 203,53 Z"
+        android:fillColor="#D4A843" />
+    <path
+        android:pathData="M53,203 C53,210 50,213 43,216 C50,219 53,222 53,229 C53,222 56,219 63,216 C56,213 53,210 53,203 Z"
+        android:fillColor="#D4A843" />
+    <path
+        android:pathData="M203,203 C203,210 200,213 193,216 C200,219 203,222 203,229 C203,222 206,219 213,216 C206,213 203,210 203,203 Z"
+        android:fillColor="#D4A843" />
+    <path
+        android:pathData="M103,53 m-4,0 a4,4 0,1 1,8 0 a4,4 0,1 1,-8 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.8" />
+    <path
+        android:pathData="M153,53 m-4,0 a4,4 0,1 1,8 0 a4,4 0,1 1,-8 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.8" />
+    <path
+        android:pathData="M53,103 m-4,0 a4,4 0,1 1,8 0 a4,4 0,1 1,-8 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.8" />
+    <path
+        android:pathData="M203,153 m-4,0 a4,4 0,1 1,8 0 a4,4 0,1 1,-8 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.8" />
+</vector>

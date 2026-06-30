@@ -29,6 +29,7 @@
     <string name="settings_dark_mode_desc">切换至深色外观</string>
     <string name="settings_light_mode_desc">切换至浅色外观</string>
     <string name="content_desc_settings">打开设置</string>
+    <string name="content_desc_store">购买 AI 咨询次数</string>
     <string name="settings_footer_hint">语言更改将应用于系统标签和当前页面；部分其他页面可能需要重启应用才能完全完成语言切换。</string>
     <string name="settings_notification_section">通知功能</string>
     <string name="settings_notif_holiday_title">法定节假日</string>
@@ -269,6 +270,23 @@
     <string name="error_ai_no_input">缺失生辰八字日期数据 — 无法发起 AI 详批服务。</string>
     <string name="error_ai_no_chart">未成功生成或显示命盘 — 无法发起 AI 详批服务。</string>
     <string name="error_ai_no_cung">请先在盘面上选定一个特定的宫位再行咨询 AI。</string>
+    <string name="error_ai_no_question">请输入您的问题。</string>
+    <string name="ai_reading_hoi_placeholder">输入您对命盘的提问…</string>
+    <string name="ai_reading_hoi_btn">免费 AI 咨询 — 您的提问</string>
+    <string name="ai_reading_hoi_hint">您可以自由提问关于本命盘的问题（例如：\"今年我适合换工作吗？\"）。AI 仅根据您的命盘回答紫微斗数相关问题。</string>
+    <string name="ai_reading_remaining">剩余 %1$d 次 AI 咨询</string>
+    <string name="ai_reading_buy_btn">购买更多</string>
+    <!-- 充值次数商店 -->
+    <string name="store_title">购买 AI 咨询次数</string>
+    <string name="store_remaining">剩余次数：%1$d</string>
+    <string name="store_credits">%1$d 次 AI 咨询</string>
+    <string name="store_buy_btn">购买</string>
+    <string name="store_unavailable">无法连接 Google Play。请检查 Play 商店应用后重试。</string>
+    <string name="store_empty">暂无可购买的套餐。</string>
+    <string name="store_granted_toast">已增加 %1$d 次。余额：%2$d</string>
+    <string name="store_pending_toast">交易处理中，完成后将自动增加次数。</string>
+    <string name="store_cancelled_toast">已取消交易。</string>
+    <string name="store_failed_toast">购买失败，请重试。</string>
     <string name="ai_reading_cung_picker_label">请选择您想要深度剖析的宫位</string>
     <string name="ai_reading_request_btn_for_cung_free">免费 AI 详批 — %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung_free">免费 AI 详批 (刷新 %1$s 解析)</string>
@@ -308,6 +326,6 @@
     <string name="intro_1_desc">根据出生日期与时辰，精准排盘并解读十二宫命盘。</string>
     <string name="intro_2_title">历法与运势</string>
     <string name="intro_2_desc">查看阴阳历、吉凶日，以及每年的运势详批。</string>
-    <string name="intro_3_title">更多功能</string>
-    <string name="intro_3_desc">保存命盘、内置浏览器以及更多实用功能。</string>
+    <string name="intro_3_title">AI 解读</string>
+    <string name="intro_3_desc">AI 详细易懂地解读命盘，并解答你的各种疑问。</string>
 </resources>

@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+
+    <!-- Hào quang nền -->
+    <path
+        android:pathData="M128,128m-104,0a104,104 0,1 1,208 0a104,104 0,1 1,-208 0Z"
+        android:fillColor="#D4A843"
+        android:fillAlpha="0.06" />
+
+    <!-- Thân lịch -->
+    <path
+        android:pathData="M52,58 L204,58 Q216,58 216,70 L216,210 Q216,222 204,222 L52,222 Q40,222 40,210 L40,70 Q40,58 52,58 Z"
+        android:fillColor="#162450"
+        android:strokeColor="#F5CB6A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round" />
+
+    <!-- Đầu lịch (thanh tháng) -->
+    <path
+        android:pathData="M40,70 Q40,58 52,58 L204,58 Q216,58 216,70 L216,92 L40,92 Z"
+        android:fillColor="#D4A843" />
+
+    <!-- Hai vòng treo lịch -->
+    <path
+        android:pathData="M80,44 L80,66 M176,44 L176,66"
+        android:strokeColor="#F5EED8"
+        android:strokeWidth="6"
+        android:strokeLineCap="round" />
+
+    <!-- Lưới ngày (3 hàng chấm) -->
+    <path
+        android:pathData="M72,124 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M112,124 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M152,124 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M72,164 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M192,164 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M72,204 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M112,204 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M192,204 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.45" />
+
+    <!-- Ngày được chọn (vòng gold) -->
+    <path
+        android:pathData="M152,164 m-12,0 a12,12 0,1 1,24 0 a12,12 0,1 1,-24 0Z"
+        android:strokeColor="#F5CB6A"
+        android:strokeWidth="2.5" />
+    <path
+        android:pathData="M152,164 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0Z"
+        android:fillColor="#F5CB6A" />
+    <path
+        android:pathData="M112,164 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z M192,124 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0Z"
+        android:fillColor="#F5EED8"
+        android:fillAlpha="0.45" />
+
+    <!-- Trăng khuyết (âm lịch) góc trên phải -->
+    <path
+        android:pathData="M196,32 A20,20 0,1 0,196 72 A15,15 0,1 1,196 32 Z"
+        android:fillColor="#F5EED8" />
+    <!-- Sao nhỏ cạnh trăng -->
+    <path
+        android:pathData="M214,46 C214,51 212,53 207,55 C212,57 214,59 214,64 C214,59 216,57 221,55 C216,53 214,51 214,46 Z"
+        android:fillColor="#F5CB6A" />
+</vector>

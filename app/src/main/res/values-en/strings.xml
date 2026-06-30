@@ -32,6 +32,7 @@
     <string name="settings_dark_mode_desc">Dark appearance</string>
     <string name="settings_light_mode_desc">Light appearance</string>
     <string name="content_desc_settings">Open settings</string>
+    <string name="content_desc_store">Buy AI readings</string>
     <string name="settings_footer_hint">Language changes apply to system labels and this screen; other screens may stay in Vietnamese until fully migrated to string resources.</string>
     <string name="settings_notification_section">Notifications</string>
     <string name="settings_notif_holiday_title">Public Holidays</string>
@@ -295,6 +296,23 @@
     <string name="error_ai_no_input">Birth data is missing — cannot request AI interpretation.</string>
     <string name="error_ai_no_chart">No chart is displayed — cannot request AI interpretation.</string>
     <string name="error_ai_no_cung">Please select a palace before asking AI.</string>
+    <string name="error_ai_no_question">Please enter your question.</string>
+    <string name="ai_reading_hoi_placeholder">Type your question about this chart…</string>
+    <string name="ai_reading_hoi_btn">Ask AI free — your question</string>
+    <string name="ai_reading_hoi_hint">You can ask your own question about this chart (e.g. \"Should I change jobs this year?\"). The AI only answers astrology questions based on your chart.</string>
+    <string name="ai_reading_remaining">%1$d AI readings left</string>
+    <string name="ai_reading_buy_btn">Buy more</string>
+    <!-- Credit store screen -->
+    <string name="store_title">Buy AI readings</string>
+    <string name="store_remaining">Readings left: %1$d</string>
+    <string name="store_credits">%1$d AI readings</string>
+    <string name="store_buy_btn">Buy</string>
+    <string name="store_unavailable">Could not connect to Google Play. Please check the Play Store app and try again.</string>
+    <string name="store_empty">No packs available right now.</string>
+    <string name="store_granted_toast">Added %1$d readings. Balance: %2$d</string>
+    <string name="store_pending_toast">Your purchase is pending. Readings will be added once it completes.</string>
+    <string name="store_cancelled_toast">Purchase cancelled.</string>
+    <string name="store_failed_toast">Purchase failed. Please try again.</string>
     <string name="ai_reading_cung_picker_label">Select a palace to interpret</string>
     <string name="ai_reading_request_btn_for_cung_free">Ask AI free — %1$s Palace</string>
     <string name="ai_reading_refresh_btn_for_cung_free">Ask AI free (Refresh %1$s)</string>
@@ -335,6 +353,6 @@
     <string name="intro_1_desc">Build and interpret an accurate 12-palace chart from your birth date and time.</string>
     <string name="intro_2_title">Calendar &amp; fortune</string>
     <string name="intro_2_desc">View the lunar-solar calendar, auspicious days and yearly fortune readings.</string>
-    <string name="intro_3_title">More tools</string>
-    <string name="intro_3_desc">Save charts, a built-in browser and many other handy features.</string>
+    <string name="intro_3_title">AI interpretation</string>
+    <string name="intro_3_desc">AI explains your chart in clear detail and answers any question you have.</string>
 </resources>

@@ -29,6 +29,7 @@
     <string name="settings_dark_mode_desc">Giao diện tối</string>
     <string name="settings_light_mode_desc">Giao diện sáng</string>
     <string name="content_desc_settings">Mở cài đặt</string>
+    <string name="content_desc_store">Nạp lượt hỏi AI</string>
     <string name="settings_footer_hint">Thay đổi ngôn ngữ sẽ áp dụng cho các nhãn hệ thống và màn hình này; các màn hình khác có thể cần khởi động lại ứng dụng để cập nhật hoàn toàn.</string>
     <string name="settings_notification_section">Thông báo</string>
     <string name="settings_notif_holiday_title">Ngày lễ công cộng</string>
@@ -270,6 +271,23 @@
     <string name="error_ai_no_input">Thiếu dữ liệu ngày sinh — không thể yêu cầu AI luận giải.</string>
     <string name="error_ai_no_chart">Chưa có lá số nào được hiển thị — không thể yêu cầu AI luận giải.</string>
     <string name="error_ai_no_cung">Vui lòng chọn một cung trước khi hỏi AI.</string>
+    <string name="error_ai_no_question">Vui lòng nhập câu hỏi của bạn.</string>
+    <string name="ai_reading_hoi_placeholder">Nhập câu hỏi của bạn về lá số…</string>
+    <string name="ai_reading_hoi_btn">Hỏi AI miễn phí — câu hỏi của bạn</string>
+    <string name="ai_reading_hoi_hint">Bạn có thể tự đặt câu hỏi về lá số (vd: \"Năm nay tôi có nên đổi việc không?\"). AI chỉ trả lời về Tử Vi dựa trên lá số của bạn.</string>
+    <string name="ai_reading_remaining">Còn %1$d lượt hỏi AI</string>
+    <string name="ai_reading_buy_btn">Nạp thêm lượt</string>
+    <!-- Màn cửa hàng nạp lượt -->
+    <string name="store_title">Nạp lượt hỏi AI</string>
+    <string name="store_remaining">Lượt còn lại: %1$d</string>
+    <string name="store_credits">%1$d lượt hỏi AI</string>
+    <string name="store_buy_btn">Mua</string>
+    <string name="store_unavailable">Không kết nối được Google Play. Vui lòng kiểm tra ứng dụng Cửa hàng Play và thử lại.</string>
+    <string name="store_empty">Hiện chưa có gói nào để mua.</string>
+    <string name="store_granted_toast">Đã cộng %1$d lượt. Số dư: %2$d</string>
+    <string name="store_pending_toast">Giao dịch đang chờ xử lý. Lượt sẽ được cộng sau khi hoàn tất.</string>
+    <string name="store_cancelled_toast">Đã huỷ giao dịch.</string>
+    <string name="store_failed_toast">Mua không thành công. Vui lòng thử lại.</string>
     <string name="ai_reading_cung_picker_label">Chọn cung chức năng muốn luận giải</string>
     <string name="ai_reading_request_btn_for_cung_free">Hỏi AI miễn phí — cung %1$s</string>
     <string name="ai_reading_refresh_btn_for_cung_free">Hỏi AI miễn phí (làm mới cung %1$s)</string>
@@ -325,6 +343,6 @@
     <string name="intro_1_desc">Lập và luận giải lá số 12 cung chính xác theo ngày giờ sinh.</string>
     <string name="intro_2_title">Lịch &amp; vận hạn</string>
     <string name="intro_2_desc">Xem lịch âm dương, ngày tốt xấu và luận giải vận hạn từng năm.</string>
-    <string name="intro_3_title">Nhiều tiện ích</string>
-    <string name="intro_3_desc">Lưu lá số, trình duyệt tích hợp và nhiều tính năng hữu ích khác.</string>
+    <string name="intro_3_title">Luận giải bằng AI</string>
+    <string name="intro_3_desc">AI luận giải lá số chi tiết, dễ hiểu và trả lời mọi câu hỏi của bạn.</string>
 </resources>
