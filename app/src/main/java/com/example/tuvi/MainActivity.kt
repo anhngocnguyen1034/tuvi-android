@@ -57,6 +57,7 @@ import com.example.tuvi.ui.browser.BrowserScreen
 import com.example.tuvi.presentation.BrowserViewModel
 import com.example.tuvi.ui.browser.HistoryScreen
 import com.example.tuvi.ui.screens.AiReadingScreen
+import com.example.tuvi.ui.screens.StoreScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.ExitAppHandler
 import com.example.tuvi.ui.screens.HomeScreen
@@ -213,6 +214,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                         navController.navigate("quotes")
                     }
                 },
+                onOpenStore = { navController.navigate("store") },
                 onOpenSettings = { navController.navigate("settings") },
             )
         }
@@ -369,15 +371,19 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
             val aiInterpretLoading by viewModel.aiInterpretLoading.collectAsStateWithLifecycle()
             val selectedCung by viewModel.selectedCung.collectAsStateWithLifecycle()
             val aiUsed by viewModel.aiUsed.collectAsStateWithLifecycle()
+            val quota by viewModel.quota.collectAsStateWithLifecycle()
             val successState = uiState as? TuViUiState.Success
             val aiReadings = successState?.aiReadings ?: emptyMap()
             val vanHanReading = successState?.vanHanReading
+            val hoiReading = successState?.hoiReading
             AiReadingScreen(
                 selectedCung = selectedCung,
                 aiReadings = aiReadings,
                 loading = aiInterpretLoading,
                 aiUsed = aiUsed,
                 vanHanReading = vanHanReading,
+                hoiReading = hoiReading,
+                remaining = quota?.remaining,
                 onSelectCung = { viewModel.selectCung(it) },
                 onRequest = {
                     Ads.showInterstitial(activity,AdNames.AI_REQUEST) {
@@ -398,8 +404,22 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                         )
                     }
                 },
+                onAskQuestion = { cauHoi ->
+                    Ads.showInterstitial(activity,AdNames.AI_REQUEST) {
+                        viewModel.fetchHoiInterpretation(
+                            cauHoi = cauHoi,
+                            onError = { err ->
+                                Toast.makeText(context, err.resolve(context), Toast.LENGTH_LONG).show()
+                            },
+                        )
+                    }
+                },
+                onBuyCredits = { navController.navigate("store") },
                 onBack = { navController.popBackStack() },
             )
+        }
+        composable("store") {
+            StoreScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = "browser?url={url}&title={title}",

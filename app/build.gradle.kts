@@ -135,6 +135,9 @@ dependencies {
     // Play Integrity (bảo vệ endpoint AI)
     implementation(libs.play.integrity)
 
+    // Google Play Billing (mua lượt AI qua IAP)
+    implementation(libs.billing.ktx)
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

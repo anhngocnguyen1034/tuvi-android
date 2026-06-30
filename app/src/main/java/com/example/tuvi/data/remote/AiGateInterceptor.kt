@@ -32,6 +32,12 @@ class AiGateInterceptor(
     }
 
     private companion object {
-        val AI_PATHS = setOf("/api/interpret", "/api/interpret/van-han")
+        val AI_PATHS = setOf(
+            "/api/interpret",
+            "/api/interpret/van-han",
+            "/api/interpret/hoi",
+            "/api/quota",
+            "/api/iap/verify",
+        )
     }
 }

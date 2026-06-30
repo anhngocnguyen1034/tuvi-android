@@ -36,6 +36,7 @@ coroutinesPlayServices = "1.9.0"
 playServicesAds = "23.6.0"
 userMessagingPlatform = "3.1.0"
 playIntegrity = "1.4.0"
+billing = "7.1.1"
 
 [libraries]
 android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
@@ -93,6 +94,8 @@ user-messaging-platform = { group = "com.google.android.ump", name = "user-messa
 
 # Play Integrity (xác thực app thật cho các endpoint AI)
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
+# Google Play Billing (mua lượt AI qua IAP)
+billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

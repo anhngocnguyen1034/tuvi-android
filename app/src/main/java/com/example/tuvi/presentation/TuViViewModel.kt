@@ -14,7 +14,10 @@ import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.usecase.DeleteSavedChartUseCase
+import com.example.tuvi.domain.model.QuotaStatus
+import com.example.tuvi.domain.usecase.GetQuotaUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
+import com.example.tuvi.domain.usecase.GetTuViHoiUseCase
 import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
 import com.example.tuvi.domain.usecase.GetTuViVanHanUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
@@ -31,6 +34,8 @@ class TuViViewModel(
     private val getTuViChart: GetTuViChartUseCase,
     private val getTuViInterpret: GetTuViInterpretUseCase,
     private val getTuViVanHan: GetTuViVanHanUseCase,
+    private val getTuViHoi: GetTuViHoiUseCase,
+    private val getQuota: GetQuotaUseCase,
     private val saveChartUseCase: SaveChartUseCase,
     private val deleteChartUseCase: DeleteSavedChartUseCase,
     private val json: Json,
@@ -62,6 +67,23 @@ class TuViViewModel(
     val aiUsed: StateFlow<Boolean> = userPrefs.aiUsedFlow
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    /** Số lượt AI còn lại (nguồn sự thật từ backend /api/quota). null = chưa biết. */
+    private val _quota = MutableStateFlow<QuotaStatus?>(null)
+    val quota: StateFlow<QuotaStatus?> = _quota.asStateFlow()
+
+    /** Tải lại số dư quota từ backend (gọi sau khi lập lá số, sau mỗi lượt AI, sau khi mua). */
+    fun refreshQuota() {
+        viewModelScope.launch {
+            getQuota().onSuccess { _quota.value = it }
+        }
+    }
+
+    /** true khi đã biết số dư và hết lượt → chặn gọi AI, mời nạp thêm. */
+    private fun isOutOfCredit(): Boolean {
+        val q = _quota.value ?: return false
+        return q.remaining <= 0
+    }
+
     fun selectCung(cung: CungSlug) {
         _selectedCung.value = cung
     }
@@ -88,6 +110,7 @@ class TuViViewModel(
             getTuViChart(input)
                 .onSuccess {
                     _uiState.value = TuViUiState.Success(it)
+                    refreshQuota()
                 }
                 .onFailure {
                     mapFailureToUi(it)
@@ -122,8 +145,8 @@ class TuViViewModel(
             return
         }
         viewModelScope.launch {
-            if (userPrefs.isAiUsed()) {
-                onError(TuViError.AiAlreadyUsed)
+            if (isOutOfCredit()) {
+                onError(TuViError.AiQuotaExhausted)
                 return@launch
             }
             _aiInterpretLoading.value = true
@@ -135,7 +158,7 @@ class TuViViewModel(
                             data = interpretation.chart,
                             aiReadings = base.aiReadings + (cung to interpretation.aiReading),
                         )
-                        userPrefs.markAiUsed()
+                        refreshQuota()
                     }
                     .onFailure { onError(mapThrowable(it)) }
             } finally {
@@ -162,8 +185,8 @@ class TuViViewModel(
             return
         }
         viewModelScope.launch {
-            if (userPrefs.isAiUsed()) {
-                onError(TuViError.AiAlreadyUsed)
+            if (isOutOfCredit()) {
+                onError(TuViError.AiQuotaExhausted)
                 return@launch
             }
             _aiInterpretLoading.value = true
@@ -175,7 +198,52 @@ class TuViViewModel(
                             data = interpretation.chart,
                             vanHanReading = interpretation.aiReading,
                         )
-                        userPrefs.markAiUsed()
+                        refreshQuota()
+                    }
+                    .onFailure { onError(mapThrowable(it)) }
+            } finally {
+                _aiInterpretLoading.value = false
+            }
+        }
+    }
+
+    /**
+     * POST /api/interpret/hoi — trả lời câu hỏi tự do [cauHoi] về lá số; cache
+     * vào [TuViUiState.Success.hoiReading]. Cũng tính 1 lượt AI miễn phí/thiết bị.
+     */
+    fun fetchHoiInterpretation(
+        cauHoi: String,
+        onError: (TuViError) -> Unit,
+    ) {
+        val input = _lastInput.value
+        if (input == null) {
+            onError(TuViError.AiNoInput)
+            return
+        }
+        val success = _uiState.value as? TuViUiState.Success
+        if (success == null) {
+            onError(TuViError.AiNoChart)
+            return
+        }
+        if (cauHoi.isBlank()) {
+            onError(TuViError.AiNoQuestion)
+            return
+        }
+        viewModelScope.launch {
+            if (isOutOfCredit()) {
+                onError(TuViError.AiQuotaExhausted)
+                return@launch
+            }
+            _aiInterpretLoading.value = true
+            try {
+                getTuViHoi(input, cauHoi.trim())
+                    .onSuccess { interpretation ->
+                        val base = _uiState.value as? TuViUiState.Success ?: return@onSuccess
+                        _uiState.value = base.copy(
+                            data = interpretation.chart,
+                            hoiReading = interpretation.aiReading,
+                        )
+                        refreshQuota()
                     }
                     .onFailure { onError(mapThrowable(it)) }
             } finally {
@@ -215,6 +283,7 @@ class TuViViewModel(
         _aiInterpretLoading.value = false
         _selectedCung.value = null
         _uiState.value = TuViUiState.Success(chart)
+        refreshQuota()
     }
 
     fun setSavedChartId(id: Long?) {
@@ -273,6 +342,8 @@ class TuViViewModel(
                     AppContainer.getTuViChartUseCase,
                     AppContainer.getTuViInterpretUseCase,
                     AppContainer.getTuViVanHanUseCase,
+                    AppContainer.getTuViHoiUseCase,
+                    AppContainer.getQuotaUseCase,
                     AppContainer.saveChartUseCase,
                     AppContainer.deleteSavedChartUseCase,
                     AppContainer.appJson,

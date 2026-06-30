@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -26,8 +27,14 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,9 +71,13 @@ fun AiReadingScreen(
     loading: Boolean,
     aiUsed: Boolean,
     vanHanReading: String?,
+    hoiReading: String?,
+    remaining: Int?,
     onSelectCung: (CungSlug) -> Unit,
     onRequest: () -> Unit,
     onRequestVanHan: () -> Unit,
+    onAskQuestion: (String) -> Unit,
+    onBuyCredits: () -> Unit,
     onBack: () -> Unit,
 ) {
     val currentReading = selectedCung?.let(aiReadings::get)
@@ -84,6 +95,8 @@ fun AiReadingScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp),
         ) {
+            QuotaHeader(remaining = remaining, onBuyCredits = onBuyCredits)
+
             CungPicker(
                 selected = selectedCung,
                 aiReadings = aiReadings,
@@ -105,8 +118,15 @@ fun AiReadingScreen(
                 onRequest = onRequestVanHan,
             )
 
-            // 1 lượt free dùng chung cho cung hoặc vận hạn → chỉ một loại có kết quả.
-            val readingToShow = currentReading ?: vanHanReading
+            HoiPanel(
+                hasReading = hoiReading != null,
+                loading = loading,
+                aiUsed = aiUsed,
+                onAsk = onAskQuestion,
+            )
+
+            // 1 lượt free dùng chung cho cung / vận hạn / câu hỏi → chỉ một loại có kết quả.
+            val readingToShow = currentReading ?: vanHanReading ?: hoiReading
             if (readingToShow != null) {
                 Spacer(Modifier.height(20.dp))
                 val bodyText = readingToShow.takeIf { it.isNotBlank() }
@@ -326,6 +346,132 @@ private fun VanHanPanel(
     }
 }
 
+/** Hàng đầu màn AI: số lượt còn lại + nút nạp thêm (mở màn cửa hàng). */
+@Composable
+private fun QuotaHeader(remaining: Int?, onBuyCredits: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = if (remaining != null)
+                stringResource(R.string.ai_reading_remaining, remaining)
+            else "",
+            color = ChartIvory,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            fontFamily = BeVietnamProFamily,
+            modifier = Modifier.weight(1f),
+        )
+        Button(
+            onClick = onBuyCredits,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ChartNavy.copy(alpha = 0.5f),
+                contentColor = ChartGold,
+            ),
+            border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
+        ) {
+            Text(
+                text = stringResource(R.string.ai_reading_buy_btn),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                fontFamily = BeVietnamProFamily,
+            )
+        }
+    }
+}
+
+/**
+ * Ô hỏi – đáp tự do: người dùng nhập câu hỏi rồi gửi sang /api/interpret/hoi.
+ * Chung 1 lượt AI miễn phí với cung & vận hạn → disable khi [aiUsed] hoặc [loading].
+ */
+@Composable
+private fun HoiPanel(
+    hasReading: Boolean,
+    loading: Boolean,
+    aiUsed: Boolean,
+    onAsk: (String) -> Unit,
+) {
+    var question by rememberSaveable { mutableStateOf("") }
+    val enabled = !loading && !aiUsed && !hasReading
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.ai_reading_hoi_hint),
+            color = ChartIvoryDim,
+            fontSize = 12.sp,
+            fontFamily = BeVietnamProFamily,
+        )
+
+        OutlinedTextField(
+            value = question,
+            onValueChange = { question = it },
+            enabled = enabled,
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.ai_reading_hoi_placeholder),
+                    color = ChartIvoryDim,
+                    fontSize = 14.sp,
+                    fontFamily = BeVietnamProFamily,
+                )
+            },
+            textStyle = androidx.compose.ui.text.TextStyle(
+                color = ChartIvory,
+                fontSize = 14.sp,
+                fontFamily = BeVietnamProFamily,
+            ),
+            minLines = 2,
+            maxLines = 5,
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = ChartGold.copy(alpha = 0.75f),
+                unfocusedBorderColor = ChartGold.copy(alpha = 0.35f),
+                disabledBorderColor = ChartGoldDim.copy(alpha = 0.25f),
+                cursorColor = ChartGold,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Button(
+            onClick = { onAsk(question.trim()) },
+            enabled = enabled && question.isNotBlank(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                horizontal = 16.dp,
+                vertical = 10.dp,
+            ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ChartNavy.copy(alpha = 0.45f),
+                contentColor = ChartGold,
+                disabledContainerColor = ChartNavy.copy(alpha = 0.25f),
+                disabledContentColor = ChartGoldDim.copy(alpha = 0.45f),
+            ),
+            border = BorderStroke(1.dp, ChartGold.copy(alpha = 0.75f)),
+        ) {
+            Text(
+                text = stringResource(R.string.ai_reading_hoi_btn),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+                fontFamily = BeVietnamProFamily,
+                maxLines = 2,
+                softWrap = true,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
 @Preview(name = "AI reading empty - dark", showBackground = true)
 @Composable
 private fun AiReadingScreenEmptyPreview() {
@@ -336,9 +482,13 @@ private fun AiReadingScreenEmptyPreview() {
             loading = false,
             aiUsed = false,
             vanHanReading = null,
+            hoiReading = null,
+            remaining = 3,
             onSelectCung = {},
             onRequest = {},
             onRequestVanHan = {},
+            onAskQuestion = {},
+            onBuyCredits = {},
             onBack = {},
         )
     }
@@ -354,9 +504,13 @@ private fun AiReadingScreenUsedPreview() {
             loading = false,
             aiUsed = true,
             vanHanReading = null,
+            hoiReading = null,
+            remaining = 3,
             onSelectCung = {},
             onRequest = {},
             onRequestVanHan = {},
+            onAskQuestion = {},
+            onBuyCredits = {},
             onBack = {},
         )
     }

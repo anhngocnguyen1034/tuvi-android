@@ -3,6 +3,7 @@ package com.example.tuvi.di
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.tuvi.BuildConfig
+import com.example.tuvi.data.billing.BillingManager
 import com.example.tuvi.data.local.TuViDatabase
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.data.remote.AiGateInterceptor
@@ -17,7 +18,11 @@ import com.example.tuvi.domain.usecase.GetQuotesUseCase
 import com.example.tuvi.domain.usecase.GetAllSavedChartsUseCase
 import com.example.tuvi.domain.usecase.GetChartsByGroupUseCase
 import com.example.tuvi.domain.usecase.GetSavedChartByIdUseCase
+import com.example.tuvi.domain.usecase.GetIapProductsUseCase
+import com.example.tuvi.domain.usecase.GetQuotaUseCase
 import com.example.tuvi.domain.usecase.GetTuViChartUseCase
+import com.example.tuvi.domain.usecase.GetTuViHoiUseCase
+import com.example.tuvi.domain.usecase.VerifyPurchaseUseCase
 import com.example.tuvi.domain.usecase.GetTuViInterpretUseCase
 import com.example.tuvi.domain.usecase.GetTuViVanHanUseCase
 import com.example.tuvi.domain.usecase.SaveChartUseCase
@@ -33,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.100:8000"
+    private const val BASE_URL = "http://192.168.1.13:8000"
     private const val CLOUD_PROJECT_NUMBER = 0L
 
     lateinit var app: android.app.Application
@@ -99,6 +104,13 @@ object AppContainer {
     val getTuViChartUseCase by lazy { GetTuViChartUseCase(repository) }
     val getTuViInterpretUseCase by lazy { GetTuViInterpretUseCase(repository) }
     val getTuViVanHanUseCase by lazy { GetTuViVanHanUseCase(repository) }
+    val getTuViHoiUseCase by lazy { GetTuViHoiUseCase(repository) }
+    val getQuotaUseCase by lazy { GetQuotaUseCase(repository) }
+    val getIapProductsUseCase by lazy { GetIapProductsUseCase(repository) }
+    val verifyPurchaseUseCase by lazy { VerifyPurchaseUseCase(repository) }
+
+    /** Google Play Billing — chỉ tạo khi cần (màn cửa hàng). */
+    val billingManager by lazy { BillingManager(app) }
 
     private lateinit var database: TuViDatabase
     lateinit var userPreferencesRepository: UserPreferencesRepository

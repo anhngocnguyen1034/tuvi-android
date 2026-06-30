@@ -22,6 +22,7 @@ sealed interface TuViError {
         val AiNoInput = Res(R.string.error_ai_no_input)
         val AiNoChart = Res(R.string.error_ai_no_chart)
         val AiNoCung = Res(R.string.error_ai_no_cung)
+        val AiNoQuestion = Res(R.string.error_ai_no_question)
         val AiAlreadyUsed = Res(R.string.error_ai_already_used)
     }
 }
@@ -38,6 +39,8 @@ sealed interface TuViUiState {
         val aiReadings: Map<CungSlug, String> = emptyMap(),
         /** Luận giải vận hạn năm sau khi gọi `/api/interpret/van-han`. */
         val vanHanReading: String? = null,
+        /** Trả lời câu hỏi tự do sau khi gọi `/api/interpret/hoi`. */
+        val hoiReading: String? = null,
     ) : TuViUiState
 
     @Immutable

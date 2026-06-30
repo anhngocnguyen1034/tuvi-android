@@ -2,8 +2,12 @@ package com.example.tuvi.data.repository
 
 import com.example.tuvi.data.mapper.toDomain
 import com.example.tuvi.data.remote.TuViApiService
+import com.example.tuvi.data.remote.dto.IapVerifyRequestDto
 import com.example.tuvi.data.remote.dto.TuViRequest
 import com.example.tuvi.domain.model.CungSlug
+import com.example.tuvi.domain.model.IapProduct
+import com.example.tuvi.domain.model.IapVerifyResult
+import com.example.tuvi.domain.model.QuotaStatus
 import com.example.tuvi.domain.model.TuViChart
 import com.example.tuvi.domain.model.TuViChartInput
 import com.example.tuvi.domain.model.TuViInterpretation
@@ -38,6 +42,44 @@ class TuViRepositoryImpl(
             chart = raw.toDomain(),
             aiReading = body.ai_reading.orEmpty(),
         )
+    }
+
+    override suspend fun getTuViHoi(
+        input: TuViChartInput,
+        cauHoi: String,
+    ): TuViInterpretation {
+        val request = buildRequest(input).copy(cau_hoi = cauHoi)
+        val body = apiService.interpretHoi(request)
+        val raw = body.data_la_so ?: error("Empty hoi response")
+        return TuViInterpretation(
+            chart = raw.toDomain(),
+            aiReading = body.ai_reading.orEmpty(),
+        )
+    }
+
+    override suspend fun getQuota(): QuotaStatus {
+        val dto = apiService.getQuota()
+        return QuotaStatus(
+            freeLimit = dto.freeLimit,
+            granted = dto.granted,
+            used = dto.used,
+            remaining = dto.remaining,
+        )
+    }
+
+    override suspend fun getIapProducts(): List<IapProduct> =
+        apiService.getIapProducts().products.map {
+            IapProduct(productId = it.productId, credits = it.credits)
+        }
+
+    override suspend fun verifyPurchase(
+        productId: String,
+        purchaseToken: String,
+    ): IapVerifyResult {
+        val dto = apiService.verifyIap(
+            IapVerifyRequestDto(productId = productId, purchaseToken = purchaseToken)
+        )
+        return IapVerifyResult(granted = dto.granted, remaining = dto.remaining)
     }
 
     private fun buildRequest(input: TuViChartInput): TuViRequest {

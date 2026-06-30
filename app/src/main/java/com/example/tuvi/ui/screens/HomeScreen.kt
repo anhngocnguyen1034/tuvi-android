@@ -76,6 +76,7 @@ fun HomeScreen(
     onOpenBrowser: () -> Unit = {},
     onOpenCalendar: () -> Unit = {},
     onOpenQuotes: () -> Unit = {},
+    onOpenStore: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
 ) {
     val homeBg = remember {
@@ -138,7 +139,15 @@ fun HomeScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                IconButton(onClick = onOpenStore) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_store),
+                        contentDescription = stringResource(R.string.content_desc_store),
+                        tint = TuViGold
+                    )
+                }
                 IconButton(onClick = onOpenSettings) {
                     Icon(
                         painter = painterResource(R.drawable.ic_settings),
