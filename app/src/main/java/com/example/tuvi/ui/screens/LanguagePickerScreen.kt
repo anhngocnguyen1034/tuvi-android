@@ -17,13 +17,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +50,7 @@ import com.anhnn.language.LanguageManager
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
 import com.anhnn.ads.NativeAd
+import com.example.tuvi.ui.components.TuViTopBar
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
@@ -78,7 +75,6 @@ private val SUPPORTED_LANGUAGES = listOf(
     LanguageManager.Language.CHINESE_SIMPLIFIED,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePickerScreen(
     onBack: () -> Unit,
@@ -93,59 +89,40 @@ fun LanguagePickerScreen(
     val selectedCode = pendingCode ?: currentCode
     val hasChange = pendingCode != null && pendingCode != currentCode
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = TuViNavy,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.settings_language),
-                        fontWeight = FontWeight.SemiBold
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TuViNavy)
+    ) {
+        TuViTopBar(
+            title = stringResource(R.string.settings_language),
+            onBack = onBack,
+            actions = {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            Analytics.logEvent(
+                                Events.LANGUAGE_CHANGE,
+                                mapOf(Events.P_LANGUAGE to pendingCode!!)
+                            )
+                            dataSource.setLanguageCode(pendingCode!!)
+                            onLanguageSaved()
+                        }
+                    },
+                    enabled = hasChange
+                ) {
+                    Icon(
+                        Icons.Filled.Check,
+                        contentDescription = stringResource(R.string.language_confirm),
+                        tint = if (hasChange) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.settings_back)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            scope.launch {
-                                Analytics.logEvent(
-                                    Events.LANGUAGE_CHANGE,
-                                    mapOf(Events.P_LANGUAGE to pendingCode!!)
-                                )
-                                dataSource.setLanguageCode(pendingCode!!)
-                                onLanguageSaved()
-                            }
-                        },
-                        enabled = hasChange
-                    ) {
-                        Icon(
-                            Icons.Filled.Check,
-                            contentDescription = stringResource(R.string.language_confirm),
-                            tint = if (hasChange) TuViGold else TuViIvoryDim.copy(alpha = 0.3f)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    scrolledContainerColor = Color.Transparent,
-                    titleContentColor = TuViIvory,
-                    navigationIconContentColor = TuViGold
-                )
-            )
-        }
-    ) { padding ->
+                }
+            },
+        )
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+                .weight(1f)
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)

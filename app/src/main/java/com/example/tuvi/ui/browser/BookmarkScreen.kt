@@ -31,13 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,6 +59,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.data.local.BookmarkDao
 import com.example.tuvi.data.local.BookmarkItemEntity
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.ui.components.TuViTopBar
 import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -109,35 +107,20 @@ fun BookmarkScreen(
 ) {
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
 
-    Scaffold(
-        containerColor = TuViNavy,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(painter = painterResource(R.drawable.ic_favorite), contentDescription = null,
-                            tint = TuViGold, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.bookmark_screen_title), color = TuViGold, fontWeight = FontWeight.Bold)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(painter = painterResource(R.drawable.ic_back), contentDescription = stringResource(R.string.settings_back), tint = TuViGold)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
-                )
-            )
-        }
-    ) { padding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TuViNavy)
+    ) {
+        TuViTopBar(
+            title = stringResource(R.string.bookmark_screen_title),
+            onBack = onBack,
+        )
         if (bookmarks.isEmpty()) {
-            BookmarkEmptyState(Modifier.fillMaxSize().padding(padding))
+            BookmarkEmptyState(Modifier.fillMaxWidth().weight(1f))
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {

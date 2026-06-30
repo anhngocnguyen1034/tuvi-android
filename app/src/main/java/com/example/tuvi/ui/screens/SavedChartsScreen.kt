@@ -38,13 +38,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anhnn.ads.BannerAd
 import com.example.tuvi.R
+import com.example.tuvi.ui.components.TuViTopBar
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.domain.model.SavedChart
 import com.example.tuvi.presentation.SavedChartsViewModel
@@ -101,38 +99,19 @@ fun SavedChartsScreen(
     val allGroupLabel = stringResource(R.string.saved_group_all)
     val allGroups = listOf(allGroupLabel) + groups
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.saved_screen_title),
-                        color = TuViGold,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_back),
-                            contentDescription = stringResource(R.string.settings_back),
-                            tint = TuViGold
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    scrolledContainerColor = Color.Transparent,
-                )
-            )
-        },
-        containerColor = TuViNavy
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TuViNavy)
+    ) {
+        TuViTopBar(
+            title = stringResource(R.string.saved_screen_title),
+            onBack = onBack,
+        )
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .weight(1f)
+                .fillMaxWidth()
         ) {
             // Search bar
             OutlinedTextField(

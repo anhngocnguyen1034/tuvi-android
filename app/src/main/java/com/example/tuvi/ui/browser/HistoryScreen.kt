@@ -28,11 +28,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,6 +59,7 @@ import com.example.tuvi.R
 import com.example.tuvi.data.local.HistoryDao
 import com.example.tuvi.data.local.HistoryItemEntity
 import com.example.tuvi.di.AppContainer
+import com.example.tuvi.ui.components.TuViTopBar
 import com.example.tuvi.ui.theme.LoraFontFamily
 import com.example.tuvi.ui.theme.TuViGold
 import com.example.tuvi.ui.theme.TuViGoldDark
@@ -141,53 +139,35 @@ fun HistoryScreen(
         )
     }
 
-    Scaffold(
-        containerColor = TuViNavy,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.history_screen_title),
-                        color = TuViGold,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TuViNavy)
+    ) {
+        TuViTopBar(
+            title = stringResource(R.string.history_screen_title),
+            onBack = onBack,
+            actions = {
+                if (history.isNotEmpty()) {
+                    IconButton(onClick = { showClearDialog = true }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_back),
-                            contentDescription = stringResource(R.string.settings_back),
-                            tint = TuViGold
+                            painter = painterResource(R.drawable.ic_trash),
+                            contentDescription = stringResource(R.string.history_cd_clear_all),
+                            tint = TuViRed
                         )
                     }
-                },
-                actions = {
-                    if (history.isNotEmpty()) {
-                        IconButton(onClick = { showClearDialog = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_trash),
-                                contentDescription = stringResource(R.string.history_cd_clear_all),
-                                tint = TuViRed
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    scrolledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
-                )
-            )
-        }
-    ) { padding ->
+                }
+            },
+        )
         if (history.isEmpty()) {
             HistoryEmptyState(modifier = Modifier
-                .fillMaxSize()
-                .padding(padding))
+                .fillMaxWidth()
+                .weight(1f))
         } else {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
