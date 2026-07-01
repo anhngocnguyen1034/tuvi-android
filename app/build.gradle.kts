@@ -138,6 +138,9 @@ dependencies {
     // Google Play Billing (mua lượt AI qua IAP)
     implementation(libs.billing.ktx)
 
+    // Microsoft Clarity — heatmap chạm/scroll + session replay
+    implementation(libs.clarity)
+
     // Room Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

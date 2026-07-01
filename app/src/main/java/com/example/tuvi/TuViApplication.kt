@@ -7,6 +7,8 @@ import com.anhnn.ads.AdFormat
 import com.anhnn.ads.Ads
 import com.anhnn.ads.AdsConfig
 import com.anhnn.analytics.Analytics
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.RemoteConfigManager
@@ -17,13 +19,15 @@ import kotlinx.coroutines.runBlocking
 
 class TuViApplication : Application() {
 
+    private companion object {
+        const val CLARITY_PROJECT_ID = "xfjrc544e8"
+    }
+
     lateinit var userPreferencesRepository: UserPreferencesRepository
         private set
 
     var initialDark: Boolean = true
         private set
-
-    /** Đã xem intro chưa — đọc 1 lần lúc khởi động để chọn màn bắt đầu (splash → intro/home). */
     var initialOnboardingDone: Boolean = false
         private set
 
@@ -48,6 +52,10 @@ class TuViApplication : Application() {
         // Analytics: Firebase Analytics (đã có google-services.json). Event cụ thể khai báo ở Events.
         Analytics.init(this)
 
+        // Microsoft Clarity: heatmap vùng chạm/scroll + session replay. Clarity tự thu thập
+        // tương tác chạm nên không cần code thêm cho heatmap. Xem báo cáo tại clarity.microsoft.com.
+        Clarity.initialize(applicationContext, ClarityConfig(CLARITY_PROJECT_ID))
+
         // Cấu hình module ads: bơm dữ liệu app (Remote Config) vào, module không phụ thuộc Firebase.
         // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.
         Ads.init(
@@ -67,11 +75,7 @@ class TuViApplication : Application() {
             )
         )
 
-        // Quảng cáo return-to-app: tự hiện App Open khi quay lại app từ background (bỏ qua lần mở
-        // đầu tiên). App Open được preload ở MainActivity sau khi SDK init qua Ads.start.
         Ads.setupAppOpen(this, AdNames.APP_OPEN_RESUME)
 
-        // Consent (UMP) + MobileAds.initialize chạy ở MainActivity qua Ads.start — theo luồng
-        // chuẩn của Google: consent trước, init ads sau.
     }
 }
