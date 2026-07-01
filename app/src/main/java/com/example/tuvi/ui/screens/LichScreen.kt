@@ -9,11 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -85,7 +80,7 @@ fun LichScreen(
         ) {
             IconButton(onClick = onBack) {
                 Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
+                    painter = painterResource(R.drawable.ic_back),
                     stringResource(R.string.settings_back),
                     tint = TuViGold
                 )
@@ -113,7 +108,7 @@ fun LichScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(onClick = { lichVm.prevMonth() }) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null, tint = TuViGold)
+                Icon(painter = painterResource(R.drawable.ic_left), null, tint = TuViGold)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
@@ -131,7 +126,7 @@ fun LichScreen(
                 }
             }
             IconButton(onClick = { lichVm.nextMonth() }) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = TuViGold)
+                Icon(painter = painterResource(R.drawable.ic_right), null, tint = TuViGold)
             }
         }
 

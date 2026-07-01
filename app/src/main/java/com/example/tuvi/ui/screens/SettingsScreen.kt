@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +30,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -425,7 +423,7 @@ private fun SavedChartsRow(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_saved),
+                    painter = painterResource(R.drawable.ic_folder),
                     contentDescription = null,
                     tint = TuViGold,
                     modifier = Modifier.size(22.dp)
@@ -447,7 +445,7 @@ private fun SavedChartsRow(onClick: () -> Unit) {
             }
         }
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            painter = painterResource(R.drawable.ic_back),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier
@@ -571,7 +569,7 @@ private fun LanguageRow(onClick: () -> Unit) {
             }
         }
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            painter = painterResource(R.drawable.ic_back),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier
@@ -642,7 +640,7 @@ private fun AboutActionRow(
             }
         }
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            painter = painterResource(R.drawable.ic_back),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier

@@ -20,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,6 +52,7 @@ import com.example.tuvi.ui.theme.ChartIvory
 import com.example.tuvi.ui.theme.ChartIvoryDim
 import com.example.tuvi.ui.theme.ChartNavy
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.painterResource
 
 private fun Context.findActivity(): Activity? {
     var ctx = this
@@ -209,7 +209,7 @@ private fun StoreTopBar(onBack: () -> Unit) {
     ) {
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                painter = painterResource(R.drawable.ic_back),
                 contentDescription = stringResource(R.string.settings_back),
                 tint = ChartGold,
             )

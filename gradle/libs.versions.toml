@@ -37,6 +37,7 @@ playServicesAds = "23.6.0"
 userMessagingPlatform = "3.1.0"
 playIntegrity = "1.4.0"
 billing = "7.1.1"
+clarity = "3.8.3"
 
 [libraries]
 android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
@@ -96,6 +97,7 @@ user-messaging-platform = { group = "com.google.android.ump", name = "user-messa
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 # Google Play Billing (mua lượt AI qua IAP)
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
