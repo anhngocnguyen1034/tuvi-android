@@ -108,7 +108,7 @@ fun LichScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(onClick = { lichVm.prevMonth() }) {
-                Icon(painter = painterResource(R.drawable.ic_left), null, tint = TuViGold)
+                Icon(painter = painterResource(R.drawable.ic_left_back), null, tint = TuViGold)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
@@ -126,7 +126,7 @@ fun LichScreen(
                 }
             }
             IconButton(onClick = { lichVm.nextMonth() }) {
-                Icon(painter = painterResource(R.drawable.ic_right), null, tint = TuViGold)
+                Icon(painter = painterResource(R.drawable.ic_right_forward), null, tint = TuViGold)
             }
         }
 

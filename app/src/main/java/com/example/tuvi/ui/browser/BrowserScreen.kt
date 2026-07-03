@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -122,6 +123,7 @@ fun BrowserScreen(
 
     // ── FLAG_SECURE: bật khi incognito, tắt khi thường ───────────────────────
     val context  = LocalContext.current
+    val resources = LocalResources.current
     val activity = context as? android.app.Activity
     DisposableEffect(isIncognito) {
         if (isIncognito) activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -355,8 +357,8 @@ fun BrowserScreen(
                     )
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            if (fileName != null) context.getString(R.string.browser_downloading, fileName)
-                            else context.getString(R.string.browser_download_error)
+                            if (fileName != null) resources.getString(R.string.browser_downloading, fileName)
+                            else resources.getString(R.string.browser_download_error)
                         )
                     }
                 },
@@ -380,8 +382,8 @@ fun BrowserScreen(
                     )
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            if (fileName != null) context.getString(R.string.browser_downloading, fileName)
-                            else context.getString(R.string.browser_download_error)
+                            if (fileName != null) resources.getString(R.string.browser_downloading, fileName)
+                            else resources.getString(R.string.browser_download_error)
                         )
                     }
                 },
@@ -478,7 +480,9 @@ private fun MoreDropdownMenu(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
             .background(bg)
             .border(0.5.dp, border, RoundedCornerShape(12.dp))
             .widthIn(min = 190.dp)
@@ -679,7 +683,7 @@ private fun BrowserBottomBar(
             // ← Back
             IconButton(onClick = onBack, enabled = canGoBack, modifier = Modifier.weight(1f)) {
                 Icon(
-                    painter=painterResource(R.drawable.ic_back),
+                    painter=painterResource(R.drawable.ic_left_back),
                     contentDescription = stringResource(R.string.browser_cd_back),
                     tint = if (canGoBack) accent else dim.copy(alpha = 0.3f),
                     modifier = Modifier.size(22.dp)

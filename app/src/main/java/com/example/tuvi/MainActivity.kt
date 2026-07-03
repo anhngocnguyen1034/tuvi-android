@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
@@ -113,6 +114,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lastInput by viewModel.lastInput.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val resources = LocalResources.current
     var showRateDialog by rememberSaveable { mutableStateOf(false) }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -250,8 +252,8 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
         composable("feedback") {
             FeedbackScreen(
                 email = "nguyenanhcry@gmail.com",
-                subject = context.getString(R.string.feedback_subject),
-                title = context.getString(R.string.feedback_screen_title),
+                subject = resources.getString(R.string.feedback_subject),
+                title = resources.getString(R.string.feedback_screen_title),
                 onBack = { navController.popBackStack() }
             )
         }
@@ -325,7 +327,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                                         Analytics.logEvent(Events.CHART_SAVE)
                                         Toast.makeText(
                                             context,
-                                            context.getString(R.string.toast_chart_saved, lastInput?.ten.orEmpty()),
+                                            resources.getString(R.string.toast_chart_saved, lastInput?.ten.orEmpty()),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         onResult(true)
@@ -333,7 +335,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                                     .onFailure {
                                         Toast.makeText(
                                             context,
-                                            context.getString(R.string.toast_chart_save_failed, it.message.orEmpty()),
+                                            resources.getString(R.string.toast_chart_save_failed, it.message.orEmpty()),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         onResult(false)
@@ -345,11 +347,11 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                                 result
                                     .onSuccess {
                                         Analytics.logEvent(Events.CHART_UNSAVE)
-                                        Toast.makeText(context, context.getString(R.string.toast_chart_unsaved), Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, resources.getString(R.string.toast_chart_unsaved), Toast.LENGTH_SHORT).show()
                                         onResult(true)
                                     }
                                     .onFailure {
-                                        Toast.makeText(context, context.getString(R.string.toast_chart_unsave_failed, it.message.orEmpty()), Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, resources.getString(R.string.toast_chart_unsave_failed, it.message.orEmpty()), Toast.LENGTH_SHORT).show()
                                         onResult(false)
                                     }
                             }
@@ -479,7 +481,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                 onOpenChart = { saved ->
                     viewModel.openSavedChart(saved) { ok ->
                         if (ok) navController.navigate("chart")
-                        else Toast.makeText(context, context.getString(R.string.toast_chart_open_failed), Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(context, resources.getString(R.string.toast_chart_open_failed), Toast.LENGTH_SHORT).show()
                     }
                 },
                 viewModel = savedVm

@@ -50,8 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -445,12 +443,12 @@ private fun SavedChartsRow(onClick: () -> Unit) {
             }
         }
         Icon(
-            painter = painterResource(R.drawable.ic_back),
+            painter = painterResource(R.drawable.ic_right_forward),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier
                 .size(18.dp)
-                .rotate(180f)
+
         )
     }
 }
@@ -569,12 +567,11 @@ private fun LanguageRow(onClick: () -> Unit) {
             }
         }
         Icon(
-            painter = painterResource(R.drawable.ic_back),
+            painter = painterResource(R.drawable.ic_right_forward),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier
                 .size(18.dp)
-                .rotate(180f)
         )
     }
 }
@@ -640,12 +637,11 @@ private fun AboutActionRow(
             }
         }
         Icon(
-            painter = painterResource(R.drawable.ic_back),
+            painter = painterResource(R.drawable.ic_right_forward),
             contentDescription = null,
             tint = TuViGoldLight,
             modifier = Modifier
                 .size(18.dp)
-                .rotate(180f)
         )
     }
 }

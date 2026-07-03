@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -71,15 +72,16 @@ fun StoreScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             val text = when (event) {
                 is StoreEvent.CreditsGranted ->
-                    context.getString(R.string.store_granted_toast, event.granted, event.remaining)
-                StoreEvent.PurchasePending -> context.getString(R.string.store_pending_toast)
-                StoreEvent.Cancelled -> context.getString(R.string.store_cancelled_toast)
-                is StoreEvent.Failed -> context.getString(R.string.store_failed_toast)
+                    resources.getString(R.string.store_granted_toast, event.granted, event.remaining)
+                StoreEvent.PurchasePending -> resources.getString(R.string.store_pending_toast)
+                StoreEvent.Cancelled -> resources.getString(R.string.store_cancelled_toast)
+                is StoreEvent.Failed -> resources.getString(R.string.store_failed_toast)
             }
             Toast.makeText(context, text, Toast.LENGTH_LONG).show()
         }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.tuvi.presentation.BrowserCommand
 import com.example.tuvi.presentation.LongPressTarget
@@ -105,6 +106,7 @@ fun TabWebViewHolder(
     onCaptureThumbnail: (ImageBitmap) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     // ── File upload: giữ callback từ WebChromeClient để trả kết quả sau khi picker đóng ──
     // Dùng mutable ref vì WebChromeClient được tạo trong remember{} (non-Composable scope)
@@ -160,7 +162,7 @@ fun TabWebViewHolder(
             ) {
                 if (request?.isForMainFrame == true) {
                     srl.isRefreshing = false
-                    onError(error?.description?.toString() ?: context.getString(com.example.tuvi.R.string.browser_error_unknown))
+                    onError(error?.description?.toString() ?: resources.getString(com.example.tuvi.R.string.browser_error_unknown))
                 }
             }
         }

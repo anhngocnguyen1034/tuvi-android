@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -82,6 +83,7 @@ fun QuotesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var spotlightQuote by remember { mutableStateOf<Quote?>(null) }
     val appContext = LocalContext.current.applicationContext
+    val resources = LocalResources.current
     val scope = rememberCoroutineScope()
 
     val onAddWidget: () -> Unit = {
@@ -89,7 +91,7 @@ fun QuotesScreen(
         if (!ok) {
             Toast.makeText(
                 appContext,
-                appContext.getString(R.string.quote_widget_unsupported),
+                resources.getString(R.string.quote_widget_unsupported),
                 Toast.LENGTH_LONG,
             ).show()
         }
@@ -102,7 +104,7 @@ fun QuotesScreen(
             QuoteWidgetController.setWidgetQuote(appContext, quote.id)
             Toast.makeText(
                 appContext,
-                appContext.getString(R.string.quotes_set_widget_done),
+                resources.getString(R.string.quotes_set_widget_done),
                 Toast.LENGTH_SHORT,
             ).show()
         }
@@ -307,7 +309,7 @@ private fun DailyQuoteCard(
                 Row {
                     IconButton(onClick = onRandom, modifier = Modifier.size(36.dp)) {
                         Icon(
-                            imageVector = Icons.Default.Refresh,
+                            painter = painterResource(R.drawable.ic_refresh),
                             contentDescription = stringResource(R.string.quotes_random),
                             tint = TuViGold,
                             modifier = Modifier.size(20.dp),
@@ -315,7 +317,7 @@ private fun DailyQuoteCard(
                     }
                     IconButton(onClick = { onSetWidget(quote) }, modifier = Modifier.size(36.dp)) {
                         Icon(
-                            imageVector = Icons.Default.Star,
+                           painter = painterResource(R.drawable.ic_set_widget),
                             contentDescription = stringResource(R.string.quotes_set_widget),
                             tint = TuViGold,
                             modifier = Modifier.size(20.dp),
@@ -384,12 +386,12 @@ private fun QuotesSearchBar(
             )
         },
         leadingIcon = {
-            Icon(Icons.Default.Search, contentDescription = null, tint = TuViGold)
+            Icon(painter = painterResource(R.drawable.ic_search), contentDescription = null, tint = TuViGold)
         },
         trailingIcon = {
             if (query.isNotEmpty()) {
                 IconButton(onClick = { onQueryChange("") }) {
-                    Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.btn_clear), tint = TuViIvoryDim)
+                    Icon(painter = painterResource(R.drawable.ic_clear), contentDescription = stringResource(R.string.btn_clear), tint = TuViIvoryDim)
                 }
             }
         },
@@ -476,7 +478,7 @@ private fun QuoteListItem(
                     modifier = Modifier.size(32.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Star,
+                       painter = painterResource(R.drawable.ic_set_widget),
                         contentDescription = stringResource(R.string.quotes_set_widget),
                         tint = TuViGold.copy(alpha = 0.85f),
                         modifier = Modifier.size(18.dp),
