@@ -322,6 +322,8 @@
     <string name="intro_skip">跳过</string>
     <string name="intro_next">继续</string>
     <string name="intro_start">开始使用</string>
+    <string name="intro_0_title">欢迎使用 Tử vi Daily</string>
+    <string name="intro_0_desc">探索紫微命盘、运势历法与 AI 解读 —— 尽在一款应用中。</string>
     <string name="intro_1_title">紫微命盘</string>
     <string name="intro_1_desc">根据出生日期与时辰，精准排盘并解读十二宫命盘。</string>
     <string name="intro_2_title">历法与运势</string>

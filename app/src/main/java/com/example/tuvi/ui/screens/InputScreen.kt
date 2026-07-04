@@ -104,7 +104,13 @@ private fun TuViDropdownBox(
             readOnly = true,
             label = { Text(label, color = TuViIvoryDim, fontSize = 12.sp) },
             trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                Icon(
+                    painter = painterResource(
+                        if (expanded) R.drawable.ic_drop_down else R.drawable.ic_drop
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
             },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = TuViIvory,
@@ -620,42 +626,33 @@ fun InputScreen(
                         modifier = Modifier.weight(1f)
                     )
                 }
-                if (duongLich) {
-                    Button(
-                        onClick = { showDatePicker = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
-                        shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TuViGold.copy(alpha = 0.7f)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                Button(
+                    onClick = { if (duongLich) showDatePicker = true else showLunarDatePicker = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
+                    shape = RoundedCornerShape(10.dp),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TuViGold.copy(alpha = 0.7f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "  %02d  /  %02d  /  %d".format(day, month, year),
+                            text = "%02d  /  %02d  /  %d".format(day, month, year),
                             color = TuViIvory,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
                             letterSpacing = 1.sp
                         )
-                    }
-                } else {
-                    Button(
-                        onClick = { showLunarDatePicker = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
-                        shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TuViGold.copy(alpha = 0.7f)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "  %02d  /  %02d  /  %d".format(day, month, year),
-                            color = TuViIvory,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            letterSpacing = 1.sp
+                        Icon(
+                            painter = painterResource(R.drawable.ic_edit_dob),
+                            contentDescription = stringResource(R.string.input_label_birthday),
+                            tint = TuViGold,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }

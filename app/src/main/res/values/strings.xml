@@ -339,6 +339,8 @@
     <string name="intro_skip">Bỏ qua</string>
     <string name="intro_next">Tiếp tục</string>
     <string name="intro_start">Bắt đầu</string>
+    <string name="intro_0_title">Chào mừng đến Tử vi Daily</string>
+    <string name="intro_0_desc">Khám phá lá số tử vi, lịch vận hạn và luận giải bằng AI — tất cả trong một ứng dụng.</string>
     <string name="intro_1_title">Lá số tử vi</string>
     <string name="intro_1_desc">Lập và luận giải lá số 12 cung chính xác theo ngày giờ sinh.</string>
     <string name="intro_2_title">Lịch &amp; vận hạn</string>

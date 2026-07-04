@@ -1,17 +1,14 @@
 package com.example.tuvi.ui.screens
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,12 +33,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,24 +47,18 @@ import com.anhnn.ads.BannerAd
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ui.theme.TuViGold
-import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViTheme
 import kotlinx.coroutines.launch
 
-/** Một trang giới thiệu: ảnh minh hoạ + tiêu đề + mô tả. */
-private data class IntroPage(
-    @DrawableRes val image: Int,
-    @StringRes val title: Int,
-    @StringRes val desc: Int,
-)
-
-private val INTRO_PAGES = listOf(
-    IntroPage(R.drawable.intro_chart, R.string.intro_1_title, R.string.intro_1_desc),
-    IntroPage(R.drawable.intro_calendar, R.string.intro_2_title, R.string.intro_2_desc),
-    IntroPage(R.drawable.intro_ai, R.string.intro_3_title, R.string.intro_3_desc),
+/** Ảnh giới thiệu full-bleed cho mỗi trang (tiêu đề + mô tả đã nằm sẵn trong ảnh). */
+@DrawableRes
+private val INTRO_PAGES = intArrayOf(
+    R.drawable.intro1,
+    R.drawable.intro2,
+    R.drawable.intro3,
 )
 
 /**
@@ -157,59 +149,18 @@ fun IntroScreen(onFinish: () -> Unit) {
     }
 }
 
+/** Ảnh full-width, căn mép trên; phần dư phía dưới bị cắt (crop). */
 @Composable
-private fun IntroPageContent(page: IntroPage) {
-    Column(
+private fun IntroPageContent(@DrawableRes image: Int) {
+    Image(
+        painter = painterResource(image),
+        contentDescription = null,
+        contentScale = ContentScale.FillWidth,
+        alignment = Alignment.TopCenter,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        IntroImageSlot(page.image)
-
-        Spacer(Modifier.height(40.dp))
-
-        Text(
-            text = stringResource(page.title),
-            color = TuViGold,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        Text(
-            text = stringResource(page.desc),
-            color = TuViIvoryDim,
-            fontSize = 15.sp,
-            lineHeight = 22.sp,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-/** Chỗ đặt ảnh minh hoạ cho mỗi trang giới thiệu. */
-@Composable
-private fun IntroImageSlot(@DrawableRes image: Int) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(24.dp))
-            .background(TuViIvory.copy(alpha = 0.04f))
-            .border(1.dp, TuViGold.copy(alpha = 0.25f), RoundedCornerShape(24.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(image),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth(0.78f)
-                .aspectRatio(1f)
-        )
-    }
+            .clipToBounds()
+    )
 }
 
 @Preview(name = "Intro – Dark", showBackground = true)

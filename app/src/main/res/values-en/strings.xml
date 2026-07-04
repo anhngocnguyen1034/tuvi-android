@@ -82,7 +82,7 @@
     <string name="input_label_birthday">DATE OF BIRTH</string>
     <string name="input_solar_calendar">Solar calendar</string>
     <string name="input_lunar_calendar">Lunar calendar</string>
-    <string name="input_label_birth_time">BIRTH TIME</string>
+    <string name="input_label_birth_time">Birth time</string>
     <string name="input_hour_label">Hour</string>
     <string name="input_minute_label">Minute</string>
     <string name="input_earthly_branch_hour">Zodiac Hour Branch</string>
@@ -349,6 +349,8 @@
     <string name="intro_skip">Skip</string>
     <string name="intro_next">Next</string>
     <string name="intro_start">Get started</string>
+    <string name="intro_0_title">Welcome to Tử vi Daily</string>
+    <string name="intro_0_desc">Explore your Tử Vi chart, fortune calendar and AI readings — all in one app.</string>
     <string name="intro_1_title">Tử Vi chart</string>
     <string name="intro_1_desc">Build and interpret an accurate 12-palace chart from your birth date and time.</string>
     <string name="intro_2_title">Calendar &amp; fortune</string>
