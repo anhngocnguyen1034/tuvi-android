@@ -485,7 +485,7 @@ fun InputScreen(
     val maxBirthYear = currentYear + 1
     val minViewYear = 1900
     val maxViewYear = 2050
-    var name by remember { mutableStateOf("Anhnn") }
+    var name by remember { mutableStateOf("TuVi Daily") }
     var day by remember { mutableIntStateOf(10) }
     var month by remember { mutableIntStateOf(3) }
     var year by remember { mutableIntStateOf(2004) }

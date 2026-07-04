@@ -82,7 +82,7 @@
     <string name="input_label_birthday">DATE OF BIRTH</string>
     <string name="input_solar_calendar">Solar calendar</string>
     <string name="input_lunar_calendar">Lunar calendar</string>
-    <string name="input_label_birth_time">Birth time</string>
+    <string name="input_label_birth_time">BIRTH TIME</string>
     <string name="input_hour_label">Hour</string>
     <string name="input_minute_label">Minute</string>
     <string name="input_earthly_branch_hour">Zodiac Hour Branch</string>

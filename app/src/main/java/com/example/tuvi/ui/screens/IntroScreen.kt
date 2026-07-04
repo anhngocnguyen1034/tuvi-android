@@ -84,13 +84,30 @@ fun IntroScreen(onFinish: () -> Unit) {
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                HorizontalPager(
-                    state = pagerState,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                ) { page ->
-                    IntroPageContent(INTRO_PAGES[page])
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        IntroPageContent(INTRO_PAGES[page])
+                    }
+
+                    // Làm mờ dần đáy ảnh vào nền để liền mạch với phần điều khiển phía dưới
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color.Transparent, TuViNavy)
+                                )
+                            )
+                    )
                 }
 
                 // Chỉ báo trang
