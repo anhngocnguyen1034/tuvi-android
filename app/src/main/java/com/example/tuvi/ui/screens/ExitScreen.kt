@@ -21,8 +21,6 @@ import com.example.tuvi.ads.AdNames
 @Composable
 fun ExitAppHandler(onExit: () -> Unit) {
     val context = LocalContext.current
-    // Icon launcher là adaptive-icon (XML) -> painterResource KHÔNG load được. Lấy drawable đã
-    // render qua PackageManager rồi rasterize sang bitmap để hiển thị an toàn.
     val appIcon = remember(context) {
         runCatching {
             BitmapPainter(

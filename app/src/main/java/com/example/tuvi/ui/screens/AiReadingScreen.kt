@@ -56,13 +56,6 @@ import com.example.tuvi.ui.theme.ChartIvoryDim
 import com.example.tuvi.ui.theme.ChartNavy
 import com.example.tuvi.ui.theme.TuViTheme
 
-/**
- * Màn riêng để xem luận giải lá số bằng AI cho TỪNG CUNG.
- *
- * Mỗi thiết bị chỉ được hỏi AI 1 lần (flag lưu DataStore). Khi đã dùng:
- * - Nút request bị disable
- * - Hiện text giải thích đã dùng hết lượt
- */
 @Composable
 fun AiReadingScreen(
     selectedCung: CungSlug?,
