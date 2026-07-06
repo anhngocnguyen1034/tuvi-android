@@ -111,6 +111,9 @@ dependencies {
     implementation(libs.blurview)
     implementation(libs.coil.compose)
 
+    // QR code generation (giới thiệu app cho người dùng khác)
+    implementation("com.google.zxing:core:3.5.3")
+
     // Firebase Remote Config (giữ lại cho cooldown ads)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config.ktx)

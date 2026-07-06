@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +67,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuvi.R
 import com.example.tuvi.presentation.SettingsViewModel
+import com.example.tuvi.util.generateQrCode
 import com.example.tuvi.ui.components.GenZThemeSwitch
 import com.example.tuvi.ui.components.TuViTopBar
 import com.example.tuvi.ui.theme.TuViGold
@@ -122,6 +125,7 @@ fun SettingsScreen(
 
     var notifGranted by remember { mutableStateOf(hasPostNotificationPermission(context)) }
     var showSettingsDialog by remember { mutableStateOf(false) }
+    var showQrDialog by remember { mutableStateOf(false) }
     var pendingNotifTarget by remember { mutableStateOf<NotificationPreference?>(null) }
     var openedNotificationSettings by remember { mutableStateOf(false) }
 
@@ -244,6 +248,26 @@ fun SettingsScreen(
         )
     }
 
+    if (showQrDialog) {
+        val storeUrl = remember(context) {
+            "https://play.google.com/store/apps/details?id=${context.packageName}"
+        }
+        ShareAppQrDialog(
+            storeUrl = storeUrl,
+            onShare = {
+                val shareText = context.getString(R.string.qr_share_message, storeUrl)
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, shareText)
+                }
+                context.startActivity(
+                    Intent.createChooser(intent, context.getString(R.string.qr_share))
+                )
+            },
+            onDismiss = { showQrDialog = false }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -332,6 +356,12 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_feedback_title),
                 desc = stringResource(R.string.settings_feedback_desc),
                 onClick = onOpenFeedback
+            )
+            AboutActionRow(
+                iconRes = R.drawable.ic_qrcode,
+                title = stringResource(R.string.settings_qr_title),
+                desc = stringResource(R.string.settings_qr_desc),
+                onClick = { showQrDialog = true }
             )
 
         }
@@ -644,6 +674,73 @@ private fun AboutActionRow(
                 .size(18.dp)
         )
     }
+}
+
+@Composable
+private fun ShareAppQrDialog(
+    storeUrl: String,
+    onShare: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val qrBitmap = remember(storeUrl) { generateQrCode(storeUrl) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = TuViNavyCard,
+        titleContentColor = TuViGold,
+        textContentColor = TuViIvory,
+        title = {
+            Text(
+                text = stringResource(R.string.qr_dialog_title),
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(220.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White)
+                        .padding(12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (qrBitmap != null) {
+                        Image(
+                            bitmap = qrBitmap,
+                            contentDescription = stringResource(R.string.qr_dialog_title),
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.qr_dialog_hint),
+                    color = TuViIvoryDim,
+                    fontSize = 13.sp
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onShare) {
+                Text(
+                    text = stringResource(R.string.qr_share),
+                    color = TuViGold,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = stringResource(R.string.qr_close),
+                    color = TuViIvoryDim
+                )
+            }
+        },
+    )
 }
 
 @Composable

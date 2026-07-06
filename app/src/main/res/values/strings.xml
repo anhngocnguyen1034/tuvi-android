@@ -328,6 +328,13 @@
     <string name="settings_rate_desc">Ủng hộ chúng tôi trên Play Store</string>
     <string name="settings_feedback_title">Góp ý &amp; Phản hồi</string>
     <string name="settings_feedback_desc">Gửi ý kiến để chúng tôi cải thiện</string>
+    <string name="settings_qr_title">Chia sẻ ứng dụng</string>
+    <string name="settings_qr_desc">Tạo mã QR để giới thiệu cho bạn bè</string>
+    <string name="qr_dialog_title">Quét để tải ứng dụng</string>
+    <string name="qr_dialog_hint">Dùng camera hoặc app quét mã để tải Tử vi Daily về máy.</string>
+    <string name="qr_share">Chia sẻ liên kết</string>
+    <string name="qr_close">Đóng</string>
+    <string name="qr_share_message">Cùng khám phá Tử vi Daily nhé! Tải app tại: %1$s</string>
     <string name="feedback_screen_title">Góp ý</string>
     <string name="feedback_subject">Góp ý ứng dụng Tử Vi</string>
     <string name="browser_ctx_open_link">Mở link này</string>
