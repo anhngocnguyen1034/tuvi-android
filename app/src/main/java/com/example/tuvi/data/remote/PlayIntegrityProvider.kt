@@ -18,8 +18,6 @@ class PlayIntegrityProvider(
     private val cloudProjectNumber: Long,
 ) {
     private val manager = IntegrityManagerFactory.create(context.applicationContext)
-
-    /** Gọi blocking — chạy trong interceptor của OkHttp (đã ở background thread). */
     fun tokenForNonce(nonce: String): String? = try {
         val request = IntegrityTokenRequest.builder()
             .setNonce(nonce)

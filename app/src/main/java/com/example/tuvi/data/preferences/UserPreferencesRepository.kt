@@ -101,10 +101,6 @@ class UserPreferencesRepository(context: Context) {
         dataStore.edit { it[KEY_NOTIF_LUNAR] = enabled }
     }
 
-    /**
-     * "Đã dùng AI" = đã có device id lưu và khớp với thiết bị hiện tại.
-     * Fallback: cờ boolean cũ (`ai_used`) từ bản trước → coi như đã dùng trên thiết bị này.
-     */
     val aiUsedFlow: Flow<Boolean> = dataStore.data.map { prefs ->
         val usedDevice = prefs[KEY_AI_USED_DEVICE]
         when {
