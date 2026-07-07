@@ -21,7 +21,3 @@ globs: app/src/main/java/**/*.kt
 # 4. Assets Handling (Xử lý tài nguyên)
 - Hình ảnh nặng hoặc Lottie JSON: Luôn load từ Static Service URL.
 - Sử dụng thư viện Coil cho việc load và cache ảnh từ server.
-
-# 5. Previews
-- Mỗi Composable UI phải có ít nhất 2 `@Preview`: 1 cho Light Mode và 1 cho Dark Mode.
-- Sử dụng `CompositionLocalProvider` để cung cấp dữ liệu mẫu cho Preview.
