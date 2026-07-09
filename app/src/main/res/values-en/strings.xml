@@ -1,9 +1,11 @@
 <resources>
     <!-- App -->
-    <string name="app_name">Tử vi Daily</string>
+    <string name="app_name">Horoza</string>
 
     <string name="quote_widget_description">Shows a daily quote. Tap to see another one.</string>
     <string name="quote_widget_label">Quotes</string>
+    <string name="date_widget_description">Solar &amp; lunar calendar with a daily quote. Tap to refresh.</string>
+    <string name="date_widget_label">Lunar-Solar Calendar</string>
     <string name="quote_widget_add">Add widget to home screen</string>
     <string name="quote_widget_unsupported">Your launcher doesn\'t support pinning widgets. Long-press the home screen and pick Widgets.</string>
     <string name="quotes_set_widget">Set as widget</string>
@@ -41,9 +43,9 @@
     <string name="settings_notif_lunar_desc">Remind me on the 15th and 1st of the lunar month</string>
 
     <!-- HomeScreen -->
-    <string name="home_app_title">TỬ VI</string>
-    <string name="home_app_subtitle">Tử vi Daily</string>
-    <string name="home_tuvi_title">Tử Vi Chart</string>
+    <string name="home_app_title">HOROZA</string>
+    <string name="home_app_subtitle">Horoza</string>
+    <string name="home_tuvi_title">Chart</string>
     <string name="home_tuvi_desc">View your personal chart by birth date</string>
     <string name="home_saved_title">Saved\nLists</string>
     <string name="home_saved_desc">View &amp; manage</string>
@@ -112,7 +114,7 @@
     <string name="chart_ai_refresh_btn">Refresh AI interpretation</string>
     <string name="chart_ai_reading_title">AI interpretation</string>
     <string name="chart_ai_reading_empty">The server returned no interpretation text.</string>
-    <string name="chart_footer">Tử vi Daily</string>
+    <string name="chart_footer">Horoza</string>
     <string name="chart_center_title">TỬ VI CHART</string>
     <string name="chart_label_name">Full name</string>
     <string name="chart_label_gender">Gender</string>
@@ -328,12 +330,12 @@
     <string name="toast_chart_unsaved">Chart unsaved</string>
     <string name="toast_chart_unsave_failed">Could not unsave: %1$s</string>
     <string name="toast_chart_open_failed">Could not open chart</string>
-    <string name="rate_dialog_title">Enjoying Tử vi Daily?</string>    <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
+    <string name="rate_dialog_title">Enjoying Horoza?</string>    <string name="rate_dialog_message">Rate us on the Play Store to show your support!</string>
     <string name="rate_dialog_confirm">Rate now</string>
     <string name="rate_dialog_dismiss">Maybe later</string>
 
     <string name="exit_dialog_title">Exit app?</string>
-    <string name="exit_dialog_message">Are you sure you want to exit Tử vi Daily?</string>
+    <string name="exit_dialog_message">Are you sure you want to exit Horoza?</string>
     <string name="exit_dialog_confirm">Exit</string>
     <string name="exit_dialog_dismiss">Stay</string>
 
@@ -349,7 +351,7 @@
     <string name="intro_skip">Skip</string>
     <string name="intro_next">Next</string>
     <string name="intro_start">Get started</string>
-    <string name="intro_0_title">Welcome to Tử vi Daily</string>
+    <string name="intro_0_title">Welcome to Horoza</string>
     <string name="intro_0_desc">Explore your Tử Vi chart, fortune calendar and AI readings — all in one app.</string>
     <string name="intro_1_title">Tử Vi chart</string>
     <string name="intro_1_desc">Build and interpret an accurate 12-palace chart from your birth date and time.</string>

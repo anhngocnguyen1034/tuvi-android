@@ -10,20 +10,21 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 
 /**
- * Tạo QR code (offline, không cần mạng) từ [content] — dùng để giới thiệu app cho
- * người dùng khác quét tải về. Trả về [ImageBitmap] để hiển thị trực tiếp trong Compose,
- * hoặc null nếu mã hoá thất bại.
+ * Tạo QR code (offline, không cần mạng) dạng [Bitmap] từ [content] — dùng để giới thiệu
+ * app cho người dùng khác quét tải về. Trả về null nếu mã hoá thất bại.
+ *
+ * Dùng error-correction H (30%) để mã vẫn quét được khi ghép lên ảnh nền / có logo ở giữa.
  */
-fun generateQrCode(
+fun generateQrBitmap(
     content: String,
     sizePx: Int = 640,
     foreground: Int = Color.BLACK,
     background: Int = Color.WHITE,
-): ImageBitmap? {
+): Bitmap? {
     if (content.isBlank()) return null
     return try {
         val hints = mapOf(
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
+            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.H,
             EncodeHintType.MARGIN to 1,
             EncodeHintType.CHARACTER_SET to "UTF-8",
         )
@@ -39,8 +40,16 @@ fun generateQrCode(
         }
         Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
             setPixels(pixels, 0, width, 0, 0, width, height)
-        }.asImageBitmap()
+        }
     } catch (e: Exception) {
         null
     }
 }
+
+/** Phiên bản trả [ImageBitmap] để hiển thị trực tiếp trong Compose. */
+fun generateQrCode(
+    content: String,
+    sizePx: Int = 640,
+    foreground: Int = Color.BLACK,
+    background: Int = Color.WHITE,
+): ImageBitmap? = generateQrBitmap(content, sizePx, foreground, background)?.asImageBitmap()

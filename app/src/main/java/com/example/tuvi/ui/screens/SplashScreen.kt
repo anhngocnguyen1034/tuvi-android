@@ -323,18 +323,4 @@ fun SplashScreen(
     }
 }
 
-@Preview(name = "Splash – Dark", showBackground = true)
-@Composable
-private fun SplashScreenDarkPreview() {
-    TuViTheme(darkTheme = true) {
-        SplashScreen(onFinish = {})
-    }
-}
 
-@Preview(name = "Splash – Light", showBackground = true)
-@Composable
-private fun SplashScreenLightPreview() {
-    TuViTheme(darkTheme = false) {
-        SplashScreen(onFinish = {})
-    }
-}

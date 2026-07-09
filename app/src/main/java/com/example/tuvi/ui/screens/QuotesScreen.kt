@@ -515,37 +515,4 @@ private fun formatAuthor(author: String?): String {
     return if (name != null) "— $name" else "— $fallback"
 }
 
-@Preview(name = "Quote card – Dark", showBackground = true)
-@Composable
-private fun QuoteListItemDarkPreview() {
-    TuViTheme(darkTheme = true) {
-        QuoteListItem(
-            quote = Quote(
-                id = 1,
-                noiDung = "Để hạnh phúc rất đơn giản, nhưng để đơn giản rất khó khăn.",
-                tiengAnh = null,
-                tacGia = "Rabindranath Tagore",
-                tuKhoa = listOf("Đơn giản", "Hạnh phúc"),
-            ),
-        )
-    }
-}
 
-@Preview(name = "Quote card – Light", showBackground = true)
-@Composable
-private fun QuoteListItemLightPreview() {
-    TuViTheme(darkTheme = false) {
-        DailyQuoteCard(
-            quote = Quote(
-                id = 1,
-                noiDung = "Để hạnh phúc rất đơn giản, nhưng để đơn giản rất khó khăn.",
-                tiengAnh = "It is very simple to be happy, but it is very difficult to be simple.",
-                tacGia = "Rabindranath Tagore",
-                tuKhoa = listOf("Đơn giản", "Hạnh phúc"),
-            ),
-            isDaily = true,
-            onSetWidget = {},
-            onRandom = {},
-        )
-    }
-}

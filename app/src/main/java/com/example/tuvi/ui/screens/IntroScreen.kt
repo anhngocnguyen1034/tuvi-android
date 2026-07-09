@@ -180,14 +180,3 @@ private fun IntroPageContent(@DrawableRes image: Int) {
     )
 }
 
-@Preview(name = "Intro – Dark", showBackground = true)
-@Composable
-private fun IntroScreenDarkPreview() {
-    TuViTheme(darkTheme = true) { IntroScreen(onFinish = {}) }
-}
-
-@Preview(name = "Intro – Light", showBackground = true)
-@Composable
-private fun IntroScreenLightPreview() {
-    TuViTheme(darkTheme = false) { IntroScreen(onFinish = {}) }
-}

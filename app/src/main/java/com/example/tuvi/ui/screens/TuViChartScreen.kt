@@ -1136,16 +1136,6 @@ private fun OpenAiReadingButton(onClick: () -> Unit) {
     }
 }
 
-@Preview(name = "Open AI reading button", showBackground = true)
-@Composable
-private fun OpenAiReadingButtonPreview() {
-    TuViTheme(darkTheme = true) {
-        Box(Modifier.background(ChartNavy).padding(8.dp)) {
-            OpenAiReadingButton(onClick = {})
-        }
-    }
-}
-
 @Composable
 internal fun AiReadingSection(
     bodyText: String,
@@ -1175,29 +1165,5 @@ internal fun AiReadingSection(
             lineHeight = 22.sp,
             fontFamily = BeVietnamProFamily,
         )
-    }
-}
-
-@Preview(name = "AI reading light", showBackground = true)
-@Composable
-private fun AiReadingSectionPreviewLight() {
-    TuViTheme(darkTheme = false) {
-        Box(Modifier.background(ChartNavy).padding(8.dp)) {
-            AiReadingSection(
-                bodyText = "Mẫu luận giải: cung Mệnh tương đối vượng, nên chú ý đại vận hiện tại.",
-            )
-        }
-    }
-}
-
-@Preview(name = "AI reading dark", showBackground = true)
-@Composable
-private fun AiReadingSectionPreviewDark() {
-    TuViTheme(darkTheme = true) {
-        Box(Modifier.background(ChartNavy).padding(8.dp)) {
-            AiReadingSection(
-                bodyText = "Dark theme preview: luận giải mẫu cho kiểm tra độ tương phản.",
-            )
-        }
     }
 }

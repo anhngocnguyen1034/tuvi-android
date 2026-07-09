@@ -62,6 +62,7 @@ import com.example.tuvi.ui.screens.StoreScreen
 import com.example.tuvi.ui.screens.CalendarChooserScreen
 import com.example.tuvi.ui.screens.ExitAppHandler
 import com.example.tuvi.ui.screens.HomeScreen
+import com.example.tuvi.ui.screens.ShareQrScreen
 import com.example.tuvi.ui.screens.IntroScreen
 import com.example.tuvi.ui.screens.LichScreen
 import com.example.tuvi.ui.screens.SavedChartsScreen
@@ -241,6 +242,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                 onOpenLanguage = { navController.navigate("language") },
                 onOpenPrivacy = { navController.navigate("privacy_policy") },
                 onOpenFeedback = { navController.navigate("feedback") },
+                onOpenShareQr = { navController.navigate("share_qr") },
                 onRateApp = {
                     requestInAppReview(
                         activity = context as Activity,
@@ -248,6 +250,9 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                     )
                 }
             )
+        }
+        composable("share_qr") {
+            ShareQrScreen(onBack = { navController.popBackStack() })
         }
         composable("feedback") {
             FeedbackScreen(

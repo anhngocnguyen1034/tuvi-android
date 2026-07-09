@@ -137,24 +137,42 @@ private fun TuViDropdownBox(
     }
 }
 
-/** Dialog chọn ngày âm lịch — custom dialog có style giống TuViDatePickerDialog. */
+/** Số ngày trong tháng: âm lịch cố định 30, dương lịch theo tháng/năm nhuận. */
+private fun daysInBirthMonth(isSolar: Boolean, month: Int, year: Int): Int =
+    if (!isSolar) 30
+    else Calendar.getInstance().apply {
+        clear(); set(Calendar.YEAR, year); set(Calendar.MONTH, month - 1)
+    }.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+/**
+ * Dialog chọn ngày sinh dùng chung cho cả Âm lịch & Dương lịch (wheel cuộn).
+ * Có toggle Âm/Dương ngay trong dialog và cho gõ số trực tiếp ở cột Năm.
+ */
 @Composable
-private fun LunarDatePickerDialog(
+private fun BirthDatePickerDialog(
+    initialIsSolar: Boolean,
     selectedDay: Int,
     selectedMonth: Int,
     selectedYear: Int,
     minYear: Int,
     maxYear: Int,
-    onDateSelected: (day: Int, month: Int, year: Int) -> Unit,
+    onDateSelected: (day: Int, month: Int, year: Int, isSolar: Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
+    var isSolar by remember { mutableStateOf(initialIsSolar) }
     var pickerDay by remember { mutableIntStateOf(selectedDay) }
     var pickerMonth by remember { mutableIntStateOf(selectedMonth) }
     var pickerYear by remember { mutableIntStateOf(selectedYear) }
 
-    val days = remember { (1..30).toList() }
     val months = remember { (1..12).toList() }
     val years = remember(minYear, maxYear) { (maxYear downTo minYear).toList() }
+    val maxDay = daysInBirthMonth(isSolar, pickerMonth, pickerYear)
+    val days = remember(maxDay) { (1..maxDay).toList() }
+
+    // Ngày vượt số ngày của tháng (đổi lịch / đổi tháng nhuận) → kẹp lại.
+    LaunchedEffect(maxDay) {
+        if (pickerDay > maxDay) pickerDay = maxDay
+    }
 
     val dayState = rememberLazyListState(initialFirstVisibleItemIndex = (selectedDay - 1).coerceAtLeast(0))
     val monthState = rememberLazyListState(initialFirstVisibleItemIndex = (selectedMonth - 1).coerceAtLeast(0))
@@ -167,16 +185,30 @@ private fun LunarDatePickerDialog(
         state: LazyListState,
         label: String,
         display: (T) -> String,
-        onSelect: (T) -> Unit
+        onSelect: (T) -> Unit,
+        onLabelClick: (() -> Unit)? = null
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                label,
-                color = TuViIvoryDim,
-                fontSize = 11.sp,
-                letterSpacing = 0.5.sp,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(bottom = 6.dp)
+                    .then(
+                        if (onLabelClick != null)
+                            Modifier.clip(RoundedCornerShape(6.dp)).clickable { onLabelClick() }
+                        else Modifier
+                    )
+            ) {
+                Text(
+                    label,
+                    color = if (onLabelClick != null) TuViGold else TuViIvoryDim,
+                    fontSize = 11.sp,
+                    letterSpacing = 0.5.sp
+                )
+                if (onLabelClick != null) {
+                    Text(" ✎", color = TuViGold, fontSize = 11.sp)
+                }
+            }
             LazyColumn(
                 state = state,
                 modifier = Modifier
@@ -216,7 +248,7 @@ private fun LunarDatePickerDialog(
         ) {
             // Title
             Text(
-                stringResource(R.string.input_lunar_picker_title),
+                stringResource(R.string.input_label_birthday),
                 modifier = Modifier.padding(start = 24.dp, top = 20.dp),
                 color = TuViGold,
                 fontSize = 14.sp,
@@ -231,6 +263,55 @@ private fun LunarDatePickerDialog(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
             )
+            // Toggle Âm / Dương dùng chung
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 4.dp)
+            ) {
+                SegmentedButton(
+                    selected = isSolar,
+                    onClick = { isSolar = true },
+                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+                    colors = SegmentedButtonDefaults.colors(
+                        activeContainerColor = TuViGold.copy(alpha = 0.35f),
+                        activeContentColor = TuViGold,
+                        inactiveContainerColor = TuViNavyLight,
+                        inactiveContentColor = TuViIvoryDim
+                    ),
+                    icon = {
+                        if (isSolar) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                            )
+                        }
+                    },
+                    label = { Text(stringResource(R.string.input_solar_calendar), fontSize = 12.sp) }
+                )
+                SegmentedButton(
+                    selected = !isSolar,
+                    onClick = { isSolar = false },
+                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+                    colors = SegmentedButtonDefaults.colors(
+                        activeContainerColor = TuViGold.copy(alpha = 0.35f),
+                        activeContentColor = TuViGold,
+                        inactiveContainerColor = TuViNavyLight,
+                        inactiveContentColor = TuViIvoryDim
+                    ),
+                    icon = {
+                        if (!isSolar) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                            )
+                        }
+                    },
+                    label = { Text(stringResource(R.string.input_lunar_calendar), fontSize = 12.sp) }
+                )
+            }
             HorizontalDivider(color = TuViGold.copy(alpha = 0.2f), thickness = 1.dp)
             // Picker columns
             Row(
@@ -276,7 +357,7 @@ private fun LunarDatePickerDialog(
                     Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim, fontSize = 13.sp)
                 }
                 TextButton(onClick = {
-                    onDateSelected(pickerDay, pickerMonth, pickerYear)
+                    onDateSelected(pickerDay, pickerMonth, pickerYear, isSolar)
                     onDismiss()
                 }) {
                     Text(stringResource(R.string.btn_select), color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -284,6 +365,7 @@ private fun LunarDatePickerDialog(
             }
         }
     }
+
 }
 
 /** Dialog chọn năm xem — tránh ExposedDropdown trong verticalScroll (hay bị khựng / chạm lỗi). */
@@ -348,129 +430,6 @@ private fun ViewYearPickerDialog(
     )
 }
 
-// ── Custom Tử Vi DatePickerDialog ──────────────────────────────────────
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TuViDatePickerDialog(
-    initialYear: Int,
-    initialMonth: Int, // 1-indexed
-    initialDay: Int,
-    onDateSelected: (year: Int, month: Int, day: Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    // Tính millis cho ngày khởi tạo
-    val initMillis = remember(initialYear, initialMonth, initialDay) {
-        val c = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        c.set(initialYear, initialMonth - 1, initialDay, 0, 0, 0)
-        c.set(Calendar.MILLISECOND, 0)
-        c.timeInMillis
-    }
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initMillis)
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                        cal.timeInMillis = millis
-                        onDateSelected(
-                            cal.get(Calendar.YEAR),
-                            cal.get(Calendar.MONTH) + 1,
-                            cal.get(Calendar.DAY_OF_MONTH)
-                        )
-                    }
-                    onDismiss()
-                }
-            ) {
-                Text(stringResource(R.string.btn_select), color = TuViGold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.btn_cancel), color = TuViIvoryDim, fontSize = 13.sp)
-            }
-        },
-        colors = DatePickerDefaults.colors(
-            containerColor = InputDatePickerSurface,
-            titleContentColor = TuViGold,
-            headlineContentColor = TuViGold,
-            weekdayContentColor = TuViIvoryDim,
-            subheadContentColor = TuViIvoryDim,
-            navigationContentColor = TuViGold,
-            yearContentColor = TuViIvory,
-            currentYearContentColor = TuViGold,
-            selectedYearContentColor = InputDatePickerSurface,
-            selectedYearContainerColor = TuViGold,
-            dayContentColor = TuViIvory,
-            selectedDayContentColor = InputDatePickerSurface,
-            selectedDayContainerColor = TuViGold,
-            todayContentColor = TuViGold,
-            todayDateBorderColor = TuViGold,
-            disabledDayContentColor = TuViIvoryDim.copy(alpha = 0.35f),
-            dayInSelectionRangeContainerColor = TuViGold.copy(alpha = 0.2f),
-            dayInSelectionRangeContentColor = TuViIvory,
-        ),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        DatePicker(
-            state = datePickerState,
-            title = {
-                Text(
-                    stringResource(R.string.input_solar_picker_title),
-                    modifier = Modifier.padding(start = 24.dp, top = 20.dp),
-                    color = TuViGold,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 2.sp
-                )
-            },
-            headline = {
-                // Hiển thị ngày đã chọn bằng định dạng d/M/yyyy
-                val selMillis = datePickerState.selectedDateMillis
-                val displayText = if (selMillis != null) {
-                    val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                    cal.timeInMillis = selMillis
-                    "%02d / %02d / %d".format(
-                        cal.get(Calendar.DAY_OF_MONTH),
-                        cal.get(Calendar.MONTH) + 1,
-                        cal.get(Calendar.YEAR)
-                    )
-                } else "—"
-                Text(
-                    displayText,
-                    modifier = Modifier.padding(start = 24.dp, bottom = 12.dp),
-                    color = TuViGold,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
-            },
-            showModeToggle = false,
-            colors = DatePickerDefaults.colors(
-                containerColor = InputDatePickerSurface,
-                titleContentColor = TuViGold,
-                headlineContentColor = TuViGold,
-                weekdayContentColor = TuViIvoryDim,
-                subheadContentColor = TuViIvoryDim,
-                navigationContentColor = TuViGold,
-                yearContentColor = TuViIvory,
-                currentYearContentColor = TuViGold,
-                selectedYearContentColor = InputDatePickerSurface,
-                selectedYearContainerColor = TuViGold,
-                dayContentColor = TuViIvory,
-                selectedDayContentColor = InputDatePickerSurface,
-                selectedDayContainerColor = TuViGold,
-                todayContentColor = TuViGold,
-                todayDateBorderColor = TuViGold,
-                disabledDayContentColor = TuViIvoryDim.copy(alpha = 0.35f),
-                dayInSelectionRangeContainerColor = TuViGold.copy(alpha = 0.2f),
-                dayInSelectionRangeContentColor = TuViIvory,
-            )
-        )
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -484,7 +443,7 @@ fun InputScreen(
     val maxBirthYear = currentYear + 1
     val minViewYear = 1900
     val maxViewYear = 2050
-    var name by remember { mutableStateOf("TuVi Daily") }
+    var name by remember { mutableStateOf("Horoza") }
     var day by remember { mutableIntStateOf(1) }
     var month by remember { mutableIntStateOf(8) }
     var year by remember { mutableIntStateOf(1999) }
@@ -497,7 +456,6 @@ fun InputScreen(
     var duongLich by remember { mutableStateOf(true) }
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var showLunarDatePicker by remember { mutableStateOf(false) }
 
     val zodiacHours = listOf(
         stringResource(R.string.input_zodiac_ty),
@@ -520,26 +478,19 @@ fun InputScreen(
     var minExpanded by remember { mutableStateOf(false) }
     var showViewYearPicker by remember { mutableStateOf(false) }
 
-    // Dialog chọn ngày dương lịch
-    if (showDatePicker && duongLich) {
-        TuViDatePickerDialog(
-            initialYear = year,
-            initialMonth = month,
-            initialDay = day,
-            onDateSelected = { y, m, d -> year = y; month = m; day = d },
-            onDismiss = { showDatePicker = false }
-        )
-    }
-    // Dialog chọn ngày âm lịch
-    if (showLunarDatePicker && !duongLich) {
-        LunarDatePickerDialog(
+    // Dialog chọn ngày sinh dùng chung (Âm/Dương + gõ số năm)
+    if (showDatePicker) {
+        BirthDatePickerDialog(
+            initialIsSolar = duongLich,
             selectedDay = day,
             selectedMonth = month,
             selectedYear = year,
             minYear = minBirthYear,
             maxYear = maxBirthYear,
-            onDateSelected = { d, m, y -> day = d; month = m; year = y },
-            onDismiss = { showLunarDatePicker = false }
+            onDateSelected = { d, m, y, isSolar ->
+                day = d; month = m; year = y; duongLich = isSolar
+            },
+            onDismiss = { showDatePicker = false }
         )
     }
     if (showViewYearPicker) {
@@ -626,7 +577,7 @@ fun InputScreen(
                     )
                 }
                 Button(
-                    onClick = { if (duongLich) showDatePicker = true else showLunarDatePicker = true },
+                    onClick = { showDatePicker = true },
                     colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
                     shape = RoundedCornerShape(10.dp),
                     border = androidx.compose.foundation.BorderStroke(
@@ -778,7 +729,8 @@ fun InputScreen(
                             )
                         },
                         trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = false)
+                            Icon ( painter = painterResource(R.drawable.ic_drop_down)
+                                , contentDescription = null)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = TuViIvory,
@@ -839,7 +791,7 @@ fun InputScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (onBack != null) {
-                androidx.compose.material3.IconButton(onClick = onBack) {
+                IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(R.drawable.ic_back),
                         contentDescription = stringResource(R.string.settings_back),

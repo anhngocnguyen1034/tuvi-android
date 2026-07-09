@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">Tử vi Daily</string>
+    <string name="app_name">Horoza</string>
 
     <string name="quote_widget_description">Hiển thị một câu danh ngôn mỗi ngày. Chạm để đổi câu khác.</string>
     <string name="quote_widget_label">Danh ngôn</string>
+    <string name="date_widget_description">Lịch dương &amp; âm kèm câu danh ngôn. Chạm để làm mới.</string>
+    <string name="date_widget_label">Lịch âm dương</string>
     <string name="quote_widget_add">Thêm widget ra màn hình</string>
     <string name="quote_widget_unsupported">Màn hình chính không hỗ trợ ghim widget. Hãy nhấn giữ màn hình rồi chọn Widgets.</string>
     <string name="quotes_set_widget">Đặt làm widget</string>
@@ -37,8 +39,8 @@
     <string name="settings_notif_lunar_title">Ngày Rằm &amp; Mùng 1</string>
     <string name="settings_notif_lunar_desc">Nhắc nhở tôi vào ngày 1 và 15 âm lịch hàng tháng</string>
 
-    <string name="home_app_title">TỬ VI</string>
-    <string name="home_app_subtitle">Tử vi Daily</string>
+    <string name="home_app_title">HOROZA</string>
+    <string name="home_app_subtitle">Horoza</string>
     <string name="home_tuvi_title">Lá Số Tử Vi</string>
     <string name="home_tuvi_desc">Xem lá số cá nhân theo ngày sinh</string>
     <string name="home_saved_title">Lá Số\nĐã Lưu</string>
@@ -106,7 +108,7 @@
     <string name="chart_ai_refresh_btn">Làm mới luận giải AI</string>
     <string name="chart_ai_reading_title">AI Luận Giải</string>
     <string name="chart_ai_reading_empty">Hệ thống không trả về văn bản luận giải.</string>
-    <string name="chart_footer">Tử vi Daily</string>
+    <string name="chart_footer">Horoza</string>
     <string name="chart_center_title">LÁ SỐ TỬ VI</string>
     <string name="chart_label_name">Họ và tên</string>
     <string name="chart_label_gender">Giới tính</string>
@@ -302,13 +304,13 @@
     <string name="toast_chart_unsaved">Đã bỏ lưu lá số</string>
     <string name="toast_chart_unsave_failed">Không thể bỏ lưu: %1$s</string>
     <string name="toast_chart_open_failed">Không thể mở lá số này</string>
-    <string name="rate_dialog_title">Bạn yêu thích Tử vi Daily?</string>
+    <string name="rate_dialog_title">Bạn yêu thích Horoza?</string>
     <string name="rate_dialog_message">Hãy đánh giá ứng dụng trên Play Store để ủng hộ đội ngũ phát triển nhé!</string>
     <string name="rate_dialog_confirm">Đánh giá ngay</string>
     <string name="rate_dialog_dismiss">Để sau</string>
 
     <string name="exit_dialog_title">Thoát ứng dụng?</string>
-    <string name="exit_dialog_message">Bạn có chắc muốn thoát Tử vi Daily không?</string>
+    <string name="exit_dialog_message">Bạn có chắc muốn thoát Horoza không?</string>
     <string name="exit_dialog_confirm">Thoát</string>
     <string name="exit_dialog_dismiss">Ở lại</string>
 
@@ -330,11 +332,10 @@
     <string name="settings_feedback_desc">Gửi ý kiến để chúng tôi cải thiện</string>
     <string name="settings_qr_title">Chia sẻ ứng dụng</string>
     <string name="settings_qr_desc">Tạo mã QR để giới thiệu cho bạn bè</string>
-    <string name="qr_dialog_title">Quét để tải ứng dụng</string>
-    <string name="qr_dialog_hint">Dùng camera hoặc app quét mã để tải Tử vi Daily về máy.</string>
-    <string name="qr_share">Chia sẻ liên kết</string>
-    <string name="qr_close">Đóng</string>
-    <string name="qr_share_message">Cùng khám phá Tử vi Daily nhé! Tải app tại: %1$s</string>
+    <string name="qr_share_message">Cùng khám phá Horoza nhé! Tải app tại: %1$s</string>
+    <string name="share_qr_title">Chia sẻ ứng dụng</string>
+    <string name="share_qr_pick_template">Chọn mẫu nền</string>
+    <string name="share_qr_share_button">Chia sẻ mã QR</string>
     <string name="feedback_screen_title">Góp ý</string>
     <string name="feedback_subject">Góp ý ứng dụng Tử Vi</string>
     <string name="browser_ctx_open_link">Mở link này</string>
@@ -346,7 +347,7 @@
     <string name="intro_skip">Bỏ qua</string>
     <string name="intro_next">Tiếp tục</string>
     <string name="intro_start">Bắt đầu</string>
-    <string name="intro_0_title">Chào mừng đến Tử vi Daily</string>
+    <string name="intro_0_title">Chào mừng đến Horoza</string>
     <string name="intro_0_desc">Khám phá lá số tử vi, lịch vận hạn và luận giải bằng AI — tất cả trong một ứng dụng.</string>
     <string name="intro_1_title">Lá số tử vi</string>
     <string name="intro_1_desc">Lập và luận giải lá số 12 cung chính xác theo ngày giờ sinh.</string>

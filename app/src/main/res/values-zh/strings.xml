@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">紫微 Daily</string>
+    <string name="app_name">Horoza</string>
 
     <string name="quote_widget_description">每天显示一句名言。点击可切换下一句。</string>
     <string name="quote_widget_label">名言</string>
+    <string name="date_widget_description">阳历与农历，附每日名言。点按刷新。</string>
+    <string name="date_widget_label">阴阳历</string>
     <string name="quote_widget_add">添加小组件到主屏幕</string>
     <string name="quote_widget_unsupported">当前桌面不支持固定小组件。请长按主屏幕并选择“小组件”。</string>
     <string name="quotes_set_widget">设为小组件</string>
@@ -37,8 +39,8 @@
     <string name="settings_notif_lunar_title">初一与十五</string>
     <string name="settings_notif_lunar_desc">农历每月初一及十五时提醒我</string>
 
-    <string name="home_app_title">紫微斗数</string>
-    <string name="home_app_subtitle">紫微 Daily</string>
+    <string name="home_app_title">HOROZA</string>
+    <string name="home_app_subtitle">Horoza</string>
     <string name="home_tuvi_title">紫微命盘</string>
     <string name="home_tuvi_desc">根据出生日期查看您的个人命盘</string>
     <string name="home_saved_title">已存\n命盘</string>
@@ -105,7 +107,7 @@
     <string name="chart_ai_refresh_btn">重新生成 AI 解析</string>
     <string name="chart_ai_reading_title">AI 命盘详批</string>
     <string name="chart_ai_reading_empty">服务器未返回任何解析文本。</string>
-    <string name="chart_footer">紫微 Daily</string>
+    <string name="chart_footer">Horoza</string>
     <string name="chart_center_title">紫微斗数命盘</string>
     <string name="chart_label_name">姓名</string>
     <string name="chart_label_gender">性别</string>
@@ -301,13 +303,13 @@
     <string name="toast_chart_unsaved">已取消保存该命盘</string>
     <string name="toast_chart_unsave_failed">无法取消保存： %1$s</string>
     <string name="toast_chart_open_failed">无法打开或加载该命盘</string>
-    <string name="rate_dialog_title">喜欢 紫微 Daily 吗？</string>
+    <string name="rate_dialog_title">喜欢 Horoza 吗？</string>
     <string name="rate_dialog_message">前往 Google Play 应用商店为我们评分，您的好评是对我们坚持优化最大的支持！</string>
     <string name="rate_dialog_confirm">前往评分</string>
     <string name="rate_dialog_dismiss">稍后再说</string>
 
     <string name="exit_dialog_title">退出应用？</string>
-    <string name="exit_dialog_message">确定要退出 紫微 Daily 吗？</string>
+    <string name="exit_dialog_message">确定要退出 Horoza 吗？</string>
     <string name="exit_dialog_confirm">退出</string>
     <string name="exit_dialog_dismiss">留下</string>
 
@@ -322,7 +324,7 @@
     <string name="intro_skip">跳过</string>
     <string name="intro_next">继续</string>
     <string name="intro_start">开始使用</string>
-    <string name="intro_0_title">欢迎使用 Tử vi Daily</string>
+    <string name="intro_0_title">欢迎使用 Horoza</string>
     <string name="intro_0_desc">探索紫微命盘、运势历法与 AI 解读 —— 尽在一款应用中。</string>
     <string name="intro_1_title">紫微命盘</string>
     <string name="intro_1_desc">根据出生日期与时辰，精准排盘并解读十二宫命盘。</string>

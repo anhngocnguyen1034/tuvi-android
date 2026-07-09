@@ -228,7 +228,7 @@ fun HomeScreen(
                 title = stringResource(R.string.home_quotes_title),
                 description = stringResource(R.string.home_quotes_desc),
                 onClick = onOpenQuotes,
-                icon = painterResource(R.drawable.ic_quote),
+                icon = painterResource(R.drawable.ic_quotes),
                 iconTint = Color(0xFFFBBF24),
             )
           }
