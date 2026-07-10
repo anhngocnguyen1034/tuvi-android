@@ -21,10 +21,10 @@ object QuoteWidgetController {
      */
     private fun refreshAll(context: Context) {
         val app = context.applicationContext
-        val provider = ComponentName(app, QuoteWidgetReceiver::class.java)
+        val provider = ComponentName(app, DateWidgetReceiver::class.java)
         val ids = AppWidgetManager.getInstance(app).getAppWidgetIds(provider)
         if (ids.isEmpty()) return
-        val intent = Intent(app, QuoteWidgetReceiver::class.java).apply {
+        val intent = Intent(app, DateWidgetReceiver::class.java).apply {
             action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
         }

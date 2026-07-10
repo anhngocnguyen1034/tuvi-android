@@ -28,6 +28,7 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.text.FontStyle
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
@@ -103,10 +104,14 @@ private val ImageProviderBackground
 private fun DateContent(info: TodayInfo, quote: Quote?) {
     val height = LocalSize.current.height
     val compact = height < 160.dp
-    val showQuote = height >= 150.dp
+    // Căn từ trên xuống thay vì giữa: nếu nội dung cao hơn khung, chỉ phần dưới cùng bị cắt
+    // (thay vì cắt cả trên lẫn dưới khiến câu danh ngôn ở đáy biến mất). Ngưỡng thấp để câu
+    // vẫn hiện ở cỡ widget nhỏ mặc định (chiều cao báo về thường hụt dưới 150dp).
+    val showQuote = height >= 120.dp
+    // Kho danh ngôn đã lọc còn tối đa 100 ký tự (~4 dòng) nên cho đủ số dòng để hiện trọn câu.
     val quoteLines = when {
-        height < 220.dp -> 2
-        height < 300.dp -> 4
+        height < 200.dp -> 4
+        height < 280.dp -> 5
         else -> 6
     }
 
@@ -116,84 +121,67 @@ private fun DateContent(info: TodayInfo, quote: Quote?) {
             .background(ImageProviderBackground)
             .clickable(actionRunCallback<RefreshDateAction>())
             .padding(horizontal = 18.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // --- Ngày tốt / xấu (Hoàng đạo / Hắc đạo) ---
+        // --- Dòng 1: icon tốt/xấu (chỉ icon, không chữ) + Dương lịch: THỨ NĂM, 09 THÁNG 07 ---
         val quality = if (info.auspicious) GoodGreen else BadRed
         val qualityIcon = if (info.auspicious) R.drawable.ic_happy else R.drawable.ic_sad
-        val qualityText = if (info.auspicious) "Ngày tốt" else "Ngày xấu"
+        val qualityDesc = if (info.auspicious) "Ngày tốt" else "Ngày xấu"
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 provider = ImageProvider(qualityIcon),
-                contentDescription = qualityText,
+                contentDescription = qualityDesc,
                 colorFilter = ColorFilter.tint(quality),
-                modifier = GlanceModifier.size(if (compact) 16.dp else 20.dp),
+                modifier = GlanceModifier.size(if (compact) 18.dp else 22.dp),
             )
-            Spacer(GlanceModifier.width(6.dp))
+            Spacer(GlanceModifier.width(8.dp))
             Text(
-                text = qualityText,
+                text = "${info.weekday.uppercase()}, ${pad(info.day)} THÁNG ${pad(info.month)}",
                 style = TextStyle(
-                    color = quality,
-                    fontSize = if (compact) 13.sp else 15.sp,
+                    color = TextMain,
+                    fontSize = if (compact) 16.sp else 19.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                 ),
             )
         }
-        Spacer(GlanceModifier.height(8.dp))
 
-        // --- Dương lịch ---
+        // --- Dòng 2: Âm lịch: 25 tháng 05 (Âm lịch) ---
+        Spacer(GlanceModifier.height(6.dp))
         Text(
-            text = info.weekday,
+            text = "${info.lunar.day} tháng ${pad(info.lunar.month)} (Âm lịch)" +
+                if (info.lunar.isLeapMonth) " (nhuận)" else "",
             style = TextStyle(
-                color = TextDim,
-                fontSize = if (compact) 13.sp else 15.sp,
+                color = TextMain,
+                fontSize = if (compact) 15.sp else 17.sp,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
             ),
         )
+
+        // --- Dòng 3: Năm Can Chi (in nghiêng, mờ) ---
         Spacer(GlanceModifier.height(2.dp))
         Text(
-            text = "${pad(info.day)}/${pad(info.month)}/${info.year}",
+            text = "Năm ${info.lunar.yearCanChi}",
             style = TextStyle(
-                color = TextMain,
-                fontSize = if (compact) 26.sp else 32.sp,
-                fontWeight = FontWeight.Bold,
+                color = TextDim,
+                fontSize = if (compact) 12.sp else 14.sp,
+                fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center,
             ),
         )
 
-        Spacer(GlanceModifier.height(10.dp))
+        // --- Gạch phân cách ---
+        Spacer(GlanceModifier.height(12.dp))
         Box(
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .height(1.dp)
                 .background(DividerColor),
         ) {}
-        Spacer(GlanceModifier.height(10.dp))
 
-        // --- Âm lịch ---
-        Text(
-            text = "Âm lịch ${info.lunar.day}/${info.lunar.month}" +
-                if (info.lunar.isLeapMonth) " (nhuận)" else "",
-            style = TextStyle(
-                color = TextMain,
-                fontSize = if (compact) 14.sp else 16.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-            ),
-        )
-        Text(
-            text = "Năm ${info.lunar.yearCanChi}",
-            style = TextStyle(
-                color = TextDim,
-                fontSize = if (compact) 12.sp else 13.sp,
-                textAlign = TextAlign.Center,
-            ),
-        )
-
-        // --- Danh ngôn ---
+        // --- Danh ngôn (in nghiêng) ---
         if (showQuote && quote != null) {
             Spacer(GlanceModifier.height(12.dp))
             Text(
@@ -201,7 +189,8 @@ private fun DateContent(info: TodayInfo, quote: Quote?) {
                 maxLines = quoteLines,
                 style = TextStyle(
                     color = TextDim,
-                    fontSize = if (compact) 12.sp else 13.sp,
+                    fontSize = if (compact) 13.sp else 15.sp,
+                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
                 ),

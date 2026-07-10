@@ -60,19 +60,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Widget danh ngôn (co giãn được) -->
-        <receiver
-            android:name=".widget.QuoteWidgetReceiver"
-            android:exported="true"
-            android:label="@string/quote_widget_label">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/quote_widget_info" />
-        </receiver>
-
         <!-- Widget lịch: dương lịch + âm lịch + danh ngôn (co giãn được) -->
         <receiver
             android:name=".widget.DateWidgetReceiver"

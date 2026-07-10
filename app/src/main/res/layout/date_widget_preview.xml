@@ -3,66 +3,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/date_widget_background"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
+    <!-- HÀNG 1: THỨ VÀ NGÀY DƯƠNG LỊCH (Chữ in hoa, đậm, hiện đại) -->
+    <TextView
+        android:id="@+id/tv_solar_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="THỨ NĂM, 09 THÁNG 07"
+        android:textColor="#FF1A1A2E"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:letterSpacing="0.02" />
+
+    <!-- HÀNG 2: NGÀY ÂM LỊCH & NĂM (Chữ thường, thanh lịch) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_happy"
-            android:tint="#FF2E9E4F" />
+        <TextView
+            android:id="@+id/tv_lunar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25 tháng 05 (Âm lịch)"
+            android:textColor="#FF4A4A5A"
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:text="Ngày tốt"
-            android:textColor="#FF2E9E4F"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:text=" • "
+            android:textColor="#FF8A8A9A"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_lunar_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Năm Bính Ngọ"
+            android:textColor="#FF6B6B7B"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thứ Năm"
-        android:textColor="#FF6B6B7B"
-        android:textSize="15sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="09/07/2026"
-        android:textColor="#FF1A1A2E"
-        android:textSize="32sp"
-        android:textStyle="bold" />
-
+    <!-- ĐƯỜNG PHÂN CÁCH MẢNH (Kéo ngang tỷ lệ đẹp) -->
     <View
-        android:layout_width="80dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"
         android:background="#22000000" />
 
+    <!-- HÀNG 3: CÂU QUOTES (Chữ nghiêng, truyền cảm hứng) -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_quote"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Âm lịch 24/5"
-        android:textColor="#FF1A1A2E"
-        android:textSize="16sp" />
+        android:text="&quot;Hành trình vạn dặm luôn khởi đầu từ một bước chân.&quot;"
+        android:textColor="#FF555565"
+        android:textSize="13sp"
+        android:textStyle="italic"
+        android:lineSpacingMultiplier="1.2" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Năm Bính Ngọ"
-        android:textColor="#FF6B6B7B"
-        android:textSize="13sp" />
 </LinearLayout>

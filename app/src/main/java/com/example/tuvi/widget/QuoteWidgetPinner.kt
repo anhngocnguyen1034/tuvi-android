@@ -14,12 +14,12 @@ object QuoteWidgetPinner {
     }
 
     /**
-     * Yêu cầu hệ thống ghim widget danh ngôn ra màn hình chính. Android sẽ hiển thị hộp xác nhận;
-     * người dùng đồng ý mới thực sự thêm. Trả về false nếu thiết bị/launcher không hỗ trợ.
+     * Yêu cầu hệ thống ghim widget lịch (âm dương + danh ngôn) ra màn hình chính. Android sẽ hiển
+     * thị hộp xác nhận; người dùng đồng ý mới thực sự thêm. Trả về false nếu thiết bị/launcher không hỗ trợ.
      */
     fun pin(context: Context): Boolean {
         if (!isSupported(context)) return false
-        val provider = ComponentName(context, QuoteWidgetReceiver::class.java)
+        val provider = ComponentName(context, DateWidgetReceiver::class.java)
         return AppWidgetManager.getInstance(context)
             .requestPinAppWidget(provider, null, null)
     }
