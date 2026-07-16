@@ -353,10 +353,39 @@
     <string name="intro_start">Get started</string>
     <string name="intro_0_title">Welcome to Horoza</string>
     <string name="intro_0_desc">Explore your Tử Vi chart, fortune calendar and AI readings — all in one app.</string>
-    <string name="intro_1_title">Tử Vi chart</string>
-    <string name="intro_1_desc">Build and interpret an accurate 12-palace chart from your birth date and time.</string>
-    <string name="intro_2_title">Calendar &amp; fortune</string>
-    <string name="intro_2_desc">View the lunar-solar calendar, auspicious days and yearly fortune readings.</string>
-    <string name="intro_3_title">AI interpretation</string>
-    <string name="intro_3_desc">AI explains your chart in clear detail and answers any question you have.</string>
+    <string name="intro_1_title">Decode your destiny</string>
+    <string name="intro_1_desc">Build a 12-palace Tử Vi chart, get scores and yearly forecasts for career, wealth and love.</string>
+    <string name="intro_2_title">Pick lucky days</string>
+    <string name="intro_2_desc">Check the lunar-solar calendar to spot good days for openings and deals — and bad days to avoid.</string>
+    <string name="intro_3_title">Your AI companion</string>
+    <string name="intro_3_desc">Chat with AI to interpret your chart and answer any question about your fortune, anytime.</string>
+
+    <!-- Settings sections -->
+    <string name="settings_data_section">Data</string>
+    <string name="settings_saved_title">Saved charts</string>
+    <string name="settings_saved_desc">View and manage your saved charts</string>
+    <string name="settings_about_section">About</string>
+    <string name="settings_privacy_title">Privacy policy</string>
+    <string name="settings_privacy_desc">How we handle your data</string>
+    <string name="settings_rate_title">Rate the app</string>
+    <string name="settings_rate_desc">Support us on the Play Store</string>
+    <string name="settings_feedback_title">Feedback</string>
+    <string name="settings_feedback_desc">Send us your ideas to help us improve</string>
+    <string name="settings_qr_title">Share app</string>
+    <string name="settings_qr_desc">Create a QR code to share with friends</string>
+
+    <!-- Feedback -->
+    <string name="feedback_screen_title">Feedback</string>
+    <string name="feedback_subject">Horoza app feedback</string>
+
+    <!-- Share via QR -->
+    <string name="qr_share_message">Come explore Horoza with me! Download the app at: %1$s</string>
+    <string name="share_qr_title">Share app</string>
+    <string name="share_qr_pick_template">Choose a background</string>
+    <string name="share_qr_share_button">Share QR code</string>
+
+    <!-- Browser context menu -->
+    <string name="browser_ctx_open_link">Open this link</string>
+    <string name="browser_ctx_open_new_tab">Open in new tab</string>
+    <string name="browser_ctx_download_image">Download image</string>
 </resources>

@@ -53,6 +53,7 @@
     <string name="home_quotes_desc">8000+ 条励志名言与人生格言</string>
     <string name="home_btn_view_now">立即查看</string>
 
+    <!-- QuotesScreen -->
     <string name="quotes_screen_title">名言警句</string>
     <string name="quotes_screen_subtitle">励志名言与人生智慧</string>
     <string name="quotes_daily_label">今日名言</string>
@@ -175,70 +176,70 @@
 
     <string name="calendar_chooser_title">万年历选择器</string>
     <string name="calendar_chooser_message">已内嵌集成了公农历万年历，点击下方进行开启：</string>
-    <string name="calendar_chooser_btn">打开公农历万年历</string>
+    <string name="calendar_chooser_btn">开启公农历万年历</string>
 
-    <string name="browser_cd_home">返回首页</string>
-    <string name="browser_bookmark_added">已添加至书签收藏</string>
-    <string name="browser_bookmark_removed">已从书签收藏中移除</string>
-    <string name="browser_cd_bookmark">书签功能</string>
+    <string name="browser_cd_home">返回主页</string>
+    <string name="browser_bookmark_added">已添加到书签</string>
+    <string name="browser_bookmark_removed">已从书签中移除</string>
+    <string name="browser_cd_bookmark">书签</string>
     <string name="browser_cd_back">后退</string>
     <string name="browser_cd_forward">前进</string>
     <string name="browser_incognito_icon">无痕模式</string>
-    <string name="browser_downloading">正在下载文件： %1$s</string>
-    <string name="browser_download_error">无法下载该文件</string>
-    <string name="browser_search_placeholder">请输入搜索关键词或网页地址…</string>
-    <string name="browser_cd_more">更多操作</string>
-    <string name="browser_menu_reload">刷新页面</string>
+    <string name="browser_downloading">正在下载：%1$s</string>
+    <string name="browser_download_error">无法下载此文件</string>
+    <string name="browser_search_placeholder">搜索或输入网址…</string>
+    <string name="browser_cd_more">更多</string>
+    <string name="browser_menu_reload">重新加载</string>
     <string name="browser_menu_tab_manager">标签页管理</string>
-    <string name="browser_menu_history">浏览历史</string>
-    <string name="browser_menu_bookmarks">我的书签</string>
+    <string name="browser_menu_history">历史记录</string>
+    <string name="browser_menu_bookmarks">书签</string>
 
-    <string name="bookmark_screen_title">书签收藏</string>
-    <string name="bookmark_edit_title">编辑书签标题</string>
-    <string name="bookmark_empty_title">暂无已收藏的书签</string>
-    <string name="bookmark_empty_hint">点击地址栏的 ★ 图标即可收藏当前网页</string>
+    <string name="bookmark_screen_title">书签管理</string>
+    <string name="bookmark_edit_title">修改标题</string>
+    <string name="bookmark_empty_title">暂无书签</string>
+    <string name="bookmark_empty_hint">点击地址栏的 ★ 图标即可保存当前网页</string>
 
-    <string name="tab_switcher_title_incognito">无痕浏览标签页</string>
-    <string name="tab_switcher_title_open">当前打开的标签页</string>
-    <string name="tab_switcher_close_all">关闭全部标签</string>
-    <string name="tab_switcher_incognito_icon">无痕模式</string>
-    <string name="tab_switcher_web_icon">普通网页</string>
+    <string name="tab_switcher_title_incognito">无痕模式</string>
+    <string name="tab_switcher_title_open">已打开的标签页</string>
+    <string name="tab_switcher_close_all">关闭全部标签页</string>
+    <string name="tab_switcher_incognito_icon">无痕</string>
+    <string name="tab_switcher_web_icon">网页</string>
     <string name="tab_switcher_empty_incognito">暂无无痕标签页</string>
     <string name="tab_switcher_empty">暂无打开的标签页</string>
-    <string name="tab_switcher_new_incognito">新建无痕标签</string>
+    <string name="tab_switcher_new_incognito">新建无痕标签页</string>
     <string name="tab_switcher_new_tab">新建标签页</string>
-    <string name="tab_cd_close">关闭此标签页</string>
+    <string name="tab_cd_close">关闭标签页</string>
 
-    <string name="image_sheet_title">图片 / 文件操作</string>
-    <string name="image_sheet_btn_download">保存至本地</string>
+    <string name="image_sheet_title">图片 / 文件</string>
+    <string name="image_sheet_btn_download">立即下载</string>
 
-    <string name="saved_group_all">全部命盘</string>
+    <string name="saved_group_all">全部</string>
 
     <string name="save_chart_group_family">家人</string>
     <string name="save_chart_group_friends">朋友</string>
     <string name="save_chart_group_colleagues">同事</string>
     <string name="save_chart_group_other">其他</string>
 
-    <string name="calendar_label_truc">值日建除（十二神）</string>
+    <string name="calendar_label_truc">值日建除（直）</string>
     <string name="calendar_truc_good">吉</string>
     <string name="calendar_truc_bad">凶</string>
     <string name="calendar_hoang_dao">黄道吉日</string>
     <string name="calendar_hac_dao">黑道凶日</string>
-    <string name="calendar_luc_nham_label">大六壬</string>
-    <string name="calendar_hoang_dao_hours_label">今日黄道吉时</string>
-    <string name="calendar_day_sun">日</string>
-    <string name="calendar_day_mon">一</string>
-    <string name="calendar_day_tue">二</string>
-    <string name="calendar_day_wed">三</string>
-    <string name="calendar_day_thu">四</string>
-    <string name="calendar_day_fri">五</string>
-    <string name="calendar_day_sat">六</string>
+    <string name="calendar_luc_nham_label">六壬课式</string>
+    <string name="calendar_hoang_dao_hours_label">吉时（黄道工时）</string>
+    <string name="calendar_day_sun">周日</string>
+    <string name="calendar_day_mon">周一</string>
+    <string name="calendar_day_tue">周二</string>
+    <string name="calendar_day_wed">周三</string>
+    <string name="calendar_day_thu">周四</string>
+    <string name="calendar_day_fri">周五</string>
+    <string name="calendar_day_sat">周六</string>
 
-    <string name="settings_dark_icon">深色主题</string>
-    <string name="settings_light_icon">浅色主题</string>
+    <string name="settings_dark_icon">深色</string>
+    <string name="settings_light_icon">浅色</string>
 
-    <string name="input_hour_item">%1$s 点</string>
-    <string name="input_minute_item">%1$s 分</string>
+    <string name="input_hour_item">%1$s点</string>
+    <string name="input_minute_item">%1$s分</string>
 
     <string name="input_zodiac_ty">子时 (23点–01点)</string>
     <string name="input_zodiac_suu">丑时 (01点–03点)</string>
@@ -253,83 +254,105 @@
     <string name="input_zodiac_tuat">戌时 (19点–21点)</string>
     <string name="input_zodiac_hoi">亥时 (21点–23点)</string>
 
-    <string name="calendar_lunar_prefix">农历： %1$s</string>
+    <string name="calendar_lunar_prefix">农历：%1$s</string>
     <string name="calendar_intercalary">(闰月)</string>
 
     <string name="notif_event_default_title">日程提醒</string>
-    <string name="notif_event_default_text">您今日有待办日程事件安排</string>
-    <string name="notif_channel_name">万年历日程提醒</string>
-    <string name="notif_channel_desc">公农历万年历中自定义日程及事记的提醒通知</string>
+    <string name="notif_event_default_text">您今天有一个日程事件安排</string>
+    <string name="notif_channel_name">万年历日程事件</string>
+    <string name="notif_channel_desc">用于接收公农历万年历日程事件的提醒通知</string>
 
-    <string name="browser_download_desc">文件正在下载中…</string>
+    <string name="browser_download_desc">正在下载中…</string>
     <string name="browser_tab_new_title">新标签页</string>
-    <string name="error_unknown">发生了未知错误。</string>
-    <string name="error_ai_interpret_503">AI 详批功能当前不可用 (HTTP 503)。请在服务器端正确配置 Gemini API Key 密钥，或稍后重试。</string>
-    <string name="error_ai_interpret_402">您的免费 AI 提问次数已用完。请解锁后继续。</string>
-    <string name="error_ai_interpret_403">无法验证应用。请从 Google Play 更新应用后重试。</string>
-    <string name="ai_reading_van_han_btn">免费问 AI — 今年运限</string>
-    <string name="ai_reading_van_han_refresh_btn">免费问 AI（刷新流年运限）</string>
-    <string name="error_ai_no_input">缺失生辰八字日期数据 — 无法发起 AI 详批服务。</string>
-    <string name="error_ai_no_chart">未成功生成或显示命盘 — 无法发起 AI 详批服务。</string>
-    <string name="error_ai_no_cung">请先在盘面上选定一个特定的宫位再行咨询 AI。</string>
+    <string name="error_unknown">发生未知错误。</string>
+    <string name="error_ai_interpret_503">AI 解析服务当前不可用 (HTTP 503)。请在服务器端配置 Gemini API 密钥，或稍后重试。</string>
+    <string name="error_ai_interpret_402">您的免费 AI 咨询次数已用尽。请购买额度后继续使用。</string>
+    <string name="error_ai_interpret_403">应用身份验证失败。请从 Google Play 应用商店更新应用后重试。</string>
+    <string name="ai_reading_van_han_btn">免费 AI 咨询 — 测算今年运势</string>
+    <string name="ai_reading_van_han_refresh_btn">免费 AI 咨询 (重新生成今年运势)</string>
+    <string name="error_ai_no_input">缺失出生日期数据 — 无法请求 AI 进行排盘解析。</string>
+    <string name="error_ai_no_chart">未显示任何命盘 — 无法请求 AI 进行排盘解析。</string>
+    <string name="error_ai_no_cung">请先选择一个宫位，然后再向 AI 提问。</string>
     <string name="error_ai_no_question">请输入您的问题。</string>
-    <string name="ai_reading_hoi_placeholder">输入您对命盘的提问…</string>
-    <string name="ai_reading_hoi_btn">免费 AI 咨询 — 您的提问</string>
-    <string name="ai_reading_hoi_hint">您可以自由提问关于本命盘的问题（例如：\"今年我适合换工作吗？\"）。AI 仅根据您的命盘回答紫微斗数相关问题。</string>
-    <string name="ai_reading_remaining">剩余 %1$d 次 AI 咨询</string>
-    <string name="ai_reading_buy_btn">购买更多</string>
-    <!-- 充值次数商店 -->
-    <string name="store_title">购买 AI 咨询次数</string>
+    <string name="ai_reading_hoi_placeholder">输入您关于此命盘的问题…</string>
+    <string name="ai_reading_hoi_btn">免费 AI 咨询 — 提交您的问题</string>
+    <string name="ai_reading_hoi_hint">您可以针对自身命盘自由提问（例如：“今年我适合换工作吗？”）。AI 将仅基于您的命盘数据进行紫微斗数解析回复。</string>
+    <string name="ai_reading_remaining">剩余 %1$d 次 AI 咨询额度</string>
+    <string name="ai_reading_buy_btn">充值次数</string>
+    <!-- Màn cửa hàng nạp lượt -->
+    <string name="store_title">充值 AI 咨询额度</string>
     <string name="store_remaining">剩余次数：%1$d</string>
-    <string name="store_credits">%1$d 次 AI 咨询</string>
+    <string name="store_credits">%1$d 次 AI 咨询额度</string>
     <string name="store_buy_btn">购买</string>
-    <string name="store_unavailable">无法连接 Google Play。请检查 Play 商店应用后重试。</string>
-    <string name="store_empty">暂无可购买的套餐。</string>
-    <string name="store_granted_toast">已增加 %1$d 次。余额：%2$d</string>
-    <string name="store_pending_toast">交易处理中，完成后将自动增加次数。</string>
-    <string name="store_cancelled_toast">已取消交易。</string>
-    <string name="store_failed_toast">购买失败，请重试。</string>
-    <string name="ai_reading_cung_picker_label">请选择您想要深度剖析的宫位</string>
-    <string name="ai_reading_request_btn_for_cung_free">免费 AI 详批 — %1$s</string>
-    <string name="ai_reading_refresh_btn_for_cung_free">免费 AI 详批 (刷新 %1$s 解析)</string>
-    <string name="chart_ai_request_btn_free">免费接收 AI 详批</string>
-    <string name="ai_reading_loading_cung">正在将数据上传至 AI 以解析 %1$s…</string>
-    <string name="ai_reading_hint_single_cung">提示：每次选择单一宫位进行深度剖析，AI 返回的结论和分析契合度将远比粗略分析整张命盘要更加精细和具有参考价值。</string>
-    <string name="browser_error_unknown">未知浏览器异常</string>
-    <string name="browser_default_title">内置浏览器</string>
+    <string name="store_unavailable">无法连接至 Google Play。请检查您的 Google Play 商店应用并重试。</string>
+    <string name="store_empty">目前没有可购买的商品包。</string>
+    <string name="store_granted_toast">已成功到账 %1$d 次。当前余额：%2$d</string>
+    <string name="store_pending_toast">交易正在处理中。完成后额度将自动充入账户。</string>
+    <string name="store_cancelled_toast">交易已取消。</string>
+    <string name="store_failed_toast">购买失败。请稍后重试。</string>
+    <string name="ai_reading_cung_picker_label">请选择您想要深度解析的对应宫位</string>
+    <string name="ai_reading_request_btn_for_cung_free">免费 AI 咨询 — 解析%1$s</string>
+    <string name="ai_reading_refresh_btn_for_cung_free">免费 AI 咨询 (重新生成%1$s解析)</string>
+    <string name="chart_ai_request_btn_free">免费 AI 咨询</string>
+    <string name="ai_reading_loading_cung">正在发送数据，由 AI 解析%1$s中…</string>
+    <string name="ai_reading_hint_single_cung">与直接详批全盘相比，选择单独分析特定的单宫宫位，能够使 AI 的解析回答更加深入和详尽。</string>
+    <string name="browser_error_unknown">未知错误</string>
+    <string name="browser_default_title">浏览器</string>
 
     <string name="toast_chart_saved">已成功保存 %1$s 的命盘</string>
-    <string name="toast_chart_save_failed">保存失败： %1$s</string>
-    <string name="toast_chart_unsaved">已取消保存该命盘</string>
-    <string name="toast_chart_unsave_failed">无法取消保存： %1$s</string>
-    <string name="toast_chart_open_failed">无法打开或加载该命盘</string>
+    <string name="toast_chart_save_failed">保存失败：%1$s</string>
+    <string name="toast_chart_unsaved">已取消保存命盘</string>
+    <string name="toast_chart_unsave_failed">无法取消保存：%1$s</string>
+    <string name="toast_chart_open_failed">无法打开此命盘</string>
     <string name="rate_dialog_title">喜欢 Horoza 吗？</string>
-    <string name="rate_dialog_message">前往 Google Play 应用商店为我们评分，您的好评是对我们坚持优化最大的支持！</string>
-    <string name="rate_dialog_confirm">前往评分</string>
+    <string name="rate_dialog_message">请在 Play 商店中为我们评分，以支持我们的开发团队！</string>
+    <string name="rate_dialog_confirm">立即评分</string>
     <string name="rate_dialog_dismiss">稍后再说</string>
 
     <string name="exit_dialog_title">退出应用？</string>
-    <string name="exit_dialog_message">确定要退出 Horoza 吗？</string>
+    <string name="exit_dialog_message">您确定要退出 Horoza 吗？</string>
     <string name="exit_dialog_confirm">退出</string>
     <string name="exit_dialog_dismiss">留下</string>
 
-    <string name="chart_open_ai_reading_btn">查看 AI 详批报告结果</string>
-    <string name="ai_reading_hint">点击上方按钮，AI 将根据您的星曜分布及宫位吉凶，自动为您生成全面系统的星盘运势批导报告。</string>
-    <string name="ai_reading_used_btn">设备免额已用尽</string>
-    <string name="ai_already_used_hint">每台独立设备均可免费体验一次 AI 详批服务 — 您的设备当前已使用过该免费额度。</string>
-    <string name="error_ai_already_used">您已使用过该设备上仅有的一次免费 AI 详批特权。</string>
-    <string name="splash_tagline">紫微斗数解读</string>
+    <string name="chart_open_ai_reading_btn">查看 AI 详批结果</string>
+    <string name="ai_reading_hint">点击上方按钮，AI 将根据您的星曜分布及对应宫位，自动为您生成深度、详尽的个人命盘分析报告。</string>
+    <string name="ai_reading_used_btn">免费 AI 额度已用完</string>
+    <string name="ai_already_used_hint">每台设备仅限获得 1 次免费 AI 提问额度 — 您已经使用了该设备额度。</string>
+    <string name="error_ai_already_used">您已使用了该设备上唯一的免费 AI 咨询额度。</string>
 
-    <!-- 介绍页 / onboarding -->
+    <string name="settings_data_section">数据管理</string>
+    <string name="settings_saved_title">已保存的命盘</string>
+    <string name="settings_saved_desc">查看与管理所有已保存的命盘数据</string>
+    <string name="settings_about_section">关于应用</string>
+    <string name="settings_privacy_title">隐私政策</string>
+    <string name="settings_privacy_desc">了解我们如何妥善保护和处理您的个人数据</string>
+    <string name="settings_rate_title">给应用评分</string>
+    <string name="settings_rate_desc">在 Play 商店支持我们</string>
+    <string name="settings_feedback_title">意见与反馈</string>
+    <string name="settings_feedback_desc">向我们提交您的改进建议</string>
+    <string name="settings_qr_title">分享应用</string>
+    <string name="settings_qr_desc">生成二维码推荐给好友</string>
+    <string name="qr_share_message">来和我一起探索 Horoza 吧！下载应用链接：%1$s</string>
+    <string name="share_qr_title">分享应用</string>
+    <string name="share_qr_pick_template">选择海报背景模板</string>
+    <string name="share_qr_share_button">分享二维码</string>
+    <string name="feedback_screen_title">意见反馈</string>
+    <string name="feedback_subject">紫微斗数应用意见反馈</string>
+    <string name="browser_ctx_open_link">打开此链接</string>
+    <string name="browser_ctx_open_new_tab">在新标签页中打开</string>
+    <string name="browser_ctx_download_image">下载图片</string>
+    <string name="splash_tagline">紫微命盘深度详批与推算</string>
+
+    <!-- Màn giới thiệu (intro/onboarding) -->
     <string name="intro_skip">跳过</string>
     <string name="intro_next">继续</string>
-    <string name="intro_start">开始使用</string>
-    <string name="intro_0_title">欢迎使用 Horoza</string>
-    <string name="intro_0_desc">探索紫微命盘、运势历法与 AI 解读 —— 尽在一款应用中。</string>
-    <string name="intro_1_title">紫微命盘</string>
-    <string name="intro_1_desc">根据出生日期与时辰，精准排盘并解读十二宫命盘。</string>
-    <string name="intro_2_title">历法与运势</string>
-    <string name="intro_2_desc">查看阴阳历、吉凶日，以及每年的运势详批。</string>
-    <string name="intro_3_title">AI 解读</string>
-    <string name="intro_3_desc">AI 详细易懂地解读命盘，并解答你的各种疑问。</string>
+    <string name="intro_start">立即开始</string>
+    <string name="intro_0_title">欢迎来到 Horoza</string>
+    <string name="intro_0_desc">探索紫微命盘、流年运势和 AI 详批 — 尽在这一站式紫微斗数应用中。</string>
+    <string name="intro_1_title">解码运势乾坤</string>
+    <string name="intro_1_desc">为您排定紫微十二宫命盘，深度解读和预测您的流年事业、财运、以及姻缘感情。</string>
+    <string name="intro_2_title">精准择日吉凶</string>
+    <string name="intro_2_desc">快捷查阅公农历万年历，开张、交易吉日早知道，避开不宜办事的黑道凶日。</string>
+    <string name="intro_3_title">专属 AI 顾问相伴</string>
+    <string name="intro_3_desc">随时随地与 AI 畅聊，为您详批命盘并答疑解惑，洞悉人生命运轨迹。</string>
 </resources>

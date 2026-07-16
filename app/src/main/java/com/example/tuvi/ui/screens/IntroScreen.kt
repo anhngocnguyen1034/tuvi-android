@@ -1,6 +1,7 @@
 package com.example.tuvi.ui.screens
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,26 +49,25 @@ import com.anhnn.ads.BannerAd
 import com.example.tuvi.R
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ui.theme.TuViGold
+import com.example.tuvi.ui.theme.TuViIvory
 import com.example.tuvi.ui.theme.TuViIvoryDim
 import com.example.tuvi.ui.theme.TuViNavy
 import com.example.tuvi.ui.theme.TuViNavyLight
 import com.example.tuvi.ui.theme.TuViTheme
 import kotlinx.coroutines.launch
 
-/** Ảnh giới thiệu full-bleed cho mỗi trang (tiêu đề + mô tả đã nằm sẵn trong ảnh). */
-@DrawableRes
-private val INTRO_PAGES = intArrayOf(
-    R.drawable.intro1,
-    R.drawable.intro2,
-    R.drawable.intro3,
+private data class IntroPage(
+    @DrawableRes val image: Int,
+    @StringRes val title: Int,
+    @StringRes val desc: Int,
 )
 
-/**
- * Màn giới thiệu 3 phần, chỉ hiện ở lần mở app đầu tiên. Vuốt ngang qua từng phần;
- * "Bỏ qua" / "Bắt đầu" đều gọi [onFinish] (caller lưu cờ đã-xem rồi vào Home).
- *
- * Chỗ ảnh hiện để TRỐNG (placeholder bo góc) — khi có asset chỉ cần đặt Image vào [IntroImageSlot].
- */
+private val INTRO_PAGES = listOf(
+    IntroPage(R.drawable.intro1, R.string.intro_1_title, R.string.intro_1_desc),
+    IntroPage(R.drawable.intro2, R.string.intro_2_title, R.string.intro_2_desc),
+    IntroPage(R.drawable.intro3, R.string.intro_3_title, R.string.intro_3_desc),
+)
+
 @Composable
 fun IntroScreen(onFinish: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { INTRO_PAGES.size })
@@ -94,6 +95,32 @@ fun IntroScreen(onFinish: () -> Unit) {
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
                         IntroPageContent(INTRO_PAGES[page])
+                    }
+
+                    // Nội dung mô tả trang, đặt trên vùng ảnh mờ dần vào nền
+                    val current = INTRO_PAGES[pagerState.currentPage]
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(horizontal = 28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(current.title),
+                            color = TuViGold,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Text(
+                            text = stringResource(current.desc),
+                            color = TuViIvory,
+                            fontSize = 15.sp,
+                            lineHeight = 22.sp,
+                            textAlign = TextAlign.Center
+                        )
                     }
 
                     // Làm mờ dần đáy ảnh vào nền để liền mạch với phần điều khiển phía dưới
@@ -168,9 +195,9 @@ fun IntroScreen(onFinish: () -> Unit) {
 
 /** Ảnh full-width, căn mép trên; phần dư phía dưới bị cắt (crop). */
 @Composable
-private fun IntroPageContent(@DrawableRes image: Int) {
+private fun IntroPageContent(page: IntroPage) {
     Image(
-        painter = painterResource(image),
+        painter = painterResource(page.image),
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
         alignment = Alignment.TopCenter,

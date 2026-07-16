@@ -349,10 +349,10 @@
     <string name="intro_start">Bắt đầu</string>
     <string name="intro_0_title">Chào mừng đến Horoza</string>
     <string name="intro_0_desc">Khám phá lá số tử vi, lịch vận hạn và luận giải bằng AI — tất cả trong một ứng dụng.</string>
-    <string name="intro_1_title">Lá số tử vi</string>
-    <string name="intro_1_desc">Lập và luận giải lá số 12 cung chính xác theo ngày giờ sinh.</string>
-    <string name="intro_2_title">Lịch &amp; vận hạn</string>
-    <string name="intro_2_desc">Xem lịch âm dương, ngày tốt xấu và luận giải vận hạn từng năm.</string>
-    <string name="intro_3_title">Luận giải bằng AI</string>
-    <string name="intro_3_desc">AI luận giải lá số chi tiết, dễ hiểu và trả lời mọi câu hỏi của bạn.</string>
+    <string name="intro_1_title">Giải mã vận mệnh</string>
+    <string name="intro_1_desc">Lập lá số tử vi 12 cung, chấm điểm và dự đoán sự nghiệp, tài lộc, tình duyên theo từng năm.</string>
+    <string name="intro_2_title">Chọn ngày tốt xấu</string>
+    <string name="intro_2_desc">Xem lịch âm dương, biết ngay ngày tốt để khai trương, giao dịch và ngày xấu cần tránh.</string>
+    <string name="intro_3_title">Trợ lý AI đồng hành</string>
+    <string name="intro_3_desc">Trò chuyện cùng AI để luận giải lá số và giải đáp mọi thắc mắc về vận mệnh, mọi lúc.</string>
 </resources>
