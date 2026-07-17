@@ -8,9 +8,11 @@
 # ngược lại lấy từ keyring của gh đã đăng nhập.
 GITHUB_REPO="${GITHUB_REPO:-anhngocnguyen1034/tuvi-android}"
 QR_SERVICE="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
-# WEBHOOKS (Có thể được truyền từ Jenkins qua biến môi trường)
-DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1}"
-DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS}"
+# WEBHOOKS — LUÔN truyền qua biến môi trường / secret, KHÔNG hardcode trong repo.
+# GitHub Actions: Settings → Secrets → WEBHOOK_SUCCESS / WEBHOOK_JENKINS.
+# Nếu để trống, bước gửi Discord sẽ được bỏ qua (không làm fail build).
+DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-}"
+DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-}"
 
 BUILD_FILE="app/build.gradle.kts"
 current_branch="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
@@ -198,6 +200,11 @@ notify_discord() {
     local file="$1"
     local elapsed_seconds="$2"
 
+    if [ -z "$DISCORD_WEBHOOK_SUCCESS" ]; then
+        echo "WARN: WEBHOOK_SUCCESS trống — bỏ qua thông báo Discord (không fail build)."
+        return 0
+    fi
+
     local file_name
     file_name=$(basename "$file")
 
@@ -258,6 +265,11 @@ notify_discord() {
 }
 
 notify_discord_failure() {
+    if [ -z "$DISCORD_WEBHOOK_JENKINS" ]; then
+        echo "WARN: WEBHOOK_JENKINS trống — bỏ qua thông báo Discord thất bại."
+        return 0
+    fi
+
     local commit="${GIT_COMMIT:-$(git log -1 --pretty=format:'%h - %s')}"
     local build_url="${BUILD_URL:-}"
 
