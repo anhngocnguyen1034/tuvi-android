@@ -43,7 +43,6 @@ object AppContainer {
 
     lateinit var app: android.app.Application
         private set
-
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
