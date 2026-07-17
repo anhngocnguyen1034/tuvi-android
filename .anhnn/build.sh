@@ -184,8 +184,22 @@ notify_discord() {
 
     local path_on_server
     path_on_server=$(upload_file "$file" "$file_name")
-    local out_file="$HOST$path_on_server"
+    echo "DEBUG: upload response: '$path_on_server'"
+
+    local out_file=""
+    if [[ "$path_on_server" == http* ]]; then
+        out_file="$path_on_server"
+    elif [[ "$path_on_server" == /* ]]; then
+        out_file="$HOST$path_on_server"
+    fi
     echo "URL file: $out_file"
+
+    # Nếu upload hỏng (out_file không phải URL http) thì Discord sẽ từ chối cả embed.
+    # Dùng BUILD_URL/HOST làm link thay thế để tin nhắn vẫn đăng được.
+    if [[ "$out_file" != http* ]]; then
+        echo "WARN: Upload file thất bại hoặc trả về không hợp lệ ('$path_on_server'). Dùng link thay thế."
+        out_file="${BUILD_URL:-$HOST}"
+    fi
 
     local encoded_url
     encoded_url=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$out_file")
@@ -224,17 +238,39 @@ notify_discord() {
         "$size" "$qr" \
         "$elapsed_seconds")
 
+    # Discord từ chối TOÀN BỘ embed nếu image.url không phải URL http hợp lệ.
+    # → chỉ đính kèm QR khi hợp lệ, ngược lại bỏ field image để tin vẫn đăng.
     local JSON_PAYLOAD
-    JSON_PAYLOAD=$(jq -n \
-        --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
-        --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
-        --arg title "✅ Build Success - $current_branch" \
-        --arg url "$out_file" \
-        --arg description "$msg" \
-        --arg image_url "$qr" \
-        '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993, image: {url: $image_url}}]}')
+    if [[ "$qr" == http* ]]; then
+        JSON_PAYLOAD=$(jq -n \
+            --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
+            --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
+            --arg title "✅ Build Success - $current_branch" \
+            --arg url "$out_file" \
+            --arg description "$msg" \
+            --arg image_url "$qr" \
+            '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993, image: {url: $image_url}}]}')
+    else
+        echo "WARN: QR không hợp lệ ('$qr') — đăng embed không kèm ảnh QR."
+        JSON_PAYLOAD=$(jq -n \
+            --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
+            --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
+            --arg title "✅ Build Success - $current_branch" \
+            --arg url "$out_file" \
+            --arg description "$msg" \
+            '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993}]}')
+    fi
 
-    curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_SUCCESS"
+    # Log HTTP status/response của Discord — curl -sS KHÔNG fail trên HTTP 4xx,
+    # nên trước đây embed bị từ chối (400 Invalid Form Body) mà build vẫn "success".
+    local discord_code
+    discord_code=$(curl -sS -o /tmp/discord_resp.txt -w "%{http_code}" \
+        -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_SUCCESS") || true
+    echo "DEBUG: Discord Success HTTP status: $discord_code"
+    echo "DEBUG: Discord Success response: $(cat /tmp/discord_resp.txt 2>/dev/null)"
+    if [[ "$discord_code" != 2* ]]; then
+        echo "WARN: Discord TỪ CHỐI tin nhắn (HTTP $discord_code). Xem payload/URL ở trên."
+    fi
 }
 
 notify_discord_failure() {
