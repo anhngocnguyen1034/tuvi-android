@@ -3,8 +3,11 @@
 # ─────────────────────────────────────────────
 # Cấu hình
 # ─────────────────────────────────────────────
-HOST="https://production.anhnn.com"
-FILE_SERVICE="$HOST/file/service"
+# Host APK: dùng GitHub Release (repo public → link tải/QR quét được ẩn danh).
+# gh CLI dùng token từ GH_TOKEN/GITHUB_TOKEN nếu có (Jenkins credential),
+# ngược lại lấy từ keyring của gh đã đăng nhập.
+GITHUB_REPO="${GITHUB_REPO:-anhngocnguyen1034/tuvi-android}"
+QR_SERVICE="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
 # WEBHOOKS (Có thể được truyền từ Jenkins qua biến môi trường)
 DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1}"
 DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS}"
@@ -92,12 +95,28 @@ update_version_in_gradle() {
 }
 
 # ─────────────────────────────────────────────
-# Upload file lên server
+# Tạo GitHub Release cho $newTag và upload các file APK/AAB làm asset
 # ─────────────────────────────────────────────
-upload_file() {
-    local file_path="$1"
-    local file_name="$2"
-    curl -sS -F "file=@\"$file_path\";filename=\"$file_name\"" "$FILE_SERVICE/upload"
+create_github_release() {
+    # $@ = danh sách file cần upload
+    echo "Tạo/ cập nhật GitHub Release cho tag $newTag trên $GITHUB_REPO ..."
+
+    if gh release view "$newTag" --repo "$GITHUB_REPO" >/dev/null 2>&1; then
+        echo "Release $newTag đã tồn tại — upload/ghi đè asset."
+        gh release upload "$newTag" "$@" --repo "$GITHUB_REPO" --clobber
+    else
+        gh release create "$newTag" "$@" \
+            --repo "$GITHUB_REPO" \
+            --title "[$current_branch] $newTag" \
+            --notes "Auto build từ nhánh \`$current_branch\` — build #${BUILD_NUMBER:-?}"
+    fi
+    echo "GitHub Release sẵn sàng: https://github.com/$GITHUB_REPO/releases/tag/$newTag"
+}
+
+# URL tải asset công khai từ GitHub Release
+github_asset_url() {
+    local file_name="$1"
+    echo "https://github.com/$GITHUB_REPO/releases/download/$newTag/$file_name"
 }
 
 # ─────────────────────────────────────────────
@@ -182,50 +201,15 @@ notify_discord() {
     local file_name
     file_name=$(basename "$file")
 
-    local path_on_server
-    path_on_server=$(upload_file "$file" "$file_name")
-    echo "DEBUG: upload response: '$path_on_server'"
-
-    local out_file=""
-    if [[ "$path_on_server" == http* ]]; then
-        out_file="$path_on_server"
-    elif [[ "$path_on_server" == /* ]]; then
-        out_file="$HOST$path_on_server"
-    fi
+    # Link tải công khai từ GitHub Release (asset đã được create_github_release upload)
+    local out_file
+    out_file=$(github_asset_url "$file_name")
     echo "URL file: $out_file"
 
-    # Nếu upload hỏng (out_file không phải URL http) thì Discord sẽ từ chối cả embed.
-    # Dùng BUILD_URL/HOST làm link thay thế để tin nhắn vẫn đăng được.
-    if [[ "$out_file" != http* ]]; then
-        echo "WARN: Upload file thất bại hoặc trả về không hợp lệ ('$path_on_server'). Dùng link thay thế."
-        out_file="${BUILD_URL:-$HOST}"
-    fi
-
+    # QR trỏ tới link tải, tạo qua dịch vụ công khai (không cần auth)
     local encoded_url
     encoded_url=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$out_file")
-
-    local qr_path
-    echo "DEBUG: Truy cập QR từ: $FILE_SERVICE/qr?text=$encoded_url"
-    qr_path=$(curl -sS -o /tmp/qr_response.txt -w "%{http_code}" "$FILE_SERVICE/qr?text=$encoded_url")
-    echo "DEBUG: QR HTTP status: $qr_path"
-    echo "DEBUG: QR response: $(cat /tmp/qr_response.txt)"
-
-    local qr=""
-    if [ "$qr_path" = "200" ]; then
-        local qr_body
-        qr_body=$(cat /tmp/qr_response.txt)
-        if [[ "$qr_body" == http* ]]; then
-            qr="$qr_body"
-        else
-            qr="$HOST$qr_body"
-        fi
-    fi
-
-    # Fallback: nếu QR nội bộ lỗi thì dùng api.qrserver.com (public, không cần auth)
-    if [ -z "$qr" ]; then
-        echo "WARN: QR nội bộ thất bại, dùng QR fallback công khai"
-        qr="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=$encoded_url"
-    fi
+    local qr="${QR_SERVICE}${encoded_url}"
     echo "QR: $qr"
 
     local size
@@ -334,13 +318,21 @@ fi
 # Tự động tạo tag & push
 auto_create_tag
 
+# Upload tất cả APK/AAB lên GitHub Release của tag vừa tạo
+# (không dùng mapfile — bash 3.2 trên macOS không hỗ trợ)
+artifact_files=()
+while IFS= read -r f; do
+    [ -n "$f" ] && artifact_files+=("$f")
+done < <(find app/build -type f \( -name "*.apk" -o -name "*.aab" \))
+create_github_release "${artifact_files[@]}"
+
 # Tính thời gian build
 end_time=$(date +%s)
 elapsed_seconds=$((end_time - start_time))
 
-# Gửi từng file APK/AAB lên Discord
-for file in $(find app/build -type f \( -name "*.apk" -o -name "*.aab" \)); do
-    echo "Upload: $file"
+# Gửi thông báo Discord cho từng file (link tải là GitHub Release asset)
+for file in "${artifact_files[@]}"; do
+    echo "Notify: $file"
     notify_discord "$file" "$elapsed_seconds"
 done
 
