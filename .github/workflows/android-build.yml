@@ -1,0 +1,64 @@
+name: Android Build & Release
+
+# Chạy khi push lên các nhánh mà .anhnn/build.sh xử lý.
+# KHÔNG trigger trên tag → tránh vòng lặp khi script tự push tag
+# (ngoài ra event do GITHUB_TOKEN tạo cũng không kích hoạt workflow mới).
+on:
+  push:
+    branches: [develop, testing, release, main]
+  workflow_dispatch: {}
+
+# Mỗi nhánh chỉ chạy 1 build tại một thời điểm (tránh đụng version/tag)
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # cần để push tag + tạo GitHub Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # build.sh cần toàn bộ tag để tính version
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK (platform + build-tools 36)
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-36 build-tools;36.0.0'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build & Release
+        env:
+          # build.sh đọc các biến này (giống môi trường Jenkins trước đây)
+          BRANCH_NAME: ${{ github.ref_name }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GIT_AUTHOR_NAME: ${{ github.actor }}
+          GITHUB_REPO: ${{ github.repository }}
+          # gh CLI dùng token này để tạo release/upload asset (hết lo keyring)
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Webhook Discord — thêm ở Settings → Secrets and variables → Actions.
+          # Nếu bỏ trống, build.sh fallback về webhook mặc định trong script.
+          WEBHOOK_SUCCESS: ${{ secrets.WEBHOOK_SUCCESS }}
+          WEBHOOK_JENKINS: ${{ secrets.WEBHOOK_JENKINS }}
+        run: |
+          chmod +x .anhnn/build.sh
+          bash .anhnn/build.sh
