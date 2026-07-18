@@ -332,6 +332,13 @@
     <string name="settings_feedback_desc">Gửi ý kiến để chúng tôi cải thiện</string>
     <string name="settings_qr_title">Chia sẻ ứng dụng</string>
     <string name="settings_qr_desc">Tạo mã QR để giới thiệu cho bạn bè</string>
+    <string name="settings_remove_ads_title">Gỡ quảng cáo</string>
+    <string name="settings_remove_ads_desc">Nâng cấp để dùng app không quảng cáo</string>
+    <string name="settings_remove_ads_desc_active">Đã kích hoạt · Cảm ơn bạn!</string>
+    <string name="remove_ads_message">Nâng cấp một lần để trải nghiệm Horoza không quảng cáo.</string>
+    <string name="remove_ads_buy">Mua</string>
+    <string name="remove_ads_restore">Khôi phục</string>
+    <string name="remove_ads_later">Để sau</string>
     <string name="qr_share_message">Cùng khám phá Horoza nhé! Tải app tại: %1$s</string>
     <string name="share_qr_title">Chia sẻ ứng dụng</string>
     <string name="share_qr_pick_template">Chọn mẫu nền</string>

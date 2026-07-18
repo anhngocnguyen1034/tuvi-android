@@ -5,6 +5,7 @@ anhnnComponentsFeedback = "1.0.1"
 anhnnComponentsExit = "1.1.0"
 anhnnComponentsAds = "1.5.0"
 anhnnComponentsAnalytics = "1.3.0"
+anhnnComponentsIap = "1.7.0"
 anhnnLanguage = "1.0.1"
 kotlin = "2.3.21"
 ksp = "2.3.7"
@@ -47,6 +48,7 @@ anhnn-components-rate = { module = "com.github.anhngocnguyen1034.anhnn-component
 anhnn-components-exit = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-exit", version.ref = "anhnnComponentsExit" }
 anhnn-components-ads = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-ads", version.ref = "anhnnComponentsAds" }
 anhnn-components-analytics = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-analytics", version.ref = "anhnnComponentsAnalytics" }
+anhnn-components-iap = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-iap", version.ref = "anhnnComponentsIap" }
 anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }

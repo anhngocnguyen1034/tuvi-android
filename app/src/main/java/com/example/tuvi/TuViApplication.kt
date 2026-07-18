@@ -12,6 +12,10 @@ import com.microsoft.clarity.ClarityConfig
 import com.example.tuvi.data.preferences.UserPreferencesRepository
 import com.example.tuvi.ads.AdNames
 import com.example.tuvi.ads.RemoteConfigManager
+import com.anhnn.iap.IapConfig
+import com.anhnn.iap.IapListener
+import com.anhnn.iap.IapManager
+import com.example.tuvi.billing.BillingProducts
 import com.example.tuvi.di.AppContainer
 import com.example.tuvi.ui.theme.TuViComposeColors
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +53,20 @@ class TuViApplication : Application() {
 
         RemoteConfigManager.init(this)
 
+        // IAP: khởi tạo Billing sớm để biết trạng thái premium (isPremium đọc từ cache bền) —
+        // dùng để tắt quảng cáo bên dưới. Thêm consumableIds khi làm "mua lượt AI".
+        IapManager.init(
+            this,
+            IapConfig(nonConsumableIds = listOf(BillingProducts.REMOVE_ADS)),
+        )
+        // Mua gỡ quảng cáo xong → xoá ad đang cache để tắt quảng cáo tức thì (không cần restart).
+        // Các request mới đã tự tắt qua adsEnabled ở dưới.
+        IapManager.addListener(object : IapListener {
+            override fun onPremiumChanged(isPremium: Boolean) {
+                if (isPremium) Ads.clear()
+            }
+        })
+
         // Analytics: Firebase Analytics (đã có google-services.json). Event cụ thể khai báo ở Events.
         Analytics.init(this)
 
@@ -60,7 +78,7 @@ class TuViApplication : Application() {
         // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.
         Ads.init(
             AdsConfig(
-                adsEnabled = { RemoteConfigManager.adsEnabled() },
+                adsEnabled = { RemoteConfigManager.adsEnabled() && !IapManager.isPremium.value },
                 adUnitId = { name ->
                     when (AdNames.formatOf(name)) {
                         AdFormat.INTERSTITIAL -> RemoteConfigManager.interAdUnitId(name)

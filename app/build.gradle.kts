@@ -141,6 +141,9 @@ dependencies {
     // Google Play Billing (mua lượt AI qua IAP)
     implementation(libs.billing.ktx)
 
+    // IAP — module anhnn-components-iap (bọc Billing v7: remove-ads / subscription).
+    implementation(libs.anhnn.components.iap)
+
     // Microsoft Clarity — heatmap chạm/scroll + session replay
     implementation(libs.clarity)
 

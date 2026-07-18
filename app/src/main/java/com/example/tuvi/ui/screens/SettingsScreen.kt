@@ -45,6 +45,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.anhnn.iap.IapManager
+import com.anhnn.iap.RemoveAdsDialog
+import com.example.tuvi.billing.BillingProducts
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -117,6 +120,22 @@ fun SettingsScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scroll = rememberScrollState()
+
+    // IAP: gỡ quảng cáo
+    val isPremium by IapManager.isPremium.collectAsStateWithLifecycle()
+    var showRemoveAds by remember { mutableStateOf(false) }
+    if (showRemoveAds) {
+        RemoveAdsDialog(
+            productId = BillingProducts.REMOVE_ADS,
+            onDismiss = { showRemoveAds = false },
+            onPurchase = { id -> (context as? Activity)?.let { IapManager.purchase(it, id) } },
+            title = stringResource(R.string.settings_remove_ads_title),
+            message = stringResource(R.string.remove_ads_message),
+            buyLabelPrefix = stringResource(R.string.remove_ads_buy),
+            dismissLabel = stringResource(R.string.remove_ads_later),
+            restoreLabel = stringResource(R.string.remove_ads_restore),
+        )
+    }
     val notifPermPrefs = remember(context) {
         context.getSharedPreferences("notif_perm_prefs", Context.MODE_PRIVATE)
     }
@@ -320,6 +339,15 @@ fun SettingsScreen(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.8.sp
+            )
+            AboutActionRow(
+                iconRes = R.drawable.ic_remove_ads,
+                title = stringResource(R.string.settings_remove_ads_title),
+                desc = stringResource(
+                    if (isPremium) R.string.settings_remove_ads_desc_active
+                    else R.string.settings_remove_ads_desc
+                ),
+                onClick = { showRemoveAds = true }
             )
             PrivacyPolicyRow(onClick = onOpenPrivacy)
             AboutActionRow(
