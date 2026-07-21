@@ -6,7 +6,9 @@ pipeline {
         ANDROID_HOME            = '/Users/nguyenquocchinh/Library/Android/sdk'
         PATH                    = "/opt/homebrew/bin:${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
 
-        // Cấu hình các kênh Discord
+        // Cấu hình các kênh Discord — lấy từ Jenkins Credentials (Secret text)
+        // 3 credential dạng "Secret text" trên Jenkins với ID tương ứng:
+        //   discord-webhook-url (kênh GitHub) / discord-webhook-jenkins / discord-webhook-success
         WEBHOOK_GITHUB          = credentials('discord-webhook-url')
         WEBHOOK_JENKINS         = credentials('discord-webhook-jenkins')
         WEBHOOK_SUCCESS         = credentials('discord-webhook-success')
@@ -80,6 +82,12 @@ pipeline {
                         '{username: "Jenkins CI", embeds: [{title: $title, description: $desc, color: 15158332}]}' \
                     | curl -sS -H "Content-Type: application/json" -X POST -d @- "$WEBHOOK_JENKINS"
                 '''
+            }
+        }
+        always {
+            // Dọn workspace sau mỗi lần build (tham khảo cách build chuẩn từ big-font)
+            node('') {
+                cleanWs()
             }
         }
     }
