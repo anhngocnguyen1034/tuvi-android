@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "http://192.168.0.103:8000"
+    private const val BASE_URL = "http://192.168.1.11:8000"
     private const val CLOUD_PROJECT_NUMBER = 0L
 
     lateinit var app: android.app.Application
@@ -79,7 +79,6 @@ object AppContainer {
                 )
             }
             .apply {
-                // Body chứa PII (tên, ngày/giờ sinh, giới tính) — chỉ log trong debug build.
                 if (BuildConfig.DEBUG) {
                     addInterceptor(HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY
