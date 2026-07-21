@@ -332,6 +332,13 @@
     <string name="settings_feedback_desc">向我们提交您的改进建议</string>
     <string name="settings_qr_title">分享应用</string>
     <string name="settings_qr_desc">生成二维码推荐给好友</string>
+    <string name="settings_remove_ads_title">移除广告</string>
+    <string name="settings_remove_ads_desc">升级后无广告使用应用</string>
+    <string name="settings_remove_ads_desc_active">已激活 · 谢谢支持！</string>
+    <string name="remove_ads_message">一次性升级，畅享无广告的 Horoza。</string>
+    <string name="remove_ads_buy">购买</string>
+    <string name="remove_ads_restore">恢复购买</string>
+    <string name="remove_ads_later">以后再说</string>
     <string name="qr_share_message">来和我一起探索 Horoza 吧！下载应用链接：%1$s</string>
     <string name="share_qr_title">分享应用</string>
     <string name="share_qr_pick_template">选择海报背景模板</string>

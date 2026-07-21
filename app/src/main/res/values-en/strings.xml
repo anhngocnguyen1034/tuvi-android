@@ -373,6 +373,13 @@
     <string name="settings_feedback_desc">Send us your ideas to help us improve</string>
     <string name="settings_qr_title">Share app</string>
     <string name="settings_qr_desc">Create a QR code to share with friends</string>
+    <string name="settings_remove_ads_title">Remove ads</string>
+    <string name="settings_remove_ads_desc">Upgrade to use the app ad-free</string>
+    <string name="settings_remove_ads_desc_active">Active · Thank you!</string>
+    <string name="remove_ads_message">One-time upgrade for an ad-free Horoza experience.</string>
+    <string name="remove_ads_buy">Buy</string>
+    <string name="remove_ads_restore">Restore</string>
+    <string name="remove_ads_later">Later</string>
 
     <!-- Feedback -->
     <string name="feedback_screen_title">Feedback</string>
