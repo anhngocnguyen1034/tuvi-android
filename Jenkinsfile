@@ -7,9 +7,9 @@ pipeline {
         PATH                    = "/opt/homebrew/bin:${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
 
         // Cấu hình các kênh Discord
-        WEBHOOK_GITHUB          = 'https://discord.com/api/webhooks/1485532290795835403/Spxq-09qW7l4-NSbgS965FECBOK-SpzIUuWeAbS4kvxwet13B0HY7p7CLeo7lGCiFRi9'
-        WEBHOOK_JENKINS         = 'https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS'
-        WEBHOOK_SUCCESS         = 'https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1'
+        WEBHOOK_GITHUB          = credentials('discord-webhook-url')
+        WEBHOOK_JENKINS         = credentials('discord-webhook-jenkins')
+        WEBHOOK_SUCCESS         = credentials('discord-webhook-success')
     }
 
     stages {
