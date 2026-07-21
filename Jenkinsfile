@@ -7,9 +7,9 @@ pipeline {
         PATH                    = "/opt/homebrew/bin:${env.JAVA_HOME}/bin:${env.ANDROID_HOME}/tools:${env.ANDROID_HOME}/platform-tools:${env.PATH}"
 
         // Cấu hình các kênh Discord — lấy từ Jenkins Credentials (Secret text)
-        // Tạo 3 credential dạng "Secret text" trên Jenkins với ID tương ứng:
-        //   discord-webhook-github  / discord-webhook-jenkins / discord-webhook-success
-        WEBHOOK_GITHUB          = credentials('discord-webhook-github')
+        // 3 credential dạng "Secret text" trên Jenkins với ID tương ứng:
+        //   discord-webhook-url (kênh GitHub) / discord-webhook-jenkins / discord-webhook-success
+        WEBHOOK_GITHUB          = credentials('discord-webhook-url')
         WEBHOOK_JENKINS         = credentials('discord-webhook-jenkins')
         WEBHOOK_SUCCESS         = credentials('discord-webhook-success')
     }
