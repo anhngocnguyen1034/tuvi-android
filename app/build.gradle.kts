@@ -22,7 +22,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.tuvi"
+    namespace = "com.anhnn.tuvi"
     compileSdk {
         version = release(36)
     }
@@ -70,6 +70,16 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    // Đổi tên file APK theo package + version + buildType để dễ nhận biết trên Discord
+    // (thay cho app-debug.apk / app-release.apk). VD: com.anhnn.tuvi-v1.0-release.apk
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "${variant.applicationId}-v${variant.versionName}-${variant.name}.apk"
+        }
     }
 }
 
