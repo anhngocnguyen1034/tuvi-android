@@ -3,13 +3,13 @@
 
 # ===== kotlinx.serialization =====
 # Giữ serializer sinh tự động + Companion cho mọi class @Serializable của app.
--keepclassmembers class com.example.tuvi.** {
+-keepclassmembers class com.anhnn.tuvi.** {
     *** Companion;
 }
--keepclasseswithmembers class com.example.tuvi.** {
+-keepclasseswithmembers class com.anhnn.tuvi.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keep,includedescriptorclasses class com.example.tuvi.**$$serializer { *; }
+-keep,includedescriptorclasses class com.anhnn.tuvi.**$$serializer { *; }
 
 -keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
 -keepclasseswithmembers class kotlinx.serialization.json.** {
@@ -27,8 +27,8 @@
 -dontwarn retrofit2.**
 
 # ===== Giữ API service interfaces & DTO (đề phòng reflection của Retrofit) =====
--keep interface com.example.tuvi.data.remote.** { *; }
--keep class com.example.tuvi.data.remote.dto.** { *; }
+-keep interface com.anhnn.tuvi.data.remote.** { *; }
+-keep class com.anhnn.tuvi.data.remote.dto.** { *; }
 
 # ===== AdMob / Google Mobile Ads / UMP =====
 -keep class com.google.android.gms.ads.** { *; }
