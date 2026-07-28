@@ -43,7 +43,11 @@ import com.anhnn.tuvi.ui.theme.*
 import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
+import com.anhnn.ads.BannerAd
+import com.anhnn.ads.NativeAd
+import com.anhnn.ads.NativeAdSize
 import com.anhnn.tuvi.R
+import com.anhnn.tuvi.ads.AdNames
 import com.anhnn.tuvi.domain.model.TuViChartInput
 
 private fun inputScreenBgBrush() = Brush.verticalGradient(listOf(TuViNavy, InputBgGradientBottom))
@@ -513,227 +517,26 @@ fun InputScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(start = 20.dp, end = 20.dp, top = 76.dp, bottom = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            SectionCard {
-                FieldLabel(stringResource(R.string.input_label_name))
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    placeholder = {
-                        Text(
-                            stringResource(R.string.input_hint_name),
-                            color = TuViIvoryDim.copy(alpha = 0.5f),
-                            fontSize = 14.sp
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TuViIvory,
-                        unfocusedTextColor = TuViIvory,
-                        focusedBorderColor = TuViGold,
-                        unfocusedBorderColor = TuViDivider,
-                        focusedLabelColor = TuViGold,
-                        cursorColor = TuViGold,
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            // ── Ngày sinh (dương / âm) ──
-            SectionCard {
-                FieldLabel(stringResource(R.string.input_label_birthday))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    FilterChip(
-                        selected = duongLich,
-                        onClick = { duongLich = true },
-                        label = { Text(stringResource(R.string.input_solar_calendar), fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = TuViGold.copy(alpha = 0.35f),
-                            selectedLabelColor = TuViGold,
-                            labelColor = TuViIvoryDim,
-                            containerColor = TuViNavyLight
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterChip(
-                        selected = !duongLich,
-                        onClick = { duongLich = false },
-                        label = { Text(stringResource(R.string.input_lunar_calendar), fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = TuViGold.copy(alpha = 0.35f),
-                            selectedLabelColor = TuViGold,
-                            labelColor = TuViIvoryDim,
-                            containerColor = TuViNavyLight
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Button(
-                    onClick = { showDatePicker = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
-                    shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TuViGold.copy(alpha = 0.7f)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "%02d  /  %02d  /  %d".format(day, month, year),
-                            color = TuViIvory,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            letterSpacing = 1.sp
-                        )
-                        Icon(
-                            painter = painterResource(R.drawable.ic_edit_dob),
-                            contentDescription = stringResource(R.string.input_label_birthday),
-                            tint = TuViGold,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            }
-
-            // Giờ sinh
-            SectionCard {
-                FieldLabel(stringResource(R.string.input_label_birth_time))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        TuViDropdownBox(
-                            label = stringResource(R.string.input_hour_label),
-                            value = stringResource(R.string.input_hour_item, "%02d".format(hour)),
-                            expanded = hourExpanded,
-                            onExpandedChange = { hourExpanded = it }
-                        ) {
-                            (0..23).forEach { h ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            stringResource(R.string.input_hour_item, "%02d".format(h)),
-                                            color = if (h == hour) TuViGold else TuViIvory
-                                        )
-                                    },
-                                    onClick = { hour = h; hourExpanded = false }
-                                )
-                            }
-                        }
-                    }
-                    Box(modifier = Modifier.weight(1f)) {
-                        TuViDropdownBox(
-                            label = stringResource(R.string.input_minute_label),
-                            value = stringResource(R.string.input_minute_item, "%02d".format(minute)),
-                            expanded = minExpanded,
-                            onExpandedChange = { minExpanded = it }
-                        ) {
-                            (0..59).forEach { m ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            stringResource(R.string.input_minute_item, "%02d".format(m)),
-                                            color = if (m == minute) TuViGold else TuViIvory
-                                        )
-                                    },
-                                    onClick = { minute = m; minExpanded = false }
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // Zodiac hint
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(TuViNavyLight)
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_time),
-                        contentDescription = null,
-                        tint = TuViGold,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(R.string.input_earthly_branch_hour),
-                            color = TuViIvoryDim,
-                            fontSize = 11.sp,
-                            letterSpacing = 0.5.sp
-                        )
-                        Text(
-                            text = zodiacLabel,
-                            color = TuViGoldLight,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            }
-
-            SectionCard {
-                FieldLabel(stringResource(R.string.input_label_gender))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    GenderButton(
-                        label = stringResource(R.string.input_gender_male),
-                        icon = R.drawable.ic_male,
-                        selected = gender == 1,
-                        onClick = { gender = 1 },
-                        modifier = Modifier.weight(1f)
-                    )
-                    GenderButton(
-                        label = stringResource(R.string.input_gender_female),
-                        icon = R.drawable.ic_female,
-                        selected = gender == -1,
-                        onClick = { gender = -1 },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            // ── Năm xem ──
-            SectionCard {
-                FieldLabel(stringResource(R.string.input_label_view_year))
-                Box(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(start = 20.dp, end = 20.dp, top = 76.dp, bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                SectionCard {
+                    FieldLabel(stringResource(R.string.input_label_name))
                     OutlinedTextField(
-                        value = viewYear.toString(),
-                        onValueChange = {},
-                        readOnly = true,
-                        label = {
+                        value = name,
+                        onValueChange = { name = it },
+                        placeholder = {
                             Text(
-                                stringResource(R.string.input_hint_view_year),
-                                color = TuViIvoryDim,
-                                fontSize = 12.sp
+                                stringResource(R.string.input_hint_name),
+                                color = TuViIvoryDim.copy(alpha = 0.5f),
+                                fontSize = 14.sp
                             )
-                        },
-                        trailingIcon = {
-                            Icon ( painter = painterResource(R.drawable.ic_drop_down)
-                                , contentDescription = null)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = TuViIvory,
@@ -741,46 +544,257 @@ fun InputScreen(
                             focusedBorderColor = TuViGold,
                             unfocusedBorderColor = TuViDivider,
                             focusedLabelColor = TuViGold,
-                            focusedTrailingIconColor = TuViGold,
-                            unfocusedTrailingIconColor = TuViIvoryDim
+                            cursorColor = TuViGold,
                         ),
                         shape = RoundedCornerShape(10.dp),
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Box(
-                        Modifier
-                            .matchParentSize()
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable { showViewYearPicker = true }
+                }
+
+                // ── Ngày sinh (dương / âm) ──
+                SectionCard {
+                    FieldLabel(stringResource(R.string.input_label_birthday))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        FilterChip(
+                            selected = duongLich,
+                            onClick = { duongLich = true },
+                            label = { Text(stringResource(R.string.input_solar_calendar), fontSize = 12.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = TuViGold.copy(alpha = 0.35f),
+                                selectedLabelColor = TuViGold,
+                                labelColor = TuViIvoryDim,
+                                containerColor = TuViNavyLight
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        FilterChip(
+                            selected = !duongLich,
+                            onClick = { duongLich = false },
+                            label = { Text(stringResource(R.string.input_lunar_calendar), fontSize = 12.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = TuViGold.copy(alpha = 0.35f),
+                                selectedLabelColor = TuViGold,
+                                labelColor = TuViIvoryDim,
+                                containerColor = TuViNavyLight
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Button(
+                        onClick = { showDatePicker = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = TuViNavyLight),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            TuViGold.copy(alpha = 0.7f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "%02d  /  %02d  /  %d".format(day, month, year),
+                                color = TuViIvory,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium,
+                                letterSpacing = 1.sp
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.ic_edit_dob),
+                                contentDescription = stringResource(R.string.input_label_birthday),
+                                tint = TuViGold,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Giờ sinh
+                SectionCard {
+                    FieldLabel(stringResource(R.string.input_label_birth_time))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            TuViDropdownBox(
+                                label = stringResource(R.string.input_hour_label),
+                                value = stringResource(R.string.input_hour_item, "%02d".format(hour)),
+                                expanded = hourExpanded,
+                                onExpandedChange = { hourExpanded = it }
+                            ) {
+                                (0..23).forEach { h ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                stringResource(R.string.input_hour_item, "%02d".format(h)),
+                                                color = if (h == hour) TuViGold else TuViIvory
+                                            )
+                                        },
+                                        onClick = { hour = h; hourExpanded = false }
+                                    )
+                                }
+                            }
+                        }
+                        Box(modifier = Modifier.weight(1f)) {
+                            TuViDropdownBox(
+                                label = stringResource(R.string.input_minute_label),
+                                value = stringResource(R.string.input_minute_item, "%02d".format(minute)),
+                                expanded = minExpanded,
+                                onExpandedChange = { minExpanded = it }
+                            ) {
+                                (0..59).forEach { m ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                stringResource(R.string.input_minute_item, "%02d".format(m)),
+                                                color = if (m == minute) TuViGold else TuViIvory
+                                            )
+                                        },
+                                        onClick = { minute = m; minExpanded = false }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Zodiac hint
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(TuViNavyLight)
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_time),
+                            contentDescription = null,
+                            tint = TuViGold,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.input_earthly_branch_hour),
+                                color = TuViIvoryDim,
+                                fontSize = 11.sp,
+                                letterSpacing = 0.5.sp
+                            )
+                            Text(
+                                text = zodiacLabel,
+                                color = TuViGoldLight,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                NativeAd(
+                    adName = AdNames.INPUT_NATIVE,
+                    size = NativeAdSize.SMALL,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                SectionCard {
+                    FieldLabel(stringResource(R.string.input_label_gender))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        GenderButton(
+                            label = stringResource(R.string.input_gender_male),
+                            icon = R.drawable.ic_male,
+                            selected = gender == 1,
+                            onClick = { gender = 1 },
+                            modifier = Modifier.weight(1f)
+                        )
+                        GenderButton(
+                            label = stringResource(R.string.input_gender_female),
+                            icon = R.drawable.ic_female,
+                            selected = gender == -1,
+                            onClick = { gender = -1 },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+
+                // ── Năm xem ──
+                SectionCard {
+                    FieldLabel(stringResource(R.string.input_label_view_year))
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedTextField(
+                            value = viewYear.toString(),
+                            onValueChange = {},
+                            readOnly = true,
+                            label = {
+                                Text(
+                                    stringResource(R.string.input_hint_view_year),
+                                    color = TuViIvoryDim,
+                                    fontSize = 12.sp
+                                )
+                            },
+                            trailingIcon = {
+                                Icon ( painter = painterResource(R.drawable.ic_drop_down)
+                                    , contentDescription = null)
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = TuViIvory,
+                                unfocusedTextColor = TuViIvory,
+                                focusedBorderColor = TuViGold,
+                                unfocusedBorderColor = TuViDivider,
+                                focusedLabelColor = TuViGold,
+                                focusedTrailingIconColor = TuViGold,
+                                unfocusedTrailingIconColor = TuViIvoryDim
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Box(
+                            Modifier
+                                .matchParentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable { showViewYearPicker = true }
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich)
+                    },
+                    enabled = name.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = TuViGold,
+                        disabledContainerColor = TuViGoldDark.copy(alpha = 0.35f)
+                    ),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.input_btn_view_chart),
+                        color = TuViNavy,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.5.sp
                     )
                 }
+
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Button(
-                onClick = {
-                    onViewChart(name, day, month, year, viewYear, hour, minute, gender, duongLich)
-                },
-                enabled = name.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = TuViGold,
-                    disabledContainerColor = TuViGoldDark.copy(alpha = 0.35f)
-                ),
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.input_btn_view_chart),
-                    color = TuViNavy,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.5.sp
-                )
-            }
-
-
-            Spacer(modifier = Modifier.height(16.dp))
+            BannerAd(adName = AdNames.INPUT_BANNER, modifier = Modifier.fillMaxWidth())
         }
 
         Row(

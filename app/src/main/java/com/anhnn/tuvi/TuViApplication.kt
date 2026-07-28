@@ -18,6 +18,8 @@ import com.anhnn.iap.IapManager
 import com.anhnn.tuvi.billing.BillingProducts
 import com.anhnn.tuvi.di.AppContainer
 import com.anhnn.tuvi.ui.theme.TuViComposeColors
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
@@ -53,19 +55,29 @@ class TuViApplication : Application() {
 
         RemoteConfigManager.init(this)
 
+        // Crashlytics: chỉ gửi crash từ bản release để log debug không làm nhiễu dashboard.
+        // KHÔNG set custom key chứa dữ liệu ngày sinh — chỉ enum/boolean (xem quy ước ở Events).
+        Firebase.crashlytics.isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG
+
         // IAP: khởi tạo Billing sớm để biết trạng thái premium (isPremium đọc từ cache bền) —
         // dùng để tắt quảng cáo bên dưới. Thêm consumableIds khi làm "mua lượt AI".
-        IapManager.init(
-            this,
-            IapConfig(nonConsumableIds = listOf(BillingProducts.REMOVE_ADS)),
-        )
-        // Mua gỡ quảng cáo xong → xoá ad đang cache để tắt quảng cáo tức thì (không cần restart).
-        // Các request mới đã tự tắt qua adsEnabled ở dưới.
-        IapManager.addListener(object : IapListener {
-            override fun onPremiumChanged(isPremium: Boolean) {
-                if (isPremium) Ads.clear()
-            }
-        })
+        //
+        // Build không có quảng cáo (FeatureFlags.ADS_ENABLED = false) thì không mở kết nối
+        // Billing: sản phẩm duy nhất là "gỡ quảng cáo" và lối vào đã ẩn ở SettingsScreen.
+        // isPremium giữ mặc định false, không ảnh hưởng adsEnabled bên dưới (đã false).
+        if (FeatureFlags.ADS_ENABLED) {
+            IapManager.init(
+                this,
+                IapConfig(nonConsumableIds = listOf(BillingProducts.REMOVE_ADS)),
+            )
+            // Mua gỡ quảng cáo xong → xoá ad đang cache để tắt quảng cáo tức thì (không cần restart).
+            // Các request mới đã tự tắt qua adsEnabled ở dưới.
+            IapManager.addListener(object : IapListener {
+                override fun onPremiumChanged(isPremium: Boolean) {
+                    if (isPremium) Ads.clear()
+                }
+            })
+        }
 
         // Analytics: Firebase Analytics (đã có google-services.json). Event cụ thể khai báo ở Events.
         Analytics.init(this)
@@ -78,14 +90,19 @@ class TuViApplication : Application() {
         // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.
         Ads.init(
             AdsConfig(
-                adsEnabled = { RemoteConfigManager.adsEnabled() && !IapManager.isPremium.value },
+                adsEnabled = {
+                    FeatureFlags.ADS_ENABLED &&
+                        RemoteConfigManager.adsEnabled() &&
+                        !IapManager.isPremium.value
+                },
                 adUnitId = { name ->
                     when (AdNames.formatOf(name)) {
                         AdFormat.INTERSTITIAL -> RemoteConfigManager.interAdUnitId(name)
                         AdFormat.NATIVE -> RemoteConfigManager.nativeAdUnitId(name)
                         AdFormat.BANNER -> RemoteConfigManager.bannerAdUnitId(name)
                         AdFormat.APP_OPEN -> RemoteConfigManager.appOpenAdUnitId(name)
-                        null -> ""
+                        // App chưa dùng rewarded — không khai báo placement nào ở AdNames.
+                        AdFormat.REWARDED, null -> ""
                     }
                 },
                 adFormat = { name -> AdNames.formatOf(name) },
@@ -93,7 +110,10 @@ class TuViApplication : Application() {
             )
         )
 
-        Ads.setupAppOpen(this, AdNames.APP_OPEN_RESUME)
+        // Không đăng ký observer app-open khi build không có quảng cáo.
+        if (FeatureFlags.ADS_ENABLED) {
+            Ads.setupAppOpen(this, AdNames.APP_OPEN_RESUME)
+        }
 
     }
 }

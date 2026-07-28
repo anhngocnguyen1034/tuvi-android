@@ -25,6 +25,7 @@ object AdNames {
     // Native
     const val LANGUAGE_NATIVE = "language_native"  // dưới danh sách chọn ngôn ngữ
     const val EXIT_NATIVE = "exit_native"          // giữa màn xác nhận thoát app
+    const val INPUT_NATIVE = "input_native"        // native small giữa form Thông Tin Lá Số
 
     // Banner
     const val EXIT_BANNER = "exit_banner"          // trên cùng màn xác nhận thoát app
@@ -32,6 +33,7 @@ object AdNames {
     const val HOME_BANNER = "home_banner"          // dưới cùng màn Home
     const val INTRO_BANNER = "intro_banner"        // dưới cùng màn intro (onboarding)
     const val CHART_BANNER = "chart_banner"        // dưới cùng màn lá số (dưới nút AI luận giải)
+    const val INPUT_BANNER = "input_banner"        // dưới cùng màn Thông Tin Lá Số (nhập liệu)
 
     // App Open
     const val APP_OPEN_RESUME = "app_open_resume"  // quay lại app từ background (return-to-app)
@@ -40,8 +42,9 @@ object AdNames {
     fun formatOf(adName: String): AdFormat? = when (adName) {
         SPLASH_OPEN, INTRO_DONE, HOME_TUVI, HOME_BROWSER, HOME_CALENDAR, HOME_QUOTES,
         CHART_CREATE, AI_OPEN, AI_REQUEST, CHART_DOWNLOAD -> AdFormat.INTERSTITIAL
-        LANGUAGE_NATIVE, EXIT_NATIVE -> AdFormat.NATIVE
-        EXIT_BANNER, SAVED_BANNER, HOME_BANNER, INTRO_BANNER, CHART_BANNER -> AdFormat.BANNER
+        LANGUAGE_NATIVE, EXIT_NATIVE, INPUT_NATIVE -> AdFormat.NATIVE
+        EXIT_BANNER, SAVED_BANNER, HOME_BANNER, INTRO_BANNER, CHART_BANNER,
+        INPUT_BANNER -> AdFormat.BANNER
         APP_OPEN_RESUME -> AdFormat.APP_OPEN
         else -> null
     }

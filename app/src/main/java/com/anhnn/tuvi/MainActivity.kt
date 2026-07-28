@@ -91,8 +91,13 @@ class MainActivity : ComponentActivity() {
         val app = application as TuViApplication
 
         // Consent (UMP) + init Mobile Ads SDK (gói trong module ads); xong thì preload.
-        Ads.start(this) {
-            Ads.preload(this, AdNames.SPLASH_OPEN)
+        // Build không có quảng cáo (FeatureFlags.ADS_ENABLED = false) thì bỏ qua hẳn: không
+        // hỏi consent, không init Mobile Ads SDK. Các Ads.preload ở NavHost là no-op vì
+        // adsEnabled = false.
+        if (FeatureFlags.ADS_ENABLED) {
+            Ads.start(this) {
+                Ads.preload(this, AdNames.SPLASH_OPEN)
+            }
         }
         setContent {
             val settingsVm: SettingsViewModel = viewModel(
@@ -157,7 +162,8 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                     }
                 },
                 isAdReady = {
-                    !RemoteConfigManager.adsEnabled() ||
+                    !FeatureFlags.ADS_ENABLED ||
+                        !RemoteConfigManager.adsEnabled() ||
                         Ads.isInterstitialReady(AdNames.SPLASH_OPEN)
                 },
             )
@@ -220,7 +226,10 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                         navController.navigate("quotes")
                     }
                 },
-                onOpenStore = { navController.navigate("store") },
+                // null -> ẩn icon cửa hàng (xem FeatureFlags.AI_READING_ENABLED).
+                onOpenStore = if (FeatureFlags.AI_READING_ENABLED) {
+                    { navController.navigate("store") }
+                } else null,
                 onOpenSettings = { navController.navigate("settings") },
             )
         }
@@ -283,7 +292,7 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
         }
         composable("input") {
             val activity = context as Activity
-            LaunchedEffect(Unit) { Ads.preload(context, AdNames.CHART_CREATE) }
+            LaunchedEffect(Unit) { Ads.preload(context, AdNames.CHART_CREATE, AdNames.INPUT_BANNER, AdNames.INPUT_NATIVE) }
             InputScreen(
                 onViewChart = { name, day, month, year, viewYear, hour, minute, gender, duongLich ->
                     viewModel.getTuVi(
@@ -308,7 +317,9 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
         composable("chart") {
             val activity = context as Activity
             LaunchedEffect(Unit) {
-                Ads.preload(context, AdNames.AI_OPEN, AdNames.CHART_DOWNLOAD, AdNames.CHART_BANNER)
+                // AI_OPEN chỉ preload khi nút AI còn hiển thị — tránh gọi ad không bao giờ show.
+                if (FeatureFlags.AI_READING_ENABLED) Ads.preload(context, AdNames.AI_OPEN)
+                Ads.preload(context, AdNames.CHART_DOWNLOAD, AdNames.CHART_BANNER)
             }
             val savedChartIdVm by viewModel.savedChartId.collectAsStateWithLifecycle()
             val state = uiState
@@ -336,11 +347,14 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                 else -> {
                     TuViChartScreen(
                         data = chartData,
-                        onOpenAiReading = {
-                            Ads.showInterstitial(activity,AdNames.AI_OPEN) {
-                                navController.navigate("ai_reading")
+                        // null -> ẩn nút AI luận giải (xem FeatureFlags.AI_READING_ENABLED).
+                        onOpenAiReading = if (FeatureFlags.AI_READING_ENABLED) {
+                            {
+                                Ads.showInterstitial(activity, AdNames.AI_OPEN) {
+                                    navController.navigate("ai_reading")
+                                }
                             }
-                        },
+                        } else null,
                         savedChartId = savedChartIdVm,
                         // Giữ nguyên lá số trong ViewModel khi back — màn nhập liệu prefill lại
                         // dữ liệu cũ và vào lại chart không phải gọi API lần nữa.

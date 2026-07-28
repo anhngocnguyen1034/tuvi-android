@@ -66,6 +66,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.anhnn.tuvi.FeatureFlags
 import com.anhnn.tuvi.R
 import com.anhnn.tuvi.presentation.SettingsViewModel
 import com.anhnn.tuvi.ui.components.GenZThemeSwitch
@@ -340,15 +341,19 @@ fun SettingsScreen(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.8.sp
             )
-            AboutActionRow(
-                iconRes = R.drawable.ic_remove_ads,
-                title = stringResource(R.string.settings_remove_ads_title),
-                desc = stringResource(
-                    if (isPremium) R.string.settings_remove_ads_desc_active
-                    else R.string.settings_remove_ads_desc
-                ),
-                onClick = { showRemoveAds = true }
-            )
+            // Ẩn khi build không có quảng cáo (xem FeatureFlags.ADS_ENABLED); vẫn hiện cho ai
+            // đã mua trước đó để họ thấy trạng thái đã kích hoạt.
+            if (FeatureFlags.ADS_ENABLED || isPremium) {
+                AboutActionRow(
+                    iconRes = R.drawable.ic_remove_ads,
+                    title = stringResource(R.string.settings_remove_ads_title),
+                    desc = stringResource(
+                        if (isPremium) R.string.settings_remove_ads_desc_active
+                        else R.string.settings_remove_ads_desc
+                    ),
+                    onClick = { showRemoveAds = true }
+                )
+            }
             PrivacyPolicyRow(onClick = onOpenPrivacy)
             AboutActionRow(
                 iconRes = R.drawable.ic_favorite,

@@ -76,7 +76,8 @@ fun HomeScreen(
     onOpenBrowser: () -> Unit = {},
     onOpenCalendar: () -> Unit = {},
     onOpenQuotes: () -> Unit = {},
-    onOpenStore: () -> Unit = {},
+    /** Khi non-null, hiển thị icon mở màn Cửa hàng ở góc trên. */
+    onOpenStore: (() -> Unit)? = null,
     onOpenSettings: () -> Unit = {},
 ) {
     val homeBg = remember {
@@ -141,12 +142,14 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = onOpenStore) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_store),
-                        contentDescription = stringResource(R.string.content_desc_store),
-                        tint = TuViGold
-                    )
+                if (onOpenStore != null) {
+                    IconButton(onClick = onOpenStore) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_store),
+                            contentDescription = stringResource(R.string.content_desc_store),
+                            tint = TuViGold
+                        )
+                    }
                 }
                 IconButton(onClick = onOpenSettings) {
                     Icon(
