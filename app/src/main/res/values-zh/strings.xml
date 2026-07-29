@@ -354,12 +354,8 @@
     <string name="intro_skip">跳过</string>
     <string name="intro_next">继续</string>
     <string name="intro_start">立即开始</string>
-    <string name="intro_0_title">欢迎来到 Horoza</string>
-    <string name="intro_0_desc">探索紫微命盘、流年运势和 AI 详批 — 尽在这一站式紫微斗数应用中。</string>
     <string name="intro_1_title">解码运势乾坤</string>
     <string name="intro_1_desc">为您排定紫微十二宫命盘，深度解读和预测您的流年事业、财运、以及姻缘感情。</string>
     <string name="intro_2_title">精准择日吉凶</string>
     <string name="intro_2_desc">快捷查阅公农历万年历，开张、交易吉日早知道，避开不宜办事的黑道凶日。</string>
-    <string name="intro_3_title">专属 AI 顾问相伴</string>
-    <string name="intro_3_desc">随时随地与 AI 畅聊，为您详批命盘并答疑解惑，洞悉人生命运轨迹。</string>
 </resources>
