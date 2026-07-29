@@ -34,7 +34,7 @@ class TuViApplication : Application() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
         private set
 
-    var initialDark: Boolean = true
+    var initialDark: Boolean = false
         private set
     var initialOnboardingDone: Boolean = false
         private set
