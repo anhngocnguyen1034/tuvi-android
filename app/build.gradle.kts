@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 // Đọc thông tin ký release từ local.properties (KHÔNG commit creds vào git).
@@ -22,7 +23,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.tuvi"
+    namespace = "com.anhnn.tuvi"
     compileSdk {
         version = release(36)
     }
@@ -61,6 +62,17 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Upload mapping để stack trace release được deobfuscate trên Crashlytics.
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
+        }
+        debug {
+            // Debug không minify nên không có mapping để upload — tắt cho build nhanh.
+            // Việc tắt *gửi crash* ở debug làm trong TuViApplication.
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
         }
     }
     compileOptions {
@@ -124,9 +136,10 @@ dependencies {
     // QR code generation (giới thiệu app cho người dùng khác)
     implementation("com.google.zxing:core:3.5.3")
 
-    // Firebase Remote Config (giữ lại cho cooldown ads)
+    // Firebase Remote Config (giữ lại cho cooldown ads) + Crashlytics (crash reporting)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config.ktx)
+    implementation(libs.firebase.crashlytics.ktx)
 
     // Language picker
     implementation(libs.anhnn.language)
@@ -136,11 +149,13 @@ dependencies {
     implementation(libs.anhnn.components.exit)
     implementation(libs.android.blur)
 
-    // AdMob — quản lý qua module anhnn-components-ads (đã api-expose play-services-ads + UMP).
-    // Giữ 2 dòng dưới để chắc chắn có sẵn SDK (cùng version, vô hại nếu trùng transitive).
-    implementation(libs.anhnn.components.ads)
-    implementation(libs.play.services.ads)
-    implementation(libs.user.messaging.platform)
+    // AdMob — ĐÃ BỎ cho bản đầu lên CH Play (không quảng cáo) để APK không chứa Mobile Ads SDK.
+    // Call-site vẫn biên dịch nhờ shim no-op `app/src/main/java/com/anhnn/tuvi/ads/AdsNoOp.kt`.
+    //
+    // Bật lại: xoá file AdsNoOp.kt, bỏ comment 3 dòng dưới, đặt FeatureFlags.ADS_ENABLED = true.
+    // implementation(libs.anhnn.components.ads)
+    // implementation(libs.play.services.ads)
+    // implementation(libs.user.messaging.platform)
 
     // Analytics (event tracking) — module api-expose firebase-analytics.
     implementation(libs.anhnn.components.analytics)
