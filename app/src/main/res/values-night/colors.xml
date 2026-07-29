@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bản tối (mặc định ban đêm): giữ palette gốc -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="tuvi_navy">#FF0D1B3E</color>
+    <color name="tuvi_navy_light">#FF162450</color>
+    <color name="tuvi_navy_card">#FF1C2D5E</color>
+
+    <color name="tuvi_gold">#FFD4A843</color>
+    <color name="tuvi_gold_light">#FFF5CB6A</color>
+    <color name="tuvi_gold_dark">#FFAA8020</color>
+    <color name="tuvi_red">#FFC0392B</color>
+    <color name="tuvi_red_light">#FFE57369</color>
+
+    <color name="tuvi_ivory">#FFF5EED8</color>
+    <color name="tuvi_ivory_dim">#FFC5BAA0</color>
+    <color name="tuvi_divider">#FF2E4080</color>
+
+    <color name="input_bg_gradient_bottom">#FF071330</color>
+    <color name="input_date_picker_surface">#FF12082A</color>
+    <color name="input_chart_red">#FF8B0000</color>
+
+    <color name="home_bg_gradient_top">#FF060E24</color>
+    <color name="home_bg_gradient_bottom">#FF0A1535</color>
+    <color name="home_card_gradient_start">#FF1E2D5E</color>
+    <color name="home_card_gradient_mid">#FF0F1B3E</color>
+    <color name="home_card_gradient_end">#FF1A2650</color>
+
+    <color name="chart_deep_bg">#FF0F0510</color>
+    <color name="chart_navy">#FF12082A</color>
+    <color name="chart_card_bg">#FF1C0D30</color>
+    <color name="chart_gold">#FFD4AF37</color>
+    <color name="chart_gold_dim">#FF8B7020</color>
+    <color name="chart_ivory">#FFF5E6C8</color>
+    <color name="chart_ivory_dim">#FFBBA080</color>
+    <color name="chart_red">#FF8B0000</color>
+    <color name="chart_border_gold">#FF5C3D0A</color>
+    <color name="chart_label_week_other">#FF2E1B6B</color>
+
+    <color name="hanh_thuy">#FF4A90D9</color>
+    <color name="hanh_hoa">#FFE84040</color>
+    <color name="hanh_kim">#FFE8D5A3</color>
+    <color name="hanh_moc">#FF4CAF50</color>
+    <color name="hanh_tho">#FFD4A017</color>
+
+    <color name="incognito_bg">#FF0D0D0D</color>
+    <color name="incognito_card">#FF1C1C1C</color>
+    <color name="incognito_emphasis">#FFE0E0E0</color>
+    <color name="incognito_muted">#FF9E9E9E</color>
+    <color name="incognito_divider">#FF2C2C2C</color>
+    <color name="incognito_dim_dark">#FF757575</color>
+</resources>

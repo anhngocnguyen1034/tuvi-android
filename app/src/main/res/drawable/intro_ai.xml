@@ -1,0 +1,48 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+
+    <!-- Hào quang nền -->
+    <path
+        android:pathData="M128,128m-104,0a104,104 0,1 1,208 0a104,104 0,1 1,-208 0Z"
+        android:fillColor="#D4A843"
+        android:fillAlpha="0.06" />
+
+    <!-- Bong bóng chat lớn -->
+    <path
+        android:pathData="M64,52 L192,52 Q212,52 212,72 L212,150 Q212,170 192,170 L108,170 L80,196 L80,170 L64,170 Q44,170 44,150 L44,72 Q44,52 64,52 Z"
+        android:fillColor="#162450"
+        android:strokeColor="#F5CB6A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round" />
+
+    <!-- Dòng văn bản luận giải -->
+    <path
+        android:pathData="M70,86 L150,86"
+        android:strokeColor="#F5EED8"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.85"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M70,108 L186,108 M70,130 L160,130"
+        android:strokeColor="#F5EED8"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.4"
+        android:strokeLineCap="round" />
+
+    <!-- Sparkle AI lớn (góc phải) -->
+    <path
+        android:pathData="M196,150 C196,172 184,184 162,194 C184,204 196,216 196,238 C196,216 208,204 230,194 C208,184 196,172 196,150 Z"
+        android:fillColor="#F5CB6A" />
+
+    <!-- Sparkle nhỏ -->
+    <path
+        android:pathData="M150,176 C150,186 145,191 135,196 C145,201 150,206 150,216 C150,206 155,201 165,196 C155,191 150,186 150,176 Z"
+        android:fillColor="#D4A843" />
+    <path
+        android:pathData="M68,196 C68,202 65,205 59,208 C65,211 68,214 68,220 C68,214 71,211 77,208 C71,205 68,202 68,196 Z"
+        android:fillColor="#D4A843"
+        android:fillAlpha="0.8" />
+</vector>

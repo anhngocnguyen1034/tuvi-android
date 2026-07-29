@@ -3,11 +3,16 @@
 # ─────────────────────────────────────────────
 # Cấu hình
 # ─────────────────────────────────────────────
-HOST="https://production.anhnn.com"
-FILE_SERVICE="$HOST/file/service"
-# WEBHOOKS (Có thể được truyền từ Jenkins qua biến môi trường)
-DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-https://discord.com/api/webhooks/1485532912970502257/9SMn_kHU8aExSP1Xov74Tnj9NApaQeS1MVudJB-9TN9LUlf6Hz1cfNUkiKcEIz3vvME1}"
-DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-https://discord.com/api/webhooks/1485532554764353546/T-5d7HbtSCgWkQUe-sdNWqZN3_2qyr7LgX1O_aHvAplo037pTnLkliGuuBKeK29S4iwS}"
+# Host APK: dùng GitHub Release (repo public → link tải/QR quét được ẩn danh).
+# gh CLI dùng token từ GH_TOKEN/GITHUB_TOKEN nếu có (Jenkins credential),
+# ngược lại lấy từ keyring của gh đã đăng nhập.
+GITHUB_REPO="${GITHUB_REPO:-anhngocnguyen1034/tuvi-android}"
+QR_SERVICE="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
+# WEBHOOKS — LUÔN truyền qua biến môi trường / secret, KHÔNG hardcode trong repo.
+# GitHub Actions: Settings → Secrets → WEBHOOK_SUCCESS / WEBHOOK_JENKINS.
+# Nếu để trống, bước gửi Discord sẽ được bỏ qua (không làm fail build).
+DISCORD_WEBHOOK_SUCCESS="${WEBHOOK_SUCCESS:-}"
+DISCORD_WEBHOOK_JENKINS="${WEBHOOK_JENKINS:-}"
 
 BUILD_FILE="app/build.gradle.kts"
 current_branch="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
@@ -92,12 +97,28 @@ update_version_in_gradle() {
 }
 
 # ─────────────────────────────────────────────
-# Upload file lên server
+# Tạo GitHub Release cho $newTag và upload các file APK/AAB làm asset
 # ─────────────────────────────────────────────
-upload_file() {
-    local file_path="$1"
-    local file_name="$2"
-    curl -sS -F "file=@\"$file_path\";filename=\"$file_name\"" "$FILE_SERVICE/upload"
+create_github_release() {
+    # $@ = danh sách file cần upload
+    echo "Tạo/ cập nhật GitHub Release cho tag $newTag trên $GITHUB_REPO ..."
+
+    if gh release view "$newTag" --repo "$GITHUB_REPO" >/dev/null 2>&1; then
+        echo "Release $newTag đã tồn tại — upload/ghi đè asset."
+        gh release upload "$newTag" "$@" --repo "$GITHUB_REPO" --clobber
+    else
+        gh release create "$newTag" "$@" \
+            --repo "$GITHUB_REPO" \
+            --title "[$current_branch] $newTag" \
+            --notes "Auto build từ nhánh \`$current_branch\` — build #${BUILD_NUMBER:-?}"
+    fi
+    echo "GitHub Release sẵn sàng: https://github.com/$GITHUB_REPO/releases/tag/$newTag"
+}
+
+# URL tải asset công khai từ GitHub Release
+github_asset_url() {
+    local file_name="$1"
+    echo "https://github.com/$GITHUB_REPO/releases/download/$newTag/$file_name"
 }
 
 # ─────────────────────────────────────────────
@@ -179,39 +200,23 @@ notify_discord() {
     local file="$1"
     local elapsed_seconds="$2"
 
+    if [ -z "$DISCORD_WEBHOOK_SUCCESS" ]; then
+        echo "WARN: WEBHOOK_SUCCESS trống — bỏ qua thông báo Discord (không fail build)."
+        return 0
+    fi
+
     local file_name
     file_name=$(basename "$file")
 
-    local path_on_server
-    path_on_server=$(upload_file "$file" "$file_name")
-    local out_file="$HOST$path_on_server"
+    # Link tải công khai từ GitHub Release (asset đã được create_github_release upload)
+    local out_file
+    out_file=$(github_asset_url "$file_name")
     echo "URL file: $out_file"
 
+    # QR trỏ tới link tải, tạo qua dịch vụ công khai (không cần auth)
     local encoded_url
     encoded_url=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$out_file")
-
-    local qr_path
-    echo "DEBUG: Truy cập QR từ: $FILE_SERVICE/qr?text=$encoded_url"
-    qr_path=$(curl -sS -o /tmp/qr_response.txt -w "%{http_code}" "$FILE_SERVICE/qr?text=$encoded_url")
-    echo "DEBUG: QR HTTP status: $qr_path"
-    echo "DEBUG: QR response: $(cat /tmp/qr_response.txt)"
-
-    local qr=""
-    if [ "$qr_path" = "200" ]; then
-        local qr_body
-        qr_body=$(cat /tmp/qr_response.txt)
-        if [[ "$qr_body" == http* ]]; then
-            qr="$qr_body"
-        else
-            qr="$HOST$qr_body"
-        fi
-    fi
-
-    # Fallback: nếu QR nội bộ lỗi thì dùng api.qrserver.com (public, không cần auth)
-    if [ -z "$qr" ]; then
-        echo "WARN: QR nội bộ thất bại, dùng QR fallback công khai"
-        qr="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=$encoded_url"
-    fi
+    local qr="${QR_SERVICE}${encoded_url}"
     echo "QR: $qr"
 
     local size
@@ -224,20 +229,47 @@ notify_discord() {
         "$size" "$qr" \
         "$elapsed_seconds")
 
+    # Discord từ chối TOÀN BỘ embed nếu image.url không phải URL http hợp lệ.
+    # → chỉ đính kèm QR khi hợp lệ, ngược lại bỏ field image để tin vẫn đăng.
     local JSON_PAYLOAD
-    JSON_PAYLOAD=$(jq -n \
-        --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
-        --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
-        --arg title "✅ Build Success - $current_branch" \
-        --arg url "$out_file" \
-        --arg description "$msg" \
-        --arg image_url "$qr" \
-        '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993, image: {url: $image_url}}]}')
+    if [[ "$qr" == http* ]]; then
+        JSON_PAYLOAD=$(jq -n \
+            --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
+            --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
+            --arg title "✅ Build Success - $current_branch" \
+            --arg url "$out_file" \
+            --arg description "$msg" \
+            --arg image_url "$qr" \
+            '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993, image: {url: $image_url}}]}')
+    else
+        echo "WARN: QR không hợp lệ ('$qr') — đăng embed không kèm ảnh QR."
+        JSON_PAYLOAD=$(jq -n \
+            --arg username "${GIT_AUTHOR_NAME:-Jenkins}" \
+            --arg avatar_url "https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/256x256/headshot.png" \
+            --arg title "✅ Build Success - $current_branch" \
+            --arg url "$out_file" \
+            --arg description "$msg" \
+            '{username: $username, avatar_url: $avatar_url, embeds: [{title: $title, url: $url, description: $description, color: 3066993}]}')
+    fi
 
-    curl -sS -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_SUCCESS"
+    # Log HTTP status/response của Discord — curl -sS KHÔNG fail trên HTTP 4xx,
+    # nên trước đây embed bị từ chối (400 Invalid Form Body) mà build vẫn "success".
+    local discord_code
+    discord_code=$(curl -sS -o /tmp/discord_resp.txt -w "%{http_code}" \
+        -H 'Content-Type: application/json' -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_SUCCESS") || true
+    echo "DEBUG: Discord Success HTTP status: $discord_code"
+    echo "DEBUG: Discord Success response: $(cat /tmp/discord_resp.txt 2>/dev/null)"
+    if [[ "$discord_code" != 2* ]]; then
+        echo "WARN: Discord TỪ CHỐI tin nhắn (HTTP $discord_code). Xem payload/URL ở trên."
+    fi
 }
 
 notify_discord_failure() {
+    if [ -z "$DISCORD_WEBHOOK_JENKINS" ]; then
+        echo "WARN: WEBHOOK_JENKINS trống — bỏ qua thông báo Discord thất bại."
+        return 0
+    fi
+
     local commit="${GIT_COMMIT:-$(git log -1 --pretty=format:'%h - %s')}"
     local build_url="${BUILD_URL:-}"
 
@@ -298,13 +330,21 @@ fi
 # Tự động tạo tag & push
 auto_create_tag
 
+# Upload tất cả APK/AAB lên GitHub Release của tag vừa tạo
+# (không dùng mapfile — bash 3.2 trên macOS không hỗ trợ)
+artifact_files=()
+while IFS= read -r f; do
+    [ -n "$f" ] && artifact_files+=("$f")
+done < <(find app/build -type f \( -name "*.apk" -o -name "*.aab" \))
+create_github_release "${artifact_files[@]}"
+
 # Tính thời gian build
 end_time=$(date +%s)
 elapsed_seconds=$((end_time - start_time))
 
-# Gửi từng file APK/AAB lên Discord
-for file in $(find app/build -type f \( -name "*.apk" -o -name "*.aab" \)); do
-    echo "Upload: $file"
+# Gửi thông báo Discord cho từng file (link tải là GitHub Release asset)
+for file in "${artifact_files[@]}"; do
+    echo "Notify: $file"
     notify_discord "$file" "$elapsed_seconds"
 done
 

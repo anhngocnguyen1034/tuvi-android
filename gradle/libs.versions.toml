@@ -1,6 +1,16 @@
 [versions]
 agp = "8.13.2"
-kotlin = "2.0.21"
+androidBlur = "1.0.3"
+anhnnComponentsFeedback = "1.0.1"
+anhnnComponentsExit = "1.1.0"
+anhnnComponentsAds = "1.8.0"
+anhnnComponentsAnalytics = "1.3.0"
+anhnnComponentsIap = "1.7.0"
+anhnnLanguage = "1.0.1"
+kotlin = "2.3.21"
+ksp = "2.3.7"
+glance = "1.1.1"
+room = "2.7.0"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -14,14 +24,40 @@ navigationCompose = "2.8.5"
 kotlinxSerializationJson = "1.7.3"
 retrofitSerializationConverter = "1.0.0"
 lifecycleViewModelCompose = "2.8.7"
-serializationPlugin = "2.0.21"
+serializationPlugin = "2.3.21"
+datastore = "1.1.1"
+appcompat = "1.7.0"
+blurview = "version-2.0.6"
+coil = "2.7.0"
+googleServices = "4.4.2"
+firebaseBom = "33.7.0"
+firebaseCrashlyticsPlugin = "3.0.2"
+credentials = "1.3.0"
+googleid = "1.1.1"
+coroutinesPlayServices = "1.9.0"
+playServicesAds = "23.6.0"
+userMessagingPlatform = "3.1.0"
+playIntegrity = "1.4.0"
+billing = "7.1.1"
+clarity = "3.8.3"
 
 [libraries]
+android-blur = { module = "com.github.anhngocnguyen1034:android-blur", version.ref = "androidBlur" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+anhnn-components-feedback = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-feedback", version.ref = "anhnnComponentsFeedback" }
+anhnn-components-rate = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-rate", version.ref = "anhnnComponentsFeedback" }
+anhnn-components-exit = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-exit", version.ref = "anhnnComponentsExit" }
+anhnn-components-ads = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-ads", version.ref = "anhnnComponentsAds" }
+anhnn-components-analytics = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-analytics", version.ref = "anhnnComponentsAnalytics" }
+anhnn-components-iap = { module = "com.github.anhngocnguyen1034.anhnn-components:anhnn-components-iap", version.ref = "anhnnComponentsIap" }
+anhnn-language = { module = "com.github.anhngocnguyen1034:anhnn-language", version.ref = "anhnnLanguage" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -39,10 +75,39 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 retrofit-kotlinx-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitSerializationConverter" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+blurview = { group = "com.github.Dimezis", name = "BlurView", version.ref = "blurview" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# Firebase Auth + Credential Manager (Google Sign-In)
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx" }
+firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+
+# AdMob
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
+
+# Play Integrity (xác thực app thật cho các endpoint AI)
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
+# Google Play Billing (mua lượt AI qua IAP)
+billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPlugin" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

@@ -8,11 +8,21 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# Build outputs — cả module app (trước đây chỉ có /build nên app/build vẫn bị commit)
+build/
+**/build/
+
+# Keystore ký app — KHÔNG commit (mật khẩu để trong local.properties)
+*.keystore
+*.jks
+
+# Kotlin / Android Studio
+.kotlin/
 
 # Python / venv
 venv/
@@ -22,5 +32,4 @@ __pycache__/
 *.py[cod]
 
 # OS junk
-.DS_Store
 Thumbs.db

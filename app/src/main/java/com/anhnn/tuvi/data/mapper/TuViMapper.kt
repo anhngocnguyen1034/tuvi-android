@@ -1,0 +1,66 @@
+package com.anhnn.tuvi.data.mapper
+
+import com.anhnn.tuvi.data.remote.dto.CungDto
+import com.anhnn.tuvi.data.remote.dto.SaoDto
+import com.anhnn.tuvi.data.remote.dto.ThienBanDto
+import com.anhnn.tuvi.data.remote.dto.TuViResponse
+import com.anhnn.tuvi.domain.model.CungInfo
+import com.anhnn.tuvi.domain.model.SaoInfo
+import com.anhnn.tuvi.domain.model.ThienBanInfo
+import com.anhnn.tuvi.domain.model.TuViChart
+
+fun TuViResponse.toDomain(): TuViChart = TuViChart(
+    thienBan = thien_ban.toDomain(),
+    diaBan   = dia_ban.map { it.toDomain() }
+)
+
+fun ThienBanDto.toDomain(): ThienBanInfo = ThienBanInfo(
+    ten              = ten,
+    gioiTinh         = gioi_tinh,
+    ngayDuong        = ngay_duong,
+    ngayAm           = ngay_am,
+    ngayAmLichTen    = ngayAmLichTen,
+    thangNhuan       = thangNhuan,
+    gioSinh          = gioSinh,
+    chiGioSinh       = chiGioSinh,
+    canNam           = canNam,
+    chiNam           = chiNam,
+    canThang         = canThang,
+    chiThang         = chiThang,
+    canNgay          = canNgay,
+    chiNgay          = chiNgay,
+    amDuongNamSinh   = amDuongNamSinh,
+    amDuongMenh      = amDuongMenh,
+    menh             = menh,
+    banMenh          = banMenh,
+    cuc              = cuc,
+    hanhCuc          = hanhCuc,
+    menhChu          = menhChu,
+    thanChu          = thanChu,
+    sinhKhac         = sinhKhac,
+    namXem           = namXem,
+    tuoiAm           = tuoiAm
+)
+
+fun CungDto.toDomain(): CungInfo = CungInfo(
+    cungSo   = cungSo,
+    cungTen  = cungTen,
+    cungChu  = cungChu,
+    hanhCung = hanhCung,
+    thienCan = thienCan,
+    daiHan   = daiHan,
+    thang    = thang,
+    sao      = sao.map { it.toDomain() },
+    tuan     = tuan,
+    triet    = triet
+)
+
+fun SaoDto.toDomain(): SaoInfo = SaoInfo(
+    saoId         = saoId,
+    ten           = ten,
+    loai          = loai,
+    dacTinh       = dac_tinh,
+    nguHanh       = ngu_hanh,
+    vongTrangSinh = vongTrangSinh,
+    isLuu         = isLuu
+)
