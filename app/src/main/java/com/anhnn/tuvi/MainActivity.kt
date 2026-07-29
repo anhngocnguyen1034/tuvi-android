@@ -104,10 +104,7 @@ class MainActivity : ComponentActivity() {
                 factory = AndroidViewModelFactory.getInstance(application)
             )
             val settingsState by settingsVm.uiState.collectAsStateWithLifecycle(
-                initialValue = SettingsUiState(
-                    themeDark = app.initialDark,
-                    localeTag = com.anhnn.tuvi.data.preferences.UserPreferencesRepository.LOCALE_VI
-                )
+                initialValue = SettingsUiState(themeDark = app.initialDark)
             )
             TuViTheme(darkTheme = settingsState.themeDark) {
                 TuViApp(isDark = settingsState.themeDark, onboardingDone = app.initialOnboardingDone)

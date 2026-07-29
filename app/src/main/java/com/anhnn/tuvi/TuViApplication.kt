@@ -7,6 +7,7 @@ import com.anhnn.ads.AdFormat
 import com.anhnn.ads.Ads
 import com.anhnn.ads.AdsConfig
 import com.anhnn.analytics.Analytics
+import com.anhnn.language.LanguageDataSource
 import com.microsoft.clarity.Clarity
 import com.microsoft.clarity.ClarityConfig
 import com.anhnn.tuvi.data.preferences.UserPreferencesRepository
@@ -21,6 +22,7 @@ import com.anhnn.tuvi.ui.theme.TuViComposeColors
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class TuViApplication : Application() {
@@ -41,12 +43,25 @@ class TuViApplication : Application() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(this)
         val savedDark = runBlocking(Dispatchers.IO) {
-            val (dark, localeTag) = userPreferencesRepository.initialSnapshot()
+            val dark = userPreferencesRepository.initialThemeDark()
             AppCompatDelegate.setDefaultNightMode(
                 if (dark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(localeTag))
             initialOnboardingDone = userPreferencesRepository.isOnboardingDone()
+            // Ngôn ngữ mặc định khi mở app lần đầu là tiếng Việt: module anhnn-language fallback
+            // "en" khi datastore của nó chưa có giá trị, nên gieo sẵn "vi" trước khi
+            // MainActivity.attachBaseContext đọc. Chỉ chạy ở máy chưa qua onboarding (cài mới)
+            // và đúng một lần → không ghi đè ngôn ngữ người dùng đã chọn.
+            if (!initialOnboardingDone && userPreferencesRepository.consumeDefaultLanguageSeed()) {
+                LanguageDataSource(this@TuViApplication)
+                    .setLanguageCode(UserPreferencesRepository.LOCALE_VI)
+            }
+            // Áp ngôn ngữ đã chọn ở mức app (không phải KEY_LOCALE cũ, vốn luôn "vi" vì không
+            // màn nào ghi vào): để context ngoài Activity — notification của SuKienReceiver /
+            // BootReceiver — cũng đúng ngôn ngữ, khớp với attachBaseContext của MainActivity.
+            val langCode = LanguageDataSource(this@TuViApplication).languageCode.first()
+                .ifBlank { UserPreferencesRepository.LOCALE_VI }
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langCode))
             dark
         }
         initialDark = savedDark

@@ -1,7 +1,7 @@
 package com.anhnn.tuvi.di
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatDelegate
+import com.anhnn.language.LanguageDataSource
 import com.anhnn.tuvi.BuildConfig
 import com.anhnn.tuvi.data.billing.BillingManager
 import com.anhnn.tuvi.data.local.TuViDatabase
@@ -28,12 +28,16 @@ import com.anhnn.tuvi.domain.usecase.GetTuViVanHanUseCase
 import com.anhnn.tuvi.domain.usecase.SaveChartUseCase
 import com.anhnn.tuvi.domain.usecase.SearchSavedChartsUseCase
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object AppContainer {
@@ -47,6 +51,13 @@ object AppContainer {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
+
+    /**
+     * Mã ngôn ngữ UI hiện tại (vi / en / zh...) dùng cho header Accept-Language.
+     * null = collector ở [init] chưa kịp phát giá trị đầu → interceptor tự đọc một lần.
+     */
+    @Volatile
+    private var currentLanguageTag: String? = null
 
     /** Play Integrity provider — chỉ tạo khi đã cấu hình Cloud Project Number. */
     private val playIntegrityProvider: PlayIntegrityProvider? by lazy {
@@ -69,9 +80,10 @@ object AppContainer {
             .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(aiGateInterceptor)
             .addInterceptor { chain ->
-                val locales = AppCompatDelegate.getApplicationLocales()
-                val tag = (if (!locales.isEmpty) locales[0] else Locale.getDefault())
-                    ?.toLanguageTag() ?: "vi"
+                val tag = currentLanguageTag
+                    ?: runBlocking { LanguageDataSource(app).languageCode.first() }
+                        .ifBlank { UserPreferencesRepository.LOCALE_VI }
+                        .also { currentLanguageTag = it }
                 chain.proceed(
                     chain.request().newBuilder()
                         .header("Accept-Language", tag)
@@ -118,6 +130,14 @@ object AppContainer {
         app = context.applicationContext as android.app.Application
         database = TuViDatabase.getInstance(context)
         userPreferencesRepository = UserPreferencesRepository(app)
+        // Ngôn ngữ UI (module anhnn-language) là nguồn duy nhất cho header Accept-Language —
+        // backend trả tên sao / luận giải theo header này. Theo dõi liên tục để đổi ngôn ngữ
+        // xong là request sau dùng ngay ngôn ngữ mới.
+        CoroutineScope(Dispatchers.IO).launch {
+            LanguageDataSource(app).languageCode.collect { code ->
+                if (code.isNotBlank()) currentLanguageTag = code
+            }
+        }
     }
 
     private val savedChartRepository by lazy {

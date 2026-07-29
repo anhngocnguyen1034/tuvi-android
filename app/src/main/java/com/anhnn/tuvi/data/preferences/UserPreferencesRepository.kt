@@ -44,23 +44,19 @@ class UserPreferencesRepository(context: Context) {
 
     companion object {
         private val KEY_THEME_DARK = booleanPreferencesKey("theme_dark")
-        private val KEY_LOCALE = stringPreferencesKey("app_locale")
         private val KEY_NOTIF_HOLIDAY = booleanPreferencesKey("notif_holiday")
         private val KEY_NOTIF_LUNAR = booleanPreferencesKey("notif_lunar")
         private val KEY_AI_USED = booleanPreferencesKey("ai_used")
         private val KEY_AI_USED_DEVICE = stringPreferencesKey("ai_used_device_id")
         private val KEY_DEVICE_ID = stringPreferencesKey("device_id")
         private val KEY_ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        private val KEY_LANG_SEEDED = booleanPreferencesKey("default_language_seeded")
 
+        /** Ngôn ngữ mặc định của app — nguồn ngôn ngữ thật là LanguageDataSource (module anhnn-language). */
         const val LOCALE_VI = "vi"
-        const val LOCALE_EN = "en"
     }
 
     val themeDarkFlow: Flow<Boolean> = dataStore.data.map { prefs -> prefs[KEY_THEME_DARK] ?: true }
-
-    val localeTagFlow: Flow<String> = dataStore.data.map { prefs ->
-        prefs[KEY_LOCALE] ?: LOCALE_VI
-    }
 
     val notifHolidayFlow: Flow<Boolean> = dataStore.data.map { prefs ->
         prefs[KEY_NOTIF_HOLIDAY] ?: true
@@ -70,16 +66,21 @@ class UserPreferencesRepository(context: Context) {
         prefs[KEY_NOTIF_LUNAR] ?: true
     }
 
-    suspend fun initialSnapshot(): Pair<Boolean, String> {
-        val prefs = dataStore.data.first()
-        return Pair(
-            prefs[KEY_THEME_DARK] ?: true,
-            prefs[KEY_LOCALE] ?: LOCALE_VI
-        )
-    }
+    suspend fun initialThemeDark(): Boolean = dataStore.data.first()[KEY_THEME_DARK] ?: true
 
     /** Đã xem màn giới thiệu chưa — chỉ hiện intro ở lần mở app đầu tiên. */
     suspend fun isOnboardingDone(): Boolean = dataStore.data.first()[KEY_ONBOARDING_DONE] ?: false
+
+    /**
+     * true đúng một lần ở lần mở app đầu tiên — dùng để gieo ngôn ngữ mặc định (tiếng Việt)
+     * vào datastore của module anhnn-language (module fallback "en" khi chưa có giá trị).
+     * Các lần sau trả false nên không bao giờ ghi đè lựa chọn của người dùng.
+     */
+    suspend fun consumeDefaultLanguageSeed(): Boolean {
+        if (dataStore.data.first()[KEY_LANG_SEEDED] == true) return false
+        dataStore.edit { it[KEY_LANG_SEEDED] = true }
+        return true
+    }
 
     suspend fun setOnboardingDone() {
         dataStore.edit { it[KEY_ONBOARDING_DONE] = true }
@@ -87,10 +88,6 @@ class UserPreferencesRepository(context: Context) {
 
     suspend fun setThemeDark(isDark: Boolean) {
         dataStore.edit { it[KEY_THEME_DARK] = isDark }
-    }
-
-    suspend fun setLocaleTag(tag: String) {
-        dataStore.edit { it[KEY_LOCALE] = tag }
     }
 
     suspend fun setNotifHoliday(enabled: Boolean) {
