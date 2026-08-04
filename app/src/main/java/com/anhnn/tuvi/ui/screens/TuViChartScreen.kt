@@ -70,7 +70,6 @@ import com.anhnn.ads.BannerAd
 import com.anhnn.tuvi.R
 import com.anhnn.tuvi.ui.screens.SaveChartDialog
 import com.anhnn.tuvi.ui.theme.BeVietnamProFamily
-import com.anhnn.tuvi.ui.theme.ChartBorderGold
 import com.anhnn.tuvi.ui.theme.LoraFontFamily
 import com.anhnn.tuvi.ui.theme.ChartCardBg
 import com.anhnn.tuvi.ui.theme.ChartDeepBg
@@ -81,11 +80,6 @@ import com.anhnn.tuvi.ui.theme.ChartIvoryDim
 import com.anhnn.tuvi.ui.theme.ChartLabelWeekOther
 import com.anhnn.tuvi.ui.theme.ChartNavy
 import com.anhnn.tuvi.ui.theme.ChartRed
-import com.anhnn.tuvi.ui.theme.HanhHoa
-import com.anhnn.tuvi.ui.theme.HanhKim
-import com.anhnn.tuvi.ui.theme.HanhMoc
-import com.anhnn.tuvi.ui.theme.HanhTho
-import com.anhnn.tuvi.ui.theme.HanhThuy
 import com.anhnn.tuvi.ui.theme.TuViTheme
 
 // 0-Canh, 1-Tân, 2-Nhâm, 3-Quý, 4-Giáp, 5-Ất, 6-Bính, 7-Đinh, 8-Mậu, 9-Kỷ
@@ -219,28 +213,43 @@ private fun saoIn(sao: SaoInfo, ids: Set<Int>, names: Set<String>): Boolean {
     else inSetIgnoreCase(names, normalizeSaoNameForColor(sao.ten))
 }
 
-/** Trả về màu sao theo Ngũ Hành. Ưu tiên dùng ngu_hanh từ API, fallback hardcode. */
+// ─── Màu "giấy" của lá số ────────────────────────────────────────────────────
+// Phần trong khung lá số (12 cung + thiên bàn) luôn là nền trắng phẳng, không
+// gradient, không đổi theo dark/light theme — nên mực chữ & màu Ngũ Hành ở đây
+// cũng là hằng số đủ tương phản trên trắng (không dùng token theo theme).
+private val ChartPaperBg = Color(0xFFE8E7E0)
+private val ChartPaperInk = Color(0xFF1E1A24)
+private val ChartPaperInkDim = Color(0xFF5A5660)
+private val ChartPaperGold = Color(0xFFB8860B)
+private val ChartPaperCungChu = Color(0xFF000000)   // tên cung: Mệnh, Tài Bạch, Quan Lộc…
+private val PaperHanhThuy = Color(0xFF2E6BB5)
+private val PaperHanhHoa = Color(0xFFD32F2F)
+private val PaperHanhKim = Color(0xFF6E6E6E)        // Kim → xám
+private val PaperHanhMoc = Color(0xFF2E7D32)
+private val PaperHanhTho = Color(0xFF9A7000)
+
+/** Trả về màu sao theo Ngũ Hành (bộ màu cho nền giấy trắng). Ưu tiên ngu_hanh từ API. */
 fun getSaoColor(sao: SaoInfo, hasTuLinh: Boolean = false): Color {
     // Ưu tiên ngu_hanh từ API nếu có
     val colorFromApi = when (sao.nguHanh?.trim()?.uppercase()) {
-        "T" -> HanhThuy
-        "H" -> HanhHoa
-        "K" -> HanhKim
-        "M" -> HanhMoc
-        "TH" -> HanhTho
+        "T" -> PaperHanhThuy
+        "H" -> PaperHanhHoa
+        "K" -> PaperHanhKim
+        "M" -> PaperHanhMoc
+        "TH" -> PaperHanhTho
         else -> null
     }
     if (colorFromApi != null) return colorFromApi
 
     // Fallback: tra theo sao_id (độc lập ngôn ngữ), rồi mới tới tên sao
     return when {
-        saoIn(sao, thuyIds, thuySet) -> HanhThuy
-        saoIn(sao, hoaIds, hoaSet) -> HanhHoa
-        saoIn(sao, kimIds, kimSet) -> HanhKim
-        saoIn(sao, kimExtraIds, kimSet_extra) -> HanhKim
-        saoIn(sao, mocIds, mocSet) -> HanhMoc
-        saoIn(sao, thoIds, thoSet) -> HanhTho
-        else -> ChartIvory
+        saoIn(sao, thuyIds, thuySet) -> PaperHanhThuy
+        saoIn(sao, hoaIds, hoaSet) -> PaperHanhHoa
+        saoIn(sao, kimIds, kimSet) -> PaperHanhKim
+        saoIn(sao, kimExtraIds, kimSet_extra) -> PaperHanhKim
+        saoIn(sao, mocIds, mocSet) -> PaperHanhMoc
+        saoIn(sao, thoIds, thoSet) -> PaperHanhTho
+        else -> ChartPaperInk
     }
 }
 
@@ -584,7 +593,7 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
                 shape = RoundedCornerShape(4.dp)
             )
             .clip(RoundedCornerShape(4.dp))
-            .background(ChartCardBg)
+            .background(ChartPaperBg)
     ) {
         val cellW = maxWidth / 4
         val cellH = maxHeight / 4
@@ -612,7 +621,7 @@ fun ChartGrid(data: TuViChart, modifier: Modifier = Modifier) {
                     brush = Brush.linearGradient(listOf(ChartGold, ChartGoldDim, ChartGold)),
                     shape = androidx.compose.ui.graphics.RectangleShape
                 )
-                .background(ChartNavy.copy(alpha = 0.85f))
+                .background(ChartPaperBg)
                 .padding(6.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -656,18 +665,18 @@ private fun computeTuanTrietGridAnchor(
     }
 }
 
-/** Nhãn Tuần/Triệt nhỏ, nền tối + viền vàng — dễ đọc trên ranh giới giữa hai cung. */
+/** Nhãn Tuần/Triệt nhỏ, nền giấy + viền vàng — dễ đọc trên ranh giới giữa hai cung. */
 @Composable
 private fun TuanTrietChip(text: String) {
     Box(
         Modifier
-            .border(0.5.dp, ChartBorderGold.copy(alpha = 0.85f), RoundedCornerShape(2.dp))
-            .background(ChartNavy.copy(alpha = 0.94f), RoundedCornerShape(2.dp))
+            .border(0.5.dp, ChartPaperGold.copy(alpha = 0.85f), RoundedCornerShape(2.dp))
+            .background(ChartPaperBg, RoundedCornerShape(2.dp))
             .padding(horizontal = 3.dp, vertical = 1.dp)
     ) {
         Text(
             text = text,
-            color = ChartIvory,
+            color = ChartPaperInk,
             style = TextStyle(
                 fontSize = 6.sp,
                 lineHeight = 6.sp,
@@ -768,13 +777,13 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
             fontWeight = FontWeight.Bold,
             fontFamily = LoraFontFamily,
             fontSize = 8.sp,
-            color = ChartGold,
+            color = ChartPaperGold,
             letterSpacing = 1.sp,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(2.dp))
 
-        CenterLine(stringResource(R.string.chart_label_name), tb.ten, valueColor = ChartGold, valueBold = true)
+        CenterLine(stringResource(R.string.chart_label_name), tb.ten, valueColor = ChartPaperGold, valueBold = true)
         CenterLine(stringResource(R.string.chart_label_gender), tb.gioiTinh)
         CenterLine(stringResource(R.string.chart_label_solar_birthday), tb.ngayDuong)
         CenterLine(stringResource(R.string.chart_label_lunar_birthday), tb.ngayAm)
@@ -789,7 +798,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
             CenterLine(stringResource(R.string.chart_label_day), "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim())
 
         tb.amDuongMenh?.let { CenterLine("", it, fontSize = 7.sp) }
-        tb.menh?.let { CenterLine(stringResource(R.string.chart_label_menh), it, valueColor = ChartGold) }
+        tb.menh?.let { CenterLine(stringResource(R.string.chart_label_menh), it, valueColor = ChartPaperGold) }
         tb.banMenh?.let { CenterLine(stringResource(R.string.chart_label_ban_menh), it) }
         tb.cuc?.let { CenterLine(stringResource(R.string.chart_label_cuc), it) }
         tb.menhChu?.let { CenterLine(stringResource(R.string.chart_label_menh_chu), it) }
@@ -803,7 +812,7 @@ private fun CenterLine(
     label: String,
     value: String,
     fontSize: TextUnit = 8.sp,
-    valueColor: Color = ChartIvory,
+    valueColor: Color = ChartPaperInk,
     valueBold: Boolean = false
 ) {
     if (value.isBlank()) return
@@ -870,6 +879,33 @@ private fun saoLabel(sao: SaoInfo, chinhTinh: Boolean = false): String {
     }
 }
 
+// Tên cung chức luôn nằm trên 1 dòng: nếu tràng ngang (Phúc Đức, Điền Trạch, Nô Bộc...)
+// thì tự giảm cỡ chữ tới khi vừa, tối thiểu 4.5.sp.
+@Composable
+private fun CungChuLabel(text: String) {
+    val maxFontSize = 6.5.sp
+    val minFontSize = 4.5.sp
+    var fontSize by remember(text) { mutableStateOf(maxFontSize) }
+    Text(
+        text = text,
+        fontSize = fontSize,
+        lineHeight = fontSize * 1.2f,
+        fontWeight = FontWeight.Bold,
+        fontFamily = LoraFontFamily,
+        color = ChartPaperCungChu,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Clip,
+        textAlign = TextAlign.Center,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth && fontSize.value > minFontSize.value) {
+                fontSize = maxOf(fontSize.value * 0.92f, minFontSize.value).sp
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
 // ─── Ô cung ───────────────────────────────────────────────────────────────────
 @Composable
 fun PalaceView(cung: CungInfo) {
@@ -898,13 +934,8 @@ fun PalaceView(cung: CungInfo) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                // Cung có chính tinh → nền viền đỏ nhẹ/transparent
-                if (chinhTinhs.isNotEmpty())
-                    Brush.verticalGradient(listOf(ChartRed.copy(alpha = 0.15f), Color.Transparent))
-                else
-                    Brush.verticalGradient(listOf(Color.Transparent, Color.Transparent))
-            )
+            // Nền ô cung: trắng phẳng, không gradient (chỉ khung/viền giữ màu vàng)
+            .background(ChartPaperBg)
             .padding(horizontal = 2.dp, vertical = 2.dp)
     ) {
         // ── Hàng 1: Can Chi | Tên Cung | Đại Hạn ──
@@ -923,35 +954,25 @@ fun PalaceView(cung: CungInfo) {
             Text(
                 text = canChiLabel,
                 fontSize = 6.sp,
-                color = ChartIvoryDim,
+                color = ChartPaperInkDim,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
             // Cung chức (Giữa) - Mệnh, Phụ Mẫu, Phúc Đức...
+            // Luôn 1 dòng: tên dài (Phúc Đức, Điền Trạch...) tự co chữ cho vừa bề ngang.
             Box(
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.8f),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = displayCungChuLabel(cung.cungChu).uppercase(),
-                    fontSize = 6.5.sp,
-                    lineHeight = 7.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = LoraFontFamily,
-                    color = ChartGold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Clip,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                CungChuLabel(text = displayCungChuLabel(cung.cungChu).uppercase())
             }
             // Đại Hạn (Căn phải)
             Text(
                 cung.daiHan?.toString() ?: "",
                 fontSize = 5.5.sp,
-                color = ChartIvoryDim,
+                color = ChartPaperInkDim,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End
@@ -1014,7 +1035,7 @@ fun PalaceView(cung: CungInfo) {
             Text(
                 cung.cungTen,
                 fontSize = 5.5.sp,
-                color = ChartIvoryDim,
+                color = ChartPaperInkDim,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
@@ -1031,7 +1052,7 @@ fun PalaceView(cung: CungInfo) {
                 text = trangSinhViTri ?: "",
                 fontSize = 6.sp,
                 lineHeight = 7.sp,
-                color = ChartIvoryDim,
+                color = ChartPaperInkDim,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -1039,7 +1060,7 @@ fun PalaceView(cung: CungInfo) {
             Text(
                 text = thangCung?.let { stringResource(R.string.chart_month_n, it) } ?: stringResource(R.string.chart_month),
                 fontSize = 6.sp,
-                color = ChartIvoryDim,
+                color = ChartPaperInkDim,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End

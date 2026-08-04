@@ -68,7 +68,6 @@ private val SCRIM_HEIGHT = 260.dp
 private val INTRO_PAGES = listOf(
     IntroPage(R.drawable.intro1, R.string.intro_1_title, R.string.intro_1_desc),
     IntroPage(R.drawable.intro2, R.string.intro_2_title, R.string.intro_2_desc),
-    IntroPage(R.drawable.intro3, R.string.intro_3_title, R.string.intro_3_desc),
 )
 
 @Composable

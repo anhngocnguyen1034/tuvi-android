@@ -34,7 +34,7 @@ class TuViApplication : Application() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
         private set
 
-    var initialDark: Boolean = true
+    var initialDark: Boolean = false
         private set
     var initialOnboardingDone: Boolean = false
         private set
@@ -48,17 +48,10 @@ class TuViApplication : Application() {
                 if (dark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
             initialOnboardingDone = userPreferencesRepository.isOnboardingDone()
-            // Ngôn ngữ mặc định khi mở app lần đầu là tiếng Việt: module anhnn-language fallback
-            // "en" khi datastore của nó chưa có giá trị, nên gieo sẵn "vi" trước khi
-            // MainActivity.attachBaseContext đọc. Chỉ chạy ở máy chưa qua onboarding (cài mới)
-            // và đúng một lần → không ghi đè ngôn ngữ người dùng đã chọn.
             if (!initialOnboardingDone && userPreferencesRepository.consumeDefaultLanguageSeed()) {
                 LanguageDataSource(this@TuViApplication)
                     .setLanguageCode(UserPreferencesRepository.LOCALE_VI)
             }
-            // Áp ngôn ngữ đã chọn ở mức app (không phải KEY_LOCALE cũ, vốn luôn "vi" vì không
-            // màn nào ghi vào): để context ngoài Activity — notification của SuKienReceiver /
-            // BootReceiver — cũng đúng ngôn ngữ, khớp với attachBaseContext của MainActivity.
             val langCode = LanguageDataSource(this@TuViApplication).languageCode.first()
                 .ifBlank { UserPreferencesRepository.LOCALE_VI }
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langCode))
@@ -70,23 +63,13 @@ class TuViApplication : Application() {
 
         RemoteConfigManager.init(this)
 
-        // Crashlytics: chỉ gửi crash từ bản release để log debug không làm nhiễu dashboard.
-        // KHÔNG set custom key chứa dữ liệu ngày sinh — chỉ enum/boolean (xem quy ước ở Events).
         Firebase.crashlytics.isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG
 
-        // IAP: khởi tạo Billing sớm để biết trạng thái premium (isPremium đọc từ cache bền) —
-        // dùng để tắt quảng cáo bên dưới. Thêm consumableIds khi làm "mua lượt AI".
-        //
-        // Build không có quảng cáo (FeatureFlags.ADS_ENABLED = false) thì không mở kết nối
-        // Billing: sản phẩm duy nhất là "gỡ quảng cáo" và lối vào đã ẩn ở SettingsScreen.
-        // isPremium giữ mặc định false, không ảnh hưởng adsEnabled bên dưới (đã false).
         if (FeatureFlags.ADS_ENABLED) {
             IapManager.init(
                 this,
                 IapConfig(nonConsumableIds = listOf(BillingProducts.REMOVE_ADS)),
             )
-            // Mua gỡ quảng cáo xong → xoá ad đang cache để tắt quảng cáo tức thì (không cần restart).
-            // Các request mới đã tự tắt qua adsEnabled ở dưới.
             IapManager.addListener(object : IapListener {
                 override fun onPremiumChanged(isPremium: Boolean) {
                     if (isPremium) Ads.clear()
@@ -97,12 +80,9 @@ class TuViApplication : Application() {
         // Analytics: Firebase Analytics (đã có google-services.json). Event cụ thể khai báo ở Events.
         Analytics.init(this)
 
-        // Microsoft Clarity: heatmap vùng chạm/scroll + session replay. Clarity tự thu thập
-        // tương tác chạm nên không cần code thêm cho heatmap. Xem báo cáo tại clarity.microsoft.com.
+
         Clarity.initialize(applicationContext, ClarityConfig(CLARITY_PROJECT_ID))
 
-        // Cấu hình module ads: bơm dữ liệu app (Remote Config) vào, module không phụ thuộc Firebase.
-        // Ad unit fallback theo định dạng (test unit) đã nằm sẵn trong RemoteConfigManager.
         Ads.init(
             AdsConfig(
                 adsEnabled = {

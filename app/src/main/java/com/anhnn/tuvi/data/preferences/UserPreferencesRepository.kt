@@ -56,7 +56,7 @@ class UserPreferencesRepository(context: Context) {
         const val LOCALE_VI = "vi"
     }
 
-    val themeDarkFlow: Flow<Boolean> = dataStore.data.map { prefs -> prefs[KEY_THEME_DARK] ?: true }
+    val themeDarkFlow: Flow<Boolean> = dataStore.data.map { prefs -> prefs[KEY_THEME_DARK] ?: false }
 
     val notifHolidayFlow: Flow<Boolean> = dataStore.data.map { prefs ->
         prefs[KEY_NOTIF_HOLIDAY] ?: true
@@ -66,7 +66,7 @@ class UserPreferencesRepository(context: Context) {
         prefs[KEY_NOTIF_LUNAR] ?: true
     }
 
-    suspend fun initialThemeDark(): Boolean = dataStore.data.first()[KEY_THEME_DARK] ?: true
+    suspend fun initialThemeDark(): Boolean = dataStore.data.first()[KEY_THEME_DARK] ?: false
 
     /** Đã xem màn giới thiệu chưa — chỉ hiện intro ở lần mở app đầu tiên. */
     suspend fun isOnboardingDone(): Boolean = dataStore.data.first()[KEY_ONBOARDING_DONE] ?: false

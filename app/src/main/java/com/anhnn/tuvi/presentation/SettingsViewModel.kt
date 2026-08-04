@@ -32,7 +32,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            SettingsUiState(themeDark = true)
+            SettingsUiState(themeDark = false)
         )
 
     fun setThemeDark(dark: Boolean) {
