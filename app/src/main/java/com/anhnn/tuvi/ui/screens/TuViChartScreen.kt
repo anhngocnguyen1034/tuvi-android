@@ -960,8 +960,7 @@ fun PalaceView(cung: CungInfo) {
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
-            // Cung chức (Giữa) - Mệnh, Phụ Mẫu, Phúc Đức...
-            // Luôn 1 dòng: tên dài (Phúc Đức, Điền Trạch...) tự co chữ cho vừa bề ngang.
+
             Box(
                 modifier = Modifier.weight(1.8f),
                 contentAlignment = Alignment.Center

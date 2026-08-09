@@ -42,7 +42,7 @@ object TuViComposeColors {
         chartRed             = Color(0xFF8B0000),
         chartBorderGold      = Color(0xFF5C3D0A),
         chartLabelWeekOther  = Color(0xFF2E1B6B),
-        hanhThuy             = Color(0xFF4A90D9),
+        hanhThuy             = Color(0xFF000000),
         hanhHoa              = Color(0xFFE84040),
         hanhKim              = Color(0xFFE8D5A3),
         hanhMoc              = Color(0xFF4CAF50),
