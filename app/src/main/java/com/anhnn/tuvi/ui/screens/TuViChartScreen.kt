@@ -1115,7 +1115,8 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
         lineHeight = 7.sp,
         color = getSaoColor(sao, hasTuLinh).copy(alpha = 0.9f),
         maxLines = 1,
-        overflow = TextOverflow.Clip
+        overflow = TextOverflow.Clip,
+        fontWeight = FontWeight.SemiBold,
     )
 }
 
