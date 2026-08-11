@@ -1026,43 +1026,43 @@ fun PalaceView(cung: CungInfo) {
         }
 
         // ── Hàng 4: Địa chi | Vòng Tràng Sinh | Tháng ──
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 1.dp) // Thêm chút padding nếu cần
         ) {
-            // Địa chi (Tý/Sửu/Dần/Mão...) (Căn trái dưới)
+            // Địa chi (Tý/Sửu/Dần/Mão...) (Góc dưới trái)
             Text(
-                cung.cungTen,
+                text = cung.cungTen,
                 fontSize = 5.5.sp,
                 color = ChartPaperInkDim,
                 maxLines = 1,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Start
+                modifier = Modifier.align(Alignment.BottomStart)
             )
-            // Tr.Sinh: <vị trí>
+
+            // Tr.Sinh: <vị trí> (Căn giữa dưới cùng)
             val trangSinhViTri = cung.sao.firstOrNull { sao ->
                 val baseName = normalizeSpaces(sao.ten.replace('\u00A0', ' '))
                 (sao.vongTrangSinh ?: 0) != 0 ||
-                    vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
+                        vongTrangSinhNames.any { baseName.equals(it, ignoreCase = true) }
             }?.ten
-            val thangCung = cung.thang ?: thangTuChiCung(cung.cungSo, cung.cungTen)
-            // Chỉ hiển thị đúng tên vị trí vòng Tràng Sinh (Đế vượng, Lâm quan, ...)
+
             Text(
                 text = trangSinhViTri ?: "",
                 fontSize = 6.sp,
-                lineHeight = 7.sp,
+                maxLines = 1,
                 color = ChartPaperInkDim,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
+                modifier = Modifier.align(Alignment.BottomCenter) // Tự động căn giữa và chiếm không gian rộng nhất có thể
             )
-            // Tháng âm lịch theo cung
+
+            // Tháng âm lịch theo cung (Góc dưới phải)
+            val thangCung = cung.thang ?: thangTuChiCung(cung.cungSo, cung.cungTen)
             Text(
                 text = thangCung?.let { stringResource(R.string.chart_month_n, it) } ?: stringResource(R.string.chart_month),
                 fontSize = 6.sp,
                 color = ChartPaperInkDim,
                 maxLines = 1,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
+                modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
     }
@@ -1115,7 +1115,8 @@ fun StarText(sao: SaoInfo, hasTuLinh: Boolean) {
         lineHeight = 7.sp,
         color = getSaoColor(sao, hasTuLinh).copy(alpha = 0.9f),
         maxLines = 1,
-        overflow = TextOverflow.Clip
+        overflow = TextOverflow.Clip,
+        fontWeight = FontWeight.SemiBold,
     )
 }
 

@@ -125,7 +125,7 @@
     <string name="chart_label_menh_chu">Mệnh Chủ</string>
     <string name="chart_label_than_chu">Thân Chủ</string>
     <string name="chart_label_sinh_khac">Sinh/Khắc</string>
-    <string name="chart_month_n">Tháng %1$d</string>
+    <string name="chart_month_n">T.%1$d</string>
     <string name="chart_month">Tháng</string>
 
     <string name="saved_screen_title">Lá Số Đã Lưu</string>

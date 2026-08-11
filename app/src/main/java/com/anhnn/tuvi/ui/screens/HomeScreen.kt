@@ -205,16 +205,16 @@ fun HomeScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            SecondaryFeatureCard(
-                modifier = Modifier.fillMaxWidth(),
-                title = stringResource(R.string.home_browser_title),
-                description = stringResource(R.string.home_browser_desc),
-                onClick = onOpenBrowser,
-                icon = painterResource(R.drawable.ic_browser),
-                iconTint = Color(0xFF2DD4BF)
-            )
+//            SecondaryFeatureCard(
+//                modifier = Modifier.fillMaxWidth(),
+//                title = stringResource(R.string.home_browser_title),
+//                description = stringResource(R.string.home_browser_desc),
+//                onClick = onOpenBrowser,
+//                icon = painterResource(R.drawable.ic_browser),
+//                iconTint = Color(0xFF2DD4BF)
+//            )
 
-            Spacer(Modifier.height(14.dp))
+//            Spacer(Modifier.height(14.dp))
 
             SecondaryFeatureCard(
                 modifier = Modifier.fillMaxWidth(),
