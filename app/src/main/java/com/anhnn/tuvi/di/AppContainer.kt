@@ -42,7 +42,9 @@ import java.util.concurrent.TimeUnit
 
 object AppContainer {
 
-    private const val BASE_URL = "https://tainhanh.io.vn/"
+//    private const val BASE_URL = "https://tainhanh.io.vn/"
+
+    private const val BASE_URL = "http://192.168.1.6:8000/"
     private const val CLOUD_PROJECT_NUMBER = 0L
 
     lateinit var app: android.app.Application

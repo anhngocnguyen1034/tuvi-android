@@ -1,4 +1,4 @@
-package com.anhnn.tuvi.ui.browser
+package com.anhnn.tuvi.ui.history
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,7 +49,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.anhnn.tuvi.R
@@ -58,7 +57,6 @@ import com.anhnn.tuvi.data.local.HistoryItemEntity
 import com.anhnn.tuvi.di.AppContainer
 import com.anhnn.tuvi.ui.components.TuViTopBar
 import com.anhnn.tuvi.ui.theme.LoraFontFamily
-import com.anhnn.tuvi.ui.theme.TuViGold
 import com.anhnn.tuvi.ui.theme.TuViGoldDark
 import com.anhnn.tuvi.ui.theme.TuViGoldLight
 import com.anhnn.tuvi.ui.theme.TuViIvory
@@ -76,27 +74,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// ── ViewModel ────────────────────────────────────────────────────────────────
-
-class HistoryViewModel(private val dao: HistoryDao) : ViewModel() {
-
-    val history: StateFlow<List<HistoryItemEntity>> = dao.getAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
-    fun delete(id: Long) = viewModelScope.launch { dao.deleteById(id) }
-
-    fun clearAll() = viewModelScope.launch { dao.clearAll() }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HistoryViewModel(AppContainer.historyDao) as T
-        }
-    }
-}
-
-// ── Screen ───────────────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

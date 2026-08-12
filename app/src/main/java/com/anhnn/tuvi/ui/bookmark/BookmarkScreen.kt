@@ -1,5 +1,6 @@
-package com.anhnn.tuvi.ui.browser
+package com.anhnn.tuvi.ui.bookmark
 
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,7 +59,6 @@ import com.anhnn.tuvi.ui.components.TuViTopBar
 import com.anhnn.tuvi.ui.theme.LoraFontFamily
 import com.anhnn.tuvi.ui.theme.TuViGold
 import com.anhnn.tuvi.ui.theme.TuViGoldDark
-import com.anhnn.tuvi.ui.theme.TuViGoldLight
 import com.anhnn.tuvi.ui.theme.TuViIvory
 import com.anhnn.tuvi.ui.theme.TuViIvoryDim
 import com.anhnn.tuvi.R
@@ -70,28 +70,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
-class BookmarkViewModel(private val dao: BookmarkDao) : ViewModel() {
-
-    val bookmarks: StateFlow<List<BookmarkItemEntity>> = dao.getAllBookmarks()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
-    fun delete(id: Long) = viewModelScope.launch { dao.deleteBookmarkById(id) }
-
-    fun updateTitle(id: Long, newTitle: String) {
-        if (newTitle.isNotBlank()) viewModelScope.launch { dao.updateTitle(id, newTitle.trim()) }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                BookmarkViewModel(AppContainer.bookmarkDao) as T
-        }
-    }
-}
-
-// ── Screen ───────────────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -322,5 +300,5 @@ private fun String.toFaviconEmoji(): String {
 }
 
 private fun String.toDomainDisplay(): String = try {
-    android.net.Uri.parse(this).host?.removePrefix("www.") ?: this
+    Uri.parse(this).host?.removePrefix("www.") ?: this
 } catch (_: Exception) { this }

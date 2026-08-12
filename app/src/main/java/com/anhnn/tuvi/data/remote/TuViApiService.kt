@@ -27,6 +27,10 @@ interface TuViApiService {
     @POST("/api/interpret/van-han")
     suspend fun interpretVanHan(@Body request: TuViRequest): VanHanResponse
 
+    /** Biểu đồ vận hạn 12 tháng (`timeline` + `summary`). Không tốn quota AI. */
+    @POST("/api/van-han/timeline")
+    suspend fun interpretVanHanTimeline(@Body request: TuViRequest): VanHanResponse
+
     /** Hỏi – đáp tự do: gửi `cau_hoi` của người dùng kèm lá số. */
     @POST("/api/interpret/hoi")
     suspend fun interpretHoi(@Body request: TuViRequest): HoiResponse

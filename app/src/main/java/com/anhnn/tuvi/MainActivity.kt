@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -53,12 +54,13 @@ import com.anhnn.tuvi.presentation.TuViViewModel
 import com.anhnn.tuvi.presentation.resolve
 import com.anhnn.tuvi.presentation.screens.InputScreen
 import com.anhnn.tuvi.presentation.screens.TuViChartScreen
-import com.anhnn.tuvi.ui.browser.BookmarkScreen
+import com.anhnn.tuvi.ui.bookmark.BookmarkScreen
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.runtime.LaunchedEffect
 import com.anhnn.tuvi.ui.browser.BrowserConfig
 import com.anhnn.tuvi.ui.browser.BrowserScreen
 import com.anhnn.tuvi.presentation.BrowserViewModel
-import com.anhnn.tuvi.ui.browser.HistoryScreen
+import com.anhnn.tuvi.ui.history.HistoryScreen
 import com.anhnn.tuvi.ui.screens.AiReadingScreen
 import com.anhnn.tuvi.ui.screens.StoreScreen
 import com.anhnn.tuvi.ui.screens.CalendarChooserScreen
@@ -76,8 +78,10 @@ import com.anhnn.tuvi.ui.screens.QuotesScreen
 import com.anhnn.tuvi.ui.screens.SettingsScreen
 import com.anhnn.tuvi.ui.theme.TuViTheme
 import android.net.Uri
-import com.anhnn.tuvi.R
+import com.anhnn.tuvi.ui.screens.SpecsScreen
+import com.anhnn.tuvi.ui.specs.SpecsViewModel
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun attachBaseContext(newBase: Context) {
@@ -391,11 +395,40 @@ fun TuViApp(isDark: Boolean = true, onboardingDone: Boolean = true) {
                                         onResult(false)
                                     }
                             }
-                        }
+                        },
+                        onOpenSpecs = {
+                            navController.navigate("specs_screen")
+                        },
                     )
                 }
             }
         }
+            composable("specs_screen") {
+                val specsVm: SpecsViewModel = hiltViewModel()
+
+                // 👉 Lấy trực tiếp thông tin người dùng vừa nhập từ TuViViewModel (thông qua flow/state lastInput)
+                val currentInput = lastInput
+
+                LaunchedEffect(currentInput) {
+                    if (currentInput != null) {
+                        // Gọi API lấy biểu đồ vận hạn 12 tháng dựa trên đúng thông số động của user (không AI)
+                        specsVm.fetchVanHanTimeline(currentInput)
+                    }
+                }
+
+                if (currentInput != null) {
+                    SpecsScreen(
+                        viewModel = specsVm,
+                        input = currentInput,
+                        onBack = { navController.popBackStack() }
+                    )
+                } else {
+                    // Trường hợp hy hữu chưa có input, có thể hiện thông báo hoặc back về
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
         composable("ai_reading") {
             val activity = context as Activity
             LaunchedEffect(Unit) { Ads.preload(context, AdNames.AI_REQUEST) }
