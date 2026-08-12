@@ -213,10 +213,6 @@ private fun saoIn(sao: SaoInfo, ids: Set<Int>, names: Set<String>): Boolean {
     else inSetIgnoreCase(names, normalizeSaoNameForColor(sao.ten))
 }
 
-// ─── Màu "giấy" của lá số ────────────────────────────────────────────────────
-// Phần trong khung lá số (12 cung + thiên bàn) luôn là nền trắng phẳng, không
-// gradient, không đổi theo dark/light theme — nên mực chữ & màu Ngũ Hành ở đây
-// cũng là hằng số đủ tương phản trên trắng (không dùng token theo theme).
 private val ChartPaperBg = Color(0xFFE8E7E0)
 private val ChartPaperInk = Color(0xFF1E1A24)
 private val ChartPaperInkDim = Color(0xFF5A5660)
@@ -251,12 +247,6 @@ fun getSaoColor(sao: SaoInfo, hasTuLinh: Boolean = false): Color {
         saoIn(sao, thoIds, thoSet) -> PaperHanhTho
         else -> ChartPaperInk
     }
-}
-
-// Back-compat: một số chỗ gọi theo String cũ (nếu còn sót)
-fun getSaoColor(tenSao: String): Color {
-    val fake = SaoInfo(ten = tenSao, dacTinh = null, vongTrangSinh = 0)
-    return getSaoColor(fake)
 }
 
 /** Tên các sao Kim mang tính hung (fallback khi thiếu sao_id). */
@@ -318,8 +308,8 @@ fun TuViChartScreen(
     savedChartId: Long? = null,
     onSave: ((String, (Boolean) -> Unit) -> Unit)? = null,
     onRemoveSave: ((Long, (Boolean) -> Unit) -> Unit)? = null,
-    /** When non-null, hiển thị nút mở màn luận giải AI dưới lưới lá số. */
     onOpenAiReading: (() -> Unit)? = null,
+    onOpenSpecs: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -330,7 +320,6 @@ fun TuViChartScreen(
     var showDownloadDialog by remember { mutableStateOf(false) }
     var downloadSuccess by remember { mutableStateOf(false) }
     val inLibrary = savedChartId != null
-
     Box() {
         Box(Modifier.fillMaxSize()) {
             if (showUnsaveDialog && savedChartId != null && onRemoveSave != null) {
@@ -474,6 +463,15 @@ fun TuViChartScreen(
                             onClick = {
                                 showDownloadConfirmDialog = true
                             }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.gallery_import),
+                                contentDescription = stringResource(R.string.chart_cd_download),
+                                tint = ChartGold
+                            )
+                        }
+                        IconButton(
+                            onClick = onOpenSpecs
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.gallery_import),

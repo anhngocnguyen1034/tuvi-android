@@ -1,10 +1,13 @@
 package com.anhnn.tuvi.ui.browser
 
+import android.app.Activity
 import android.net.Uri
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.FocusInteraction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +41,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.key
@@ -49,7 +52,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
@@ -70,18 +72,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anhnn.tuvi.presentation.BrowserViewModel
 import com.anhnn.tuvi.presentation.LongPressTarget
-import com.anhnn.tuvi.presentation.TabState
 import com.anhnn.tuvi.R
+import com.anhnn.tuvi.ui.bookmark.BookmarkScreen
 import com.anhnn.tuvi.ui.theme.IncognitoBg
 import com.anhnn.tuvi.ui.theme.IncognitoCard
 import com.anhnn.tuvi.ui.theme.IncognitoDivider
 import com.anhnn.tuvi.ui.theme.IncognitoEmphasis
 import com.anhnn.tuvi.ui.theme.IncognitoMuted
 import com.anhnn.tuvi.ui.theme.TuViDivider
-import com.anhnn.tuvi.ui.browser.BookmarkScreen
-import com.anhnn.tuvi.ui.browser.HistoryScreen
+import com.anhnn.tuvi.ui.history.HistoryScreen
 import com.anhnn.tuvi.ui.theme.TuViGold
-import com.anhnn.tuvi.ui.theme.TuViGoldDark
 import com.anhnn.tuvi.ui.theme.TuViIvory
 import com.anhnn.tuvi.ui.theme.TuViIvoryDim
 import com.anhnn.tuvi.ui.theme.TuViNavy
@@ -124,7 +124,7 @@ fun BrowserScreen(
     // ── FLAG_SECURE: bật khi incognito, tắt khi thường ───────────────────────
     val context  = LocalContext.current
     val resources = LocalResources.current
-    val activity = context as? android.app.Activity
+    val activity = context as? Activity
     DisposableEffect(isIncognito) {
         if (isIncognito) activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         else             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -357,7 +357,10 @@ fun BrowserScreen(
                     )
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            if (fileName != null) resources.getString(R.string.browser_downloading, fileName)
+                            if (fileName != null) resources.getString(
+                                R.string.browser_downloading,
+                                fileName
+                            )
                             else resources.getString(R.string.browser_download_error)
                         )
                     }
@@ -382,7 +385,10 @@ fun BrowserScreen(
                     )
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            if (fileName != null) resources.getString(R.string.browser_downloading, fileName)
+                            if (fileName != null) resources.getString(
+                                R.string.browser_downloading,
+                                fileName
+                            )
                             else resources.getString(R.string.browser_download_error)
                         )
                     }
@@ -572,7 +578,7 @@ private fun AddressBar(
     val hintCol  = if (isIncognito) IncognitoMuted  else TuViIvoryDim
 
     // Khi URL đổi do điều hướng (không phải đang gõ) → đồng bộ lại text hiển thị.
-    androidx.compose.runtime.LaunchedEffect(url) {
+    LaunchedEffect(url) {
         if (!isFocused) field = TextFieldValue(displayUrl(url))
     }
 
@@ -603,16 +609,16 @@ private fun AddressBar(
                 .background(cardBg)
                 .padding(horizontal = 12.dp, vertical = 7.dp),
             // Khi focus: hiện full URL và bôi đen toàn bộ để gõ đè ngay (giống Chrome).
-            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }.also { src ->
-                androidx.compose.runtime.LaunchedEffect(src) {
+            interactionSource = remember { MutableInteractionSource() }.also { src ->
+                LaunchedEffect(src) {
                     src.interactions.collect { interaction ->
                         when (interaction) {
-                            is androidx.compose.foundation.interaction.FocusInteraction.Focus -> {
+                            is FocusInteraction.Focus -> {
                                 val full = displayUrl(url)
                                 field = TextFieldValue(full, selection = TextRange(0, full.length))
                                 isFocused = true
                             }
-                            is androidx.compose.foundation.interaction.FocusInteraction.Unfocus -> {
+                            is FocusInteraction.Unfocus -> {
                                 isFocused = false
                                 field = TextFieldValue(displayUrl(url))
                             }

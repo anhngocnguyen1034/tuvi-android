@@ -70,6 +70,8 @@ data class VanHanResponse(
     @SerialName("nam_xem") val nam_xem: Int? = null,
     @SerialName("data_la_so") val data_la_so: TuViResponse? = null,
     @SerialName("ai_reading") val ai_reading: String? = null,
+    val timeline: List<ThangHanData>? = emptyList(),
+    val summary: VongHanSummary? = null
 )
 
 /** Response from POST /api/interpret/hoi (trả lời câu hỏi tự do về lá số). */
@@ -133,4 +135,34 @@ data class SaoDto(
     val ngu_hanh: String? = null,
     @SerialName("vong_trang_sinh") val vongTrangSinh: Int? = 0,
     @SerialName("is_luu") val isLuu: Boolean = false
+)
+
+@Serializable
+data class ThangHanData(
+    val thang: Int,
+    @SerialName("thang_ten") val thangTen: String,
+    @SerialName("cung_so") val cungSo: Int? = null,
+    @SerialName("cung_ten") val cungTen: String,
+    @SerialName("cung_chu") val cungChu: String,
+    @SerialName("raw_score") val rawScore: Float,
+    @SerialName("normalized_score") val normalizedScore: Float,
+    val breakdown: ScoreBreakdown
+)
+
+@Serializable
+data class ScoreBreakdown(
+    @SerialName("chinh_tinh") val chinhTinh: Float,
+    @SerialName("cat_tinh") val catTinh: Float,
+    @SerialName("sat_tinh") val satTinh: Float,
+    @SerialName("sao_luu") val saoLuu: Float,
+    @SerialName("he_so") val heSo: Float
+)
+
+@Serializable
+data class VongHanSummary(
+    @SerialName("min_raw") val minRaw: Float? = null,
+    @SerialName("max_raw") val maxRaw: Float? = null,
+    @SerialName("best_month") val bestMonth: Int? = null,
+    @SerialName("worst_month") val worstMonth: Int? = null,
+    @SerialName("avg_raw") val avgRaw: Float? = null
 )

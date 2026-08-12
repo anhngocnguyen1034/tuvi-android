@@ -21,10 +21,12 @@ import com.anhnn.tuvi.di.AppContainer
 import com.anhnn.tuvi.ui.theme.TuViComposeColors
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
+@HiltAndroidApp
 class TuViApplication : Application() {
 
     private companion object {

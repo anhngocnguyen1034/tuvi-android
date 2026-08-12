@@ -8,8 +8,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-}
 
+    alias(libs.plugins.hilt.android)
+}
 // Đọc thông tin ký release từ local.properties (KHÔNG commit creds vào git).
 val keystoreProps = Properties().apply {
     val f = rootProject.file("local.properties")
@@ -20,6 +21,12 @@ kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
+}
+
+// Hilt 2.59.x bundle kotlin-metadata-jvm 2.2.20 — không đọc được metadata Kotlin 2.3.x
+// ("Provided Metadata instance has version 2.3.0"). Force lên 2.3.21 cho processor classpath.
+configurations.all {
+    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.21")
 }
 
 android {
@@ -104,7 +111,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
     // Networking
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization.converter)
@@ -116,7 +122,7 @@ dependencies {
 
     // WebView: pull-to-refresh (Compose PullToRefresh không nhận gesture từ WebView)
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    
+    implementation(libs.androidx.hilt.navigation.compose)
     // Lifecycle & ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -176,6 +182,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
