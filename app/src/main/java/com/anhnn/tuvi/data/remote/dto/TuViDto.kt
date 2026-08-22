@@ -1,5 +1,6 @@
 package com.anhnn.tuvi.data.remote.dto
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
@@ -138,6 +139,7 @@ data class SaoDto(
 )
 
 @Serializable
+@Immutable
 data class ThangHanData(
     val thang: Int,
     @SerialName("thang_ten") val thangTen: String,
@@ -150,6 +152,7 @@ data class ThangHanData(
 )
 
 @Serializable
+@Immutable
 data class ScoreBreakdown(
     @SerialName("chinh_tinh") val chinhTinh: Float,
     @SerialName("cat_tinh") val catTinh: Float,
@@ -159,6 +162,7 @@ data class ScoreBreakdown(
 )
 
 @Serializable
+@Immutable
 data class VongHanSummary(
     @SerialName("min_raw") val minRaw: Float? = null,
     @SerialName("max_raw") val maxRaw: Float? = null,
