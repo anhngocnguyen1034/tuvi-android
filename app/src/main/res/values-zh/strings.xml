@@ -120,8 +120,11 @@
     <string name="chart_label_month">月</string>
     <string name="chart_label_day">日</string>
     <string name="chart_label_menh">命宫</string>
+    <string name="chart_label_menh_short">命</string>
     <string name="chart_label_ban_menh">本命五行</string>
     <string name="chart_label_cuc">局</string>
+    <string name="chart_label_am_duong">阴阳</string>
+    <string name="chart_label_tuoi">岁数</string>
     <string name="chart_label_menh_chu">命主</string>
     <string name="chart_label_than_chu">身主</string>
     <string name="chart_label_sinh_khac">生克关系</string>
