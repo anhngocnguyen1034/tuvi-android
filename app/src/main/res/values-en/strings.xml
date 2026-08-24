@@ -126,8 +126,11 @@
     <string name="chart_label_month">Month</string>
     <string name="chart_label_day">Day</string>
     <string name="chart_label_menh">Destiny Palace</string>
+    <string name="chart_label_menh_short">Destiny</string>
     <string name="chart_label_ban_menh">Life Element</string>
     <string name="chart_label_cuc">Element Bureau</string>
+    <string name="chart_label_am_duong">Yin–Yang</string>
+    <string name="chart_label_tuoi">Age</string>
     <string name="chart_label_menh_chu">Destiny Master</string>
     <string name="chart_label_than_chu">Body Master</string>
     <string name="chart_label_sinh_khac">Generation &amp; Restriction</string>

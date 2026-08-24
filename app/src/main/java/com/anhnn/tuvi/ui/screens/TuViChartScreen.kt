@@ -749,7 +749,7 @@ private fun DrawTuanTriet(
                 layout(constraints.maxWidth, constraints.maxHeight) {
                     val left = cxPx - placeable.width / 2f
                     val top = if (alignBottom) cyPx - placeable.height.toFloat()
-                              else cyPx - placeable.height / 2f
+                    else cyPx - placeable.height / 2f
                     placeable.placeRelative(
                         x = (left + 0.5f).toInt(),
                         y = (top + 0.5f).toInt()
@@ -760,6 +760,106 @@ private fun DrawTuanTriet(
     }
 }
 
+// ─── THIÊN BÀN TRUNG TÂM & CHIA CỘT ─────────────────────────────────────────
+
+@Composable
+private fun MultiColumnInfoRow(
+    label: String,
+    value1: String,
+    value2: String? = null,
+    fontSize: TextUnit = 8.sp,
+    valueColor: Color = ChartPaperInk,
+    labelBold: Boolean = true,
+    value1Bold: Boolean = false
+) {
+    if (value1.isBlank() && value2.isNullOrBlank()) return
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth() ,
+        verticalAlignment = Alignment.Top
+    ) {
+        // Cột 1: Nhãn (Chiếm ~28% chiều rộng, ép trái)
+        Text(
+            text = if (label.isNotBlank()) "$label: " else "",
+            fontSize = fontSize,
+            color = ChartPaperInk,
+            fontWeight = if (labelBold) FontWeight.Bold else FontWeight.Normal,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.weight(0.28f)
+        )
+
+        if (value2 != null) {
+            // --- TRƯỜNG HỢP CÓ 3 CỘT (Ví dụ: Năm | 2008 | Mậu Tí) ---
+
+            // Cột 2: Giá trị dương lịch (Chiếm 36%, ép trái)
+            Text(
+                text = value1,
+                fontSize = fontSize,
+                color = valueColor,
+                fontWeight = if (value1Bold) FontWeight.Bold else FontWeight.Normal,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.weight(0.36f)
+            )
+            // Cột 3: Giá trị Can Chi (Chiếm 36%, ép trái)
+            Text(
+                text = value2,
+                fontSize = fontSize,
+                color = ChartPaperInk, // Giữ màu chuẩn cho Can Chi
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.weight(0.36f)
+            )
+        } else {
+            // --- TRƯỜNG HỢP CHỈ CÓ 2 CỘT (Ví dụ: Họ tên | Group FB Tử Vi Việt Nam) ---
+            // Gộp diện tích cột 2 và 3 lại để text có nhiều chỗ hiển thị và tự rớt dòng thoải mái
+            Text(
+                text = value1,
+                fontSize = fontSize,
+                color = valueColor,
+                fontWeight = if (value1Bold) FontWeight.Bold else FontWeight.Normal,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.weight(0.72f)
+            )
+        }
+    }
+}
+
+
+// ─── Các phần Ngày giờ sinh tách từ ngày Dương lịch ──────────────────────────
+private data class SolarParts(val year: String?, val month: String?, val day: String?)
+
+/** Tách Năm/Tháng/Ngày dương lịch từ chuỗi ngày gộp (vd "01/10/1985", "1-10-1985"). */
+private fun parseSolarDate(ngayDuong: String): SolarParts {
+    if (ngayDuong.isBlank()) return SolarParts(null, null, null)
+    val nums = Regex("[0-9]+").findAll(ngayDuong).map { it.value }.toList()
+    if (nums.isEmpty()) return SolarParts(null, null, null)
+    // Số gồm 4 chữ số là năm; nếu không có thì dùng số cuối cùng.
+    val yearIdx = nums.indexOfFirst { it.length == 4 }
+    val year = if (yearIdx >= 0) nums[yearIdx] else nums.last()
+    // Trước năm là Ngày rồi Tháng theo thứ tự Ngày/Tháng tiếng Việt.
+    val before = if (yearIdx >= 0) nums.subList(0, yearIdx) else nums.dropLast(1)
+    val day = if (before.size >= 2) before[before.size - 2] else before.firstOrNull()
+    val month = if (before.size >= 2) before.last() else (before.singleOrNull())
+    return SolarParts(year, month, day)
+}
+
+/** Tổng luận tương quan: màu xanh, in đậm, thụt lề tương đối so với khối bên trên. */
+@Composable
+private fun TuongQuanSummaryText(text: String) {
+    if (text.isBlank()) return
+    Text(
+        text = text,
+        fontSize = 7.sp,
+        color = PaperHanhThuy,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Start,
+        lineHeight = 8.sp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp, end = 2.dp, top = 1.dp, bottom = 1.dp)
+    )
+}
 
 @Composable
 private fun ThienBanCenterContent(tb: ThienBanInfo) {
@@ -768,7 +868,7 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(2.dp)
+            .padding(1.dp)
     ) {
         Text(
             stringResource(R.string.chart_center_title),
@@ -779,51 +879,94 @@ private fun ThienBanCenterContent(tb: ThienBanInfo) {
             letterSpacing = 1.sp,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(1.dp))
 
-        CenterLine(stringResource(R.string.chart_label_name), tb.ten, valueColor = ChartPaperGold, valueBold = true)
-        CenterLine(stringResource(R.string.chart_label_gender), tb.gioiTinh)
-        CenterLine(stringResource(R.string.chart_label_solar_birthday), tb.ngayDuong)
-        CenterLine(stringResource(R.string.chart_label_lunar_birthday), tb.ngayAm)
-        tb.gioSinh?.let { CenterLine(stringResource(R.string.chart_label_hour), it) }
-        tb.namXem?.let { CenterLine(stringResource(R.string.chart_label_view_year), it.toString()) }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            // ── Cụm 1: Thông tin cá nhân & Ngày giờ sinh (Nhãn | Dương | Can Chi) ──
+            // Họ tên chiếm toàn bộ khoảng trống bên phải nhãn
+            MultiColumnInfoRow(
+                stringResource(R.string.chart_label_name),
+                tb.ten,
+                valueColor = ChartPaperGold,
+                value1Bold = true
+            )
 
-        if (tb.canNam != null || tb.chiNam != null)
-            CenterLine(stringResource(R.string.chart_label_year), "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim())
-        if (tb.canThang != null || tb.chiThang != null)
-            CenterLine(stringResource(R.string.chart_label_month), "${tb.canThang ?: ""} ${tb.chiThang ?: ""}".trim())
-        if (tb.canNgay != null || tb.chiNgay != null)
-            CenterLine(stringResource(R.string.chart_label_day), "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim())
+            val solar = parseSolarDate(tb.ngayDuong)
+            val canChiNam = "${tb.canNam ?: ""} ${tb.chiNam ?: ""}".trim().ifBlank { null }
+            val canChiThang = "${tb.canThang ?: ""} ${tb.chiThang ?: ""}".trim().ifBlank { null }
+            val canChiNgay = "${tb.canNgay ?: ""} ${tb.chiNgay ?: ""}".trim().ifBlank { null }
+            val canChiGio = tb.chiGioSinh?.trim()?.ifBlank { null }
+            val gioSinhRaw = tb.gioSinh?.trim().orEmpty()
 
-        tb.amDuongMenh?.let { CenterLine("", it, fontSize = 7.sp) }
-        tb.menh?.let { CenterLine(stringResource(R.string.chart_label_menh), it, valueColor = ChartPaperGold) }
-        tb.banMenh?.let { CenterLine(stringResource(R.string.chart_label_ban_menh), it) }
-        tb.cuc?.let { CenterLine(stringResource(R.string.chart_label_cuc), it) }
-        tb.menhChu?.let { CenterLine(stringResource(R.string.chart_label_menh_chu), it) }
-        tb.thanChu?.let { CenterLine(stringResource(R.string.chart_label_than_chu), it) }
-        tb.sinhKhac?.let { CenterLine(stringResource(R.string.chart_label_sinh_khac), it) }
+            if (solar.year != null) {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_year), solar.year, canChiNam)
+            } else if (tb.ngayDuong.isNotBlank()) {
+                // Fallback khi không tách được ngày: giữ nguyên chuỗi ngày gộp, không mất dữ liệu
+                MultiColumnInfoRow(stringResource(R.string.chart_label_day), tb.ngayDuong, canChiNgay)
+            }
+
+            if (solar.month != null) {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_month), solar.month, canChiThang)
+            }
+            if (solar.day != null) {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_day), solar.day, canChiNgay)
+            }
+            if (gioSinhRaw.isNotBlank()) {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_hour), gioSinhRaw, canChiGio)
+            }
+
+            // ── Cụm 2: Năm xem hạn (tách biệt bởi khoảng trắng nhỏ) ──
+            Spacer(Modifier.height(3.dp))
+
+            tb.namXem?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_view_year), it.toString(), canChiNam)
+            }
+            tb.tuoiAm?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_tuoi), it.toString())
+            }
+
+            // ── Cụm 3: Thuộc tính Bản Mệnh (2 cột, gióng lề thẳng cụm 1) ──
+            Spacer(Modifier.height(3.dp))
+
+            val amDuongNam = listOfNotNull(tb.amDuongMenh, tb.gioiTinh)
+                .joinToString(" ")
+                .trim()
+            if (amDuongNam.isNotBlank()) {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_am_duong), amDuongNam)
+            }
+            tb.menh?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_menh_short), it, valueColor = ChartPaperGold)
+            }
+            tb.cuc?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_cuc), it)
+            }
+
+            // ── Cụm 4: Chủ tinh (2 cột) ──
+            Spacer(Modifier.height(3.dp))
+
+            tb.menhChu?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_menh_chu), it, valueColor = ChartPaperGold)
+            }
+            tb.thanChu?.let {
+                MultiColumnInfoRow(stringResource(R.string.chart_label_than_chu), it, valueColor = ChartPaperGold)
+            }
+        }
+
+        // ── Cụm 5: Tổng luận Tương quan (màu xanh, đậm, thụt lề) ──
+        Spacer(Modifier.height(4.dp))
+
+        tb.sinhKhac?.let { summary ->
+            summary.split('\n', '\r')
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+                .forEach { TuongQuanSummaryText(it) }
+        }
     }
-}
-
-@Composable
-private fun CenterLine(
-    label: String,
-    value: String,
-    fontSize: TextUnit = 8.sp,
-    valueColor: Color = ChartPaperInk,
-    valueBold: Boolean = false
-) {
-    if (value.isBlank()) return
-    Text(
-        text = if (label.isBlank()) value else "$label: $value",
-        fontSize = fontSize,
-        color = valueColor,
-        fontWeight = if (valueBold) FontWeight.Bold else FontWeight.Normal,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        textAlign = TextAlign.Center,
-        lineHeight = fontSize * 1.3f
-    )
 }
 
 /** Map code ngắn từ API đầy đủ thông tin  */

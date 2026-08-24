@@ -120,8 +120,11 @@
     <string name="chart_label_month">Tháng</string>
     <string name="chart_label_day">Ngày</string>
     <string name="chart_label_menh">Cung Mệnh</string>
+    <string name="chart_label_menh_short">Mệnh</string>
     <string name="chart_label_ban_menh">Bản Mệnh</string>
     <string name="chart_label_cuc">Cục</string>
+    <string name="chart_label_am_duong">Âm Dương</string>
+    <string name="chart_label_tuoi">Tuổi</string>
     <string name="chart_label_menh_chu">Mệnh Chủ</string>
     <string name="chart_label_than_chu">Thân Chủ</string>
     <string name="chart_label_sinh_khac">Sinh/Khắc</string>
